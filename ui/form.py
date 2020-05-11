@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSlot
+from ui.button_panel import ButtonPanel
 
 
 class MainForm(QtWidgets.QWidget):
@@ -15,8 +16,7 @@ class MainForm(QtWidgets.QWidget):
         self.manometers.setStyleSheet('QWidget{ background: yellow }')
         self.workspace = QtWidgets.QWidget()
         self.workspace.setStyleSheet('QWidget{ background: lightgreen }')
-        self.btn_panel = QtWidgets.QWidget()
-        self.btn_panel.setStyleSheet('QWidget{ background: blue }')
+        self.btn_panel = ButtonPanel()
         self.setLayout(self.vbox)
         self.vbox.addWidget(self.manometers)
         self.vbox.addWidget(self.workspace)
@@ -52,10 +52,7 @@ class MainForm(QtWidgets.QWidget):
         # todo 2.3 Создать виджет с многостраничным меню
         # todo 2.4 напполнить меню для проекта и расположить его на форме
         # todo 2.5 сделать навигацию по меню
-        # todo 3 Создать панель с кнопками
-        # todo 3.1 Создать панель и расположить на ней несколько кнопок согласно ТЗ
-        # todo 3.2 Сделать стиль для кнопок
-        # todo 3.3 Сделать возможность включать и выключать кнопки панели
+
         # todo 4 создать панель манометров
         # todo 4.1 Создать круговую стрелку
         # todo 4.2 Создать круговой указатель
