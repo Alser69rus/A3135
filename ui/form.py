@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import pyqtSlot
 
 
 class MainForm(QtWidgets.QWidget):
@@ -44,6 +45,7 @@ class MainForm(QtWidgets.QWidget):
         self.hbox.addWidget(self.settings)
         self.hbox.addWidget(self.report_header)
         self.hbox.addWidget(self.report)
+
         # todo 2 Создать меню
         # todo 2.1 Создать виджет кнопки
         # todo 2.2 Создать виджет одиночного меню
@@ -72,3 +74,18 @@ class MainForm(QtWidgets.QWidget):
         # todo 5.8 расположить виджет настроек на форме
         # todo 6 создать тесты для размеров формы
         # todo 7 Создать виджет заполнения формы испытания
+
+    @pyqtSlot(str)
+    def show_panel(self, value: str):
+        available_panel = {
+            'манометры': self.manometers,
+            'меню': self.menu,
+            'текст': self.text,
+            'картинка': self.img,
+            'график': self.graph,
+            'настройки': self.settings,
+            'заголовок': self.report_header,
+            'отчет': self.report,
+        }
+        for panel in available_panel.keys():
+            available_panel[panel].setVisible(panel in value)
