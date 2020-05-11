@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSlot
 from ui.button_panel import ButtonPanel
+from ui.workspace import Workspace
 
 
 class MainForm(QtWidgets.QWidget):
@@ -14,37 +15,12 @@ class MainForm(QtWidgets.QWidget):
         self.vbox = QtWidgets.QVBoxLayout()
         self.manometers = QtWidgets.QWidget()
         self.manometers.setStyleSheet('QWidget{ background: yellow }')
-        self.workspace = QtWidgets.QWidget()
-        self.workspace.setStyleSheet('QWidget{ background: lightgreen }')
+        self.workspace = Workspace()
         self.btn_panel = ButtonPanel()
         self.setLayout(self.vbox)
         self.vbox.addWidget(self.manometers)
         self.vbox.addWidget(self.workspace)
         self.vbox.addWidget(self.btn_panel)
-        # todo 1.2 Создать 7 панелей и расположить их горизонтально на центральном виджите
-        self.hbox = QtWidgets.QHBoxLayout()
-        self.menu = QtWidgets.QWidget()
-        self.menu.setStyleSheet('QWidget{ background: red }')
-        self.text = QtWidgets.QWidget()
-        self.text.setStyleSheet('QWidget{ background: orange }')
-        self.img = QtWidgets.QWidget()
-        self.img.setStyleSheet('QWidget{ background: yellow }')
-        self.graph = QtWidgets.QWidget()
-        self.graph.setStyleSheet('QWidget{ background:  green}')
-        self.settings = QtWidgets.QWidget()
-        self.settings.setStyleSheet('QWidget{ background: cyan }')
-        self.report_header = QtWidgets.QWidget()
-        self.report_header.setStyleSheet('QWidget{ background: blue }')
-        self.report = QtWidgets.QWidget()
-        self.report.setStyleSheet('QWidget{ background: magenta }')
-        self.workspace.setLayout(self.hbox)
-        self.hbox.addWidget(self.menu)
-        self.hbox.addWidget(self.text)
-        self.hbox.addWidget(self.img)
-        self.hbox.addWidget(self.graph)
-        self.hbox.addWidget(self.settings)
-        self.hbox.addWidget(self.report_header)
-        self.hbox.addWidget(self.report)
 
         # todo 2 Создать меню
         # todo 2.1 Создать виджет кнопки
@@ -76,13 +52,13 @@ class MainForm(QtWidgets.QWidget):
     def show_panel(self, value: str):
         available_panel = {
             'манометры': self.manometers,
-            'меню': self.menu,
-            'текст': self.text,
-            'картинка': self.img,
-            'график': self.graph,
-            'настройки': self.settings,
-            'заголовок': self.report_header,
-            'отчет': self.report,
+            'меню': self.workspace.menu,
+            'текст': self.workspace.text,
+            'картинка': self.workspace.img,
+            'график': self.workspace.graph,
+            'настройки': self.workspace.settings,
+            'заголовок': self.workspace.report_header,
+            'отчет': self.workspace.report,
         }
         for panel in available_panel.keys():
             available_panel[panel].setVisible(panel in value)

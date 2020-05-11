@@ -27,5 +27,4 @@ if __name__ == '__main__':
     main = Main()
     main.start()
 
-
     sys.exit(app.exec_())
