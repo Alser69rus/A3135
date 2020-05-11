@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSlot
 from ui.button_panel import ButtonPanel
 from ui.workspace import Workspace
+from ui.manometers import Manometers
 
 
 class MainForm(QtWidgets.QWidget):
@@ -10,13 +11,12 @@ class MainForm(QtWidgets.QWidget):
         self.resize(1024, 768)
         self.setWindowTitle('Стенд А3139')
 
-        # todo 1 Create form
-        # todo 1.1 Создать три панели и расположить их на форме вертикально
         self.vbox = QtWidgets.QVBoxLayout()
-        self.manometers = QtWidgets.QWidget()
-        self.manometers.setStyleSheet('QWidget{ background: yellow }')
+        self.vbox.setContentsMargins(4, 4, 4, 4)
+        self.manometers = Manometers()
         self.workspace = Workspace()
         self.btn_panel = ButtonPanel()
+
         self.setLayout(self.vbox)
         self.vbox.addWidget(self.manometers)
         self.vbox.addWidget(self.workspace)
@@ -36,6 +36,7 @@ class MainForm(QtWidgets.QWidget):
         # todo 4.4 создать линейную шкалу
         # todo 4.5 создать несколько видов манометров (фабрику)
         # todo 4.6 расположить манометры на панели и положить на форму
+
         # todo 5 создать виджет с настройками
         # todo 5.1 расположить на форме индикатор состояния модулей ai и di
         # todo 5.2 создать настройку COM-порта
@@ -45,7 +46,7 @@ class MainForm(QtWidgets.QWidget):
         # todo 5.6 создать процедуру чтения и записи настроек в файл
         # todo 5.7 создать процедуру реинициализации модулей
         # todo 5.8 расположить виджет настроек на форме
-        # todo 6 создать тесты для размеров формы
+
         # todo 7 Создать виджет заполнения формы испытания
 
     @pyqtSlot(str)

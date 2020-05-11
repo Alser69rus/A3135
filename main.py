@@ -5,7 +5,7 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
-from ui import form
+from ui.main_form import MainForm
 
 
 class Main:
@@ -13,7 +13,7 @@ class Main:
         print('Стенд А3139')
         print('(c) ПКБ ЦТ, 2020')
 
-        self.form = form.MainForm()
+        self.form = MainForm()
         logging.debug('main form load ok')
 
         self.stm = QtCore.QStateMachine()

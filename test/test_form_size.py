@@ -1,12 +1,12 @@
 import unittest
 from PyQt5 import QtWidgets, QtTest
-from ui import form
+from ui import main_form
 
 
 class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:
         self.app = QtWidgets.QApplication([])
-        self.form = form.MainForm()
+        self.form = main_form.MainForm()
         QtTest.QTest.qWaitForWindowActive(self.form)
 
     def test_width(self):

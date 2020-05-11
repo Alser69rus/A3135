@@ -16,7 +16,7 @@ class ButtonPanel(QtWidgets.QWidget):
         self.down.setIcon(QtGui.QIcon('img\\down.png'))
         self.yes.setIcon(QtGui.QIcon('img\\yes.png'))
         self.no.setIcon(QtGui.QIcon('img\\no.png'))
-        
+
         self.hbox = QtWidgets.QHBoxLayout()
         self.setLayout(self.hbox)
         self.hbox.addWidget(self.back)
@@ -45,6 +45,6 @@ class ButtonPanel(QtWidgets.QWidget):
 
         self.setStyleSheet(self.style_sheet)
 
-        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                           QtWidgets.QSizePolicy.Fixed)
-        self.size().setHeight(40)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        self.setMinimumHeight(40)
+        self.hbox.setContentsMargins(0, 0, 0, 0)

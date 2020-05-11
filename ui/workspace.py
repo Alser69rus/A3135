@@ -7,6 +7,7 @@ class Workspace(QtWidgets.QWidget):
         # todo 1.2 Создать 7 панелей и расположить их горизонтально на центральном виджите
 
         self.hbox = QtWidgets.QHBoxLayout()
+        self.hbox.setContentsMargins(0, 0, 0, 0)
         self.menu = QtWidgets.QWidget()
         self.text = QtWidgets.QWidget()
         self.img = QtWidgets.QWidget()
