@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSlot
 from ui.button_panel import ButtonPanel
 from ui.workspace import Workspace
-from ui.manometers import Manometers
+from ui.manometers_panel import Manometers
 
 
 class MainForm(QtWidgets.QWidget):
@@ -29,14 +29,6 @@ class MainForm(QtWidgets.QWidget):
         # todo 2.4 напполнить меню для проекта и расположить его на форме
         # todo 2.5 сделать навигацию по меню
 
-        # todo 4 создать панель манометров
-        # todo 4.1 Создать круговую стрелку
-        # todo 4.2 Создать круговой указатель
-        # todo 4.3 создать круговую шкалу
-        # todo 4.4 создать линейную шкалу
-        # todo 4.5 создать несколько видов манометров (фабрику)
-        # todo 4.6 расположить манометры на панели и положить на форму
-
         # todo 5 создать виджет с настройками
         # todo 5.1 расположить на форме индикатор состояния модулей ai и di
         # todo 5.2 создать настройку COM-порта
@@ -48,6 +40,7 @@ class MainForm(QtWidgets.QWidget):
         # todo 5.8 расположить виджет настроек на форме
 
         # todo 7 Создать виджет заполнения формы испытания
+        # todo 8Создать виджет отчета
 
     @pyqtSlot(str)
     def show_panel(self, value: str):

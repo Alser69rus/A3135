@@ -7,7 +7,7 @@ class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:
         self.app = QtWidgets.QApplication([])
         self.form = main_form.MainForm()
-        QtTest.QTest.qWaitForWindowActive(self.form)
+        self.form.show()
 
     def test_width(self):
         self.assertEqual(self.form.width(), 1024, msg='form width')

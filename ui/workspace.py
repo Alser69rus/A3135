@@ -4,8 +4,6 @@ from PyQt5 import QtWidgets
 class Workspace(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        # todo 1.2 Создать 7 панелей и расположить их горизонтально на центральном виджите
-
         self.hbox = QtWidgets.QHBoxLayout()
         self.hbox.setContentsMargins(0, 0, 0, 0)
         self.menu = QtWidgets.QWidget()
