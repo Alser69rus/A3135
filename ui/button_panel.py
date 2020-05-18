@@ -1,15 +1,23 @@
 from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtCore import Qt
 
 
 class ButtonPanel(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.setFocusPolicy(Qt.NoFocus)
 
         self.back = QtWidgets.QPushButton('Возврат')
         self.up = QtWidgets.QPushButton('Вверх')
         self.down = QtWidgets.QPushButton('Вниз')
         self.yes = QtWidgets.QPushButton('Да')
         self.no = QtWidgets.QPushButton('Нет')
+
+        self.back.setFocusPolicy(Qt.NoFocus)
+        self.up.setFocusPolicy(Qt.NoFocus)
+        self.down.setFocusPolicy(Qt.NoFocus)
+        self.yes.setFocusPolicy(Qt.NoFocus)
+        self.no.setFocusPolicy(Qt.NoFocus)
 
         self.back.setIcon(QtGui.QIcon('img\\back.png'))
         self.up.setIcon(QtGui.QIcon('img\\up.png'))
