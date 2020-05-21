@@ -1,6 +1,7 @@
 import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QStateMachine
+from PyQt5.QtGui import QPixmap
 
 import logging
 
@@ -16,14 +17,13 @@ class Main:
         print('(c) ПКБ ЦТ, 2020')
 
         self.form = MainForm()
-        self.form.show_panel('текст картинка')
+        self.form.show_panel('текст график манометры')
 
         self.stm = QStateMachine()
 
         self.controller = Controller(form=self.form, state_machine=self.stm)
 
         self.form.show()
-        self.controller.text.setText('Hello')
 
 
 if __name__ == '__main__':

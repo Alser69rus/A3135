@@ -20,12 +20,14 @@ class Btn:
 class Controller(QObject):
     def __init__(self, form: MainForm, state_machine: QStateMachine, parent=None):
         super().__init__(parent=parent)
-        self.btn = Btn()
+        self.btn: Btn = Btn()
         self.form = form
         self.stm = state_machine
         self.button_panel = self.form.btn_panel
         self.menu = self.form.workspace.menu
         self.text = self.form.workspace.text.text
+        self.img = self.form.workspace.img.img
+        self.images = self.form.workspace.img.images
 
         self.connect_button_panel()
         self.connect_main_menu()

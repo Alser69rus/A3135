@@ -9,6 +9,7 @@ verify_ssl = true
 pyqt5 = "==5.14.2"
 pyqt5-sip = "*"
 pyqt5-stubs = "*"
+pyqtgraph = "*"
 
 [requires]
 python_version = "3.8"
