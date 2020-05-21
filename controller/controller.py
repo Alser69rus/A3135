@@ -25,9 +25,10 @@ class Controller(QObject):
         self.stm = state_machine
         self.button_panel = self.form.btn_panel
         self.menu = self.form.workspace.menu
-        self.text = self.form.workspace.text.text
-        self.img = self.form.workspace.img.img
-        self.images = self.form.workspace.img.images
+        self.text = self.form.workspace.text
+        self.img = self.form.workspace.img
+        self.images = self.img.images
+        self.graph=self.form.workspace.graph
 
         self.connect_button_panel()
         self.connect_main_menu()

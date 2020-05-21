@@ -21,6 +21,7 @@ class Manometers(QtWidgets.QWidget):
         self.hbox.addWidget(self.p_upr)
 
         self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
-        self.setMinimumHeight(150)
         self.hbox.setContentsMargins(0, 0, 0, 0)
+        self.setMinimumHeight(150)
+
 

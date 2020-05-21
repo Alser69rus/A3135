@@ -17,13 +17,15 @@ class Main:
         print('(c) ПКБ ЦТ, 2020')
 
         self.form = MainForm()
-        self.form.show_panel('текст график манометры')
+        self.form.show_panel('меню')
 
         self.stm = QStateMachine()
 
         self.controller = Controller(form=self.form, state_machine=self.stm)
 
         self.form.show()
+        self.controller.text.setText('Hello')
+
 
 
 if __name__ == '__main__':

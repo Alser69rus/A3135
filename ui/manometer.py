@@ -47,7 +47,7 @@ class Manometer(QtWidgets.QWidget):
         self.arrow.draw(painter)
 
     def bevel_draw(self, painter: QPainter):
-        painter.drawRoundedRect(0, 0, self.width() - 1, self.height() - 1, 8, 8)
+        painter.drawRoundedRect(0, 0, self.width() - 2, self.height() - 2, 8, 8)
 
     @pyqtSlot(float)
     def set_value(self, value: float):
