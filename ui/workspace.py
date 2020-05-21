@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets
+from ui.main_menu import MainMenu
 
 
 class Workspace(QtWidgets.QWidget):
@@ -6,7 +7,7 @@ class Workspace(QtWidgets.QWidget):
         super().__init__(parent=parent)
         self.hbox = QtWidgets.QHBoxLayout()
         self.hbox.setContentsMargins(0, 0, 0, 0)
-        self.menu = QtWidgets.QWidget()
+        self.menu = MainMenu()
         self.text = QtWidgets.QWidget()
         self.img = QtWidgets.QWidget()
         self.graph = QtWidgets.QWidget()
@@ -23,8 +24,8 @@ class Workspace(QtWidgets.QWidget):
         self.hbox.addWidget(self.report_header)
         self.hbox.addWidget(self.report)
 
-        self.setStyleSheet('QWidget{ background: lightgreen }')
-        self.menu.setStyleSheet('QWidget{ background: red }')
+        # self.setStyleSheet('QWidget{ background: lightgreen }')
+        # self.menu.setStyleSheet('QWidget{ background: red }')
         self.text.setStyleSheet('QWidget{ background: orange }')
         self.img.setStyleSheet('QWidget{ background: yellow }')
         self.graph.setStyleSheet('QWidget{ background:  green}')

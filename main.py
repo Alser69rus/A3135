@@ -1,5 +1,6 @@
 import sys
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import QStateMachine
 
 import logging
 
@@ -15,19 +16,17 @@ class Main:
         print('(c) ПКБ ЦТ, 2020')
 
         self.form = MainForm()
-        self.stm = QtCore.QStateMachine()
+        self.form.show_panel('меню')
 
-        self.controller = Controller()
-        self.controller.connect_button_panel(self.form.btn_panel)
-        self.form.keyPressEvent = self.controller.keyPressEvent
+        self.stm = QStateMachine()
 
-    def start(self):
+        self.controller = Controller(form=self.form, state_machine=self.stm)
+
         self.form.show()
 
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     main = Main()
-    main.start()
 
     sys.exit(app.exec_())

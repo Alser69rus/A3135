@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets
-from ui.manometer import Manometer
+from ui.manometer import Manometer,Manometer_10
 
 
 class Manometers(QtWidgets.QWidget):
@@ -8,7 +8,7 @@ class Manometers(QtWidgets.QWidget):
 
         self.hbox = QtWidgets.QHBoxLayout()
         self.p_pm = Manometer('P пм')
-        self.p_im = Manometer('Р им')
+        self.p_im = Manometer_10('Р им')
         self.p_tc1 = Manometer('Р тц1')
         self.p_tc2 = Manometer('Р тц2')
         self.p_upr = Manometer('Р упр рд/сд')

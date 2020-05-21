@@ -13,15 +13,18 @@ class Caption(QtWidgets.QLabel):
 
 
 class Value(QtWidgets.QLabel):
-    def __init__(self, value:float = 0, parent=None):
+    def __init__(self, value: float = 0, parent=None):
         super().__init__(parent=parent)
         self.setAlignment(QtCore.Qt.AlignCenter)
         self.setFont(QFont('Segoi UI', 14))
         self.format: str = '{:5.3f} МПа'
         self.setText(self.format.format(value))
 
+
 class Manometer(QtWidgets.QWidget):
-    def __init__(self, caption: str = 'Манометр', width=190, height=220, parent=None):
+    def __init__(self, caption: str = 'Манометр', parent=None):
+        width = 190
+        height = 220
         super().__init__(parent=parent)
         self.setMinimumSize(150, 150)
         self.setFixedSize(width, height)
@@ -54,6 +57,15 @@ class Manometer(QtWidgets.QWidget):
         angle = value * angle_range / value_range
         self.arrow.angle = self.scale.angle.min + angle
         self.update()
+
+
+class Manometer_10(Manometer):
+    def __init__(self, caption: str = 'Манометр 1.0', parent=None):
+        super().__init__(caption=caption, parent=parent)
+        self.scale.label.max = 1.0
+        self.scale.primary.count = 10
+        self.scale.secondary.count = 2
+        self.scale.tertiary.count = 2
 
 
 @dataclass
@@ -174,4 +186,3 @@ class Arrow:
     def draw_tail(painter: QPainter):
         rect = QRectF(-4, -4, 8, 8)
         painter.drawEllipse(rect)
-

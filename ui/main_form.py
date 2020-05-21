@@ -5,6 +5,7 @@ from ui.workspace import Workspace
 from ui.manometers_panel import Manometers
 
 
+
 class MainForm(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
