@@ -5,7 +5,8 @@ from PyQt5.QtGui import QKeyEvent
 from dataclasses import dataclass, field
 from ui.main_form import MainForm
 
-ANIMATE_CLICK_DELAY=50
+ANIMATE_CLICK_DELAY = 50
+
 
 @dataclass
 class Btn:
@@ -24,6 +25,7 @@ class Controller(QObject):
         self.stm = state_machine
         self.button_panel = self.form.btn_panel
         self.menu = self.form.workspace.menu
+        self.text = self.form.workspace.text.text
 
         self.connect_button_panel()
         self.connect_main_menu()
