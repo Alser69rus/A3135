@@ -2,9 +2,10 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QLabel, QVBoxLayout, QStackedL
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import Qt, QSize, pyqtSignal, pyqtSlot, QObject
 from enum import Enum, auto
-from typing import List, Optional
+from typing import List, Optional, Dict
 
-ANIMATE_CLICK_DELAY=50
+ANIMATE_CLICK_DELAY = 50
+
 
 class ButtonState(Enum):
     NORMAL = auto()
@@ -129,7 +130,8 @@ class Menu(QWidget):
         self.caption.setAlignment(Qt.AlignCenter)
         self.caption.setText(caption)
 
-        self.button: List[MenuButton] = []
+        self.button: Dict[str, MenuButton] = {}
+        self.button_list: List[MenuButton] = []
         self.buttons_widget = QWidget()
         self.btn_box = QVBoxLayout()
         self.buttons_widget.setLayout(self.btn_box)
@@ -147,12 +149,15 @@ class Menu(QWidget):
 
         self.active: bool = True
 
-    def add_button(self, text: str) -> MenuButton:
+    def add_button(self, name: str, text: str = '') -> MenuButton:
+        if not text:
+            text = name
         button = MenuButton(text)
         button.button_style = self.button_style
         button.mouse_entry.connect(self.on_button_entry)
         button.clicked.connect(self.button_clicked)
-        self.button.append(button)
+        self.button_list.append(button)
+        self.button[name] = button
         self.btn_box.addWidget(button)
         if self.current_button is None:
             self.current_button = button
@@ -164,12 +169,12 @@ class Menu(QWidget):
         self.select(self.sender())
 
     def reset(self):
-        for button in self.button:
+        for button in self.button_list:
             button.set_normal()
             button.selected = False
 
-        if self.button:
-            self.current_button = self.button[0]
+        if self.button_list:
+            self.current_button = self.button_list[0]
             self.current_button.selected = True
 
     def select(self, button: QObject):
@@ -180,21 +185,21 @@ class Menu(QWidget):
         self.current_button.selected = True
 
     def next_element(self, button: MenuButton):
-        if not self.button: return None
-        if button is None: return self.button[0]
-        i = self.button.index(button)
-        i = (i + 1) if i < len(self.button) - 1 else 0
-        btn: MenuButton = self.button[i]
+        if not self.button_list: return None
+        if button is None: return self.button_list[0]
+        i = self.button_list.index(button)
+        i = (i + 1) if i < len(self.button_list) - 1 else 0
+        btn: MenuButton = self.button_list[i]
         if btn.isVisible() and btn.isEnabled():
             return btn
         return self.next_element(btn)
 
     def previous_element(self, button: MenuButton):
-        if not self.button: return None
-        if button is None: return self.button[0]
-        i = self.button.index(button)
-        i = (i - 1) if i > 0 else len(self.button) - 1
-        btn = self.button[i]
+        if not self.button_list: return None
+        if button is None: return self.button_list[0]
+        i = self.button_list.index(button)
+        i = (i - 1) if i > 0 else len(self.button_list) - 1
+        btn = self.button_list[i]
         if btn.isVisible() and btn.isEnabled():
             return btn
         return self.previous_element(btn)
@@ -225,7 +230,7 @@ class MenuWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.menu: List[Menu] = []
+        self.menu: Dict[str, Menu] = {}
         self.current_menu: Optional[Menu] = None
         self.button_style: ButtonStyle = ButtonStyle()
 
@@ -234,11 +239,13 @@ class MenuWidget(QWidget):
 
         self.active: bool = True
 
-    def add_menu(self, caption: str) -> Menu:
+    def add_menu(self, name: str, caption: str = '') -> Menu:
+        if not caption:
+            caption = name
         menu = Menu(caption)
         menu.button_style = self.button_style
         menu.button_clicked.connect(self.button_clicked)
-        self.menu.append(menu)
+        self.menu[name] = menu
         self.layout.addWidget(menu)
         if self.current_menu is None:
             self.show_menu(menu)
