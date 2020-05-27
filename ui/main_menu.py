@@ -5,10 +5,13 @@ from ui.menu import MenuWidget
 class MainMenu(MenuWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.main = self.add_menu('Главное меню')
-        self.main.btn1 = self.main.add_button('Первая кнопка')
-        self.main.btn2 = self.main.add_button('Вторая кнопка')
-        self.main.btn3 = self.main.add_button('Третья кнопка')
-        self.main.btn4 = self.main.add_button('Четвертая кнопка')
+        menu = self.add_menu('main', 'Главное меню')
+        menu.add_button('btp 020', 'Испытание БТП 020')
+        menu.add_button('rd 042', 'Испытание РД 042')
+        menu.add_button('ku 215', 'Испытание КУ 215')
+        menu.add_button('keb 208', 'Испытание КЭБ 208')
+        menu.add_button('Выход')
 
-
+        menu = self.add_menu('btp 020', 'Программа испытания БТП 020')
+        menu.add_button('prepare','Подготовка к испытанию')
+        menu.add_button('torm_auto','Проверка ступенчатого торможения и отпуска при действии автоматического тормоза')

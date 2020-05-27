@@ -72,6 +72,7 @@ class MenuButton(QPushButton):
         self.setFlat(True)
         self.setFont(QFont('Segoi Ui', 16))
         self.setMouseTracking(True)
+        
         self.setText(text)
         self.setFocusPolicy(Qt.NoFocus)
         self.setIconSize(QSize(32, 32))
@@ -248,12 +249,12 @@ class MenuWidget(QWidget):
         self.menu[name] = menu
         self.layout.addWidget(menu)
         if self.current_menu is None:
-            self.show_menu(menu)
+            self.show_menu(name)
         return menu
 
-    def show_menu(self, menu: Menu):
-        self.current_menu = menu
-        self.layout.setCurrentWidget(menu)
+    def show_menu(self, name: str):
+        self.current_menu = self.menu[name]
+        self.layout.setCurrentWidget(self.current_menu)
 
     @pyqtSlot()
     def on_ok_click(self):

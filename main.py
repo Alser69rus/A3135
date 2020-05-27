@@ -18,7 +18,7 @@ class Main:
         print('(c) ПКБ ЦТ, 2020')
 
         self.form = MainForm()
-        self.form.show_panel('меню, манометры')
+        self.form.show_panel('меню')
 
         self.stm = QStateMachine()
         self.server = Server()
@@ -29,6 +29,7 @@ class Main:
 
         self.form.show()
         self.controller.text.setText('Hello')
+        self.controller.menu.show_menu('btp 020')
 
 
 if __name__ == '__main__':
