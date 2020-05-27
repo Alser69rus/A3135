@@ -32,7 +32,7 @@ class Controller(QObject):
         self.graph = self.form.workspace.graph
         self.server = server
         self.sensor = server.sensor
-        self.manometers=self.form.manometers
+        self.manometer=self.form.manometers.manometer
 
         self.connect_button_panel()
         self.connect_main_menu()
@@ -40,11 +40,11 @@ class Controller(QObject):
         self.connect_server()
 
     def connect_server(self):
-        self.sensor['ppm'].value_changed.connect(self.manometers.p_pm.set_value)
-        self.sensor['pim'].value_changed.connect(self.manometers.p_im.set_value)
-        self.sensor['ptc1'].value_changed.connect(self.manometers.p_tc1.set_value)
-        self.sensor['ptc2'].value_changed.connect(self.manometers.p_tc2.set_value)
-        self.sensor['pupr'].value_changed.connect(self.manometers.p_upr.set_value)
+        self.sensor['ppm'].value_changed.connect(self.manometer['ppm'].set_value)
+        self.sensor['pim'].value_changed.connect(self.manometer['pim'].set_value)
+        self.sensor['ptc1'].value_changed.connect(self.manometer['ptc1'].set_value)
+        self.sensor['ptc2'].value_changed.connect(self.manometer['ptc2'].set_value)
+        self.sensor['pupr'].value_changed.connect(self.manometer['pupr'].set_value)
 
 
     def connect_button_panel(self):
