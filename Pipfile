@@ -10,6 +10,7 @@ pyqt5 = "==5.14.2"
 pyqt5-sip = "*"
 pyqt5-stubs = "*"
 pyqtgraph = "*"
+pymodbus = "*"
 
 [requires]
 python_version = "3.8"

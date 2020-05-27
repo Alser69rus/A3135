@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3e283f30ebb8bd20f6ffc01937ffeb838a8616453c2f66064096d7967e0bcf9d"
+            "sha256": "dedc5474bc915d16b1124345aea14cb362857e68eb3bf27c8c0dd997729c5844"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -42,6 +42,14 @@
             ],
             "markers": "python_version >= '3.5'",
             "version": "==1.18.4"
+        },
+        "pymodbus": {
+            "hashes": [
+                "sha256:17acbd7b4e57357c71c25a37f03d07fe2fcd4dba19c95b4c0c2621b9f0a8f34f",
+                "sha256:8e59d49cdc3f9df8e90fa004baa4aae94814b9ecf1fc03620b1d67234896c444"
+            ],
+            "index": "pypi",
+            "version": "==2.3.0"
         },
         "pyqt5": {
             "hashes": [
@@ -90,6 +98,21 @@
             ],
             "index": "pypi",
             "version": "==0.10.0"
+        },
+        "pyserial": {
+            "hashes": [
+                "sha256:6e2d401fdee0eab996cf734e67773a0143b932772ca8b42451440cfed942c627",
+                "sha256:e0770fadba80c31013896c7e6ef703f72e7834965954a78e71a3049488d4d7d8"
+            ],
+            "version": "==3.4"
+        },
+        "six": {
+            "hashes": [
+                "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259",
+                "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"
+            ],
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
+            "version": "==1.15.0"
         }
     },
     "develop": {}
