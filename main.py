@@ -2,14 +2,14 @@ import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QStateMachine
 
+from ui.main_form import MainForm
+from controller.controller import Controller
+from opc.server import Server
+
 import logging
 
 # logging.basicConfig(level=logging.DEBUG,format='%(name)s %(asctime)s - %(levelname)s - %(message)s')
 logging.basicConfig(level=logging.INFO)
-
-from ui.main_form import MainForm
-from controller.controller import Controller
-from opc.server import Server
 
 
 class Main:

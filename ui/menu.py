@@ -129,7 +129,7 @@ class Menu(QWidget):
         self.caption.setAlignment(Qt.AlignCenter)
         self.caption.setText(caption)
 
-        self.buttons: List[MenuButton] = []
+        self.button: List[MenuButton] = []
         self.buttons_widget = QWidget()
         self.btn_box = QVBoxLayout()
         self.buttons_widget.setLayout(self.btn_box)
@@ -141,7 +141,7 @@ class Menu(QWidget):
         self.vbox.addWidget(self.buttons_widget)
         self.vbox.addStretch(1)
 
-        self.button: Optional[MenuButton] = None
+        self.current_button: Optional[MenuButton] = None
 
         self.button_style = ButtonStyle()
 
@@ -152,10 +152,10 @@ class Menu(QWidget):
         button.button_style = self.button_style
         button.mouse_entry.connect(self.on_button_entry)
         button.clicked.connect(self.button_clicked)
-        self.buttons.append(button)
+        self.button.append(button)
         self.btn_box.addWidget(button)
-        if self.button is None:
-            self.button = button
+        if self.current_button is None:
+            self.current_button = button
             button.selected = True
         return button
 
@@ -164,37 +164,37 @@ class Menu(QWidget):
         self.select(self.sender())
 
     def reset(self):
-        for button in self.buttons:
+        for button in self.button:
             button.set_normal()
             button.selected = False
 
-        if self.buttons:
-            self.button = self.buttons[0]
-            self.button.selected = True
+        if self.button:
+            self.current_button = self.button[0]
+            self.current_button.selected = True
 
     def select(self, button: QObject):
         if not button.isEnabled(): return
-        if not (self.button is None):
-            self.button.selected = False
-        self.button = button
-        self.button.selected = True
+        if not (self.current_button is None):
+            self.current_button.selected = False
+        self.current_button = button
+        self.current_button.selected = True
 
     def next_element(self, button: MenuButton):
-        if not self.buttons: return None
-        if button is None: return self.buttons[0]
-        i = self.buttons.index(button)
-        i = (i + 1) if i < len(self.buttons) - 1 else 0
-        btn: MenuButton = self.buttons[i]
+        if not self.button: return None
+        if button is None: return self.button[0]
+        i = self.button.index(button)
+        i = (i + 1) if i < len(self.button) - 1 else 0
+        btn: MenuButton = self.button[i]
         if btn.isVisible() and btn.isEnabled():
             return btn
         return self.next_element(btn)
 
     def previous_element(self, button: MenuButton):
-        if not self.buttons: return None
-        if button is None: return self.buttons[0]
-        i = self.buttons.index(button)
-        i = (i - 1) if i > 0 else len(self.buttons) - 1
-        btn = self.buttons[i]
+        if not self.button: return None
+        if button is None: return self.button[0]
+        i = self.button.index(button)
+        i = (i - 1) if i > 0 else len(self.button) - 1
+        btn = self.button[i]
         if btn.isVisible() and btn.isEnabled():
             return btn
         return self.previous_element(btn)
@@ -202,8 +202,8 @@ class Menu(QWidget):
     @pyqtSlot()
     def on_ok_click(self):
         if not self.active: return
-        if self.button is None: return
-        self.button.animateClick(ANIMATE_CLICK_DELAY)
+        if self.current_button is None: return
+        self.current_button.animateClick(ANIMATE_CLICK_DELAY)
 
     @pyqtSlot()
     def on_back_click(self):
@@ -212,12 +212,12 @@ class Menu(QWidget):
     @pyqtSlot()
     def on_up_click(self):
         if not self.active: return
-        self.select(self.previous_element(self.button))
+        self.select(self.previous_element(self.current_button))
 
     @pyqtSlot()
     def on_down_click(self):
         if not self.active: return
-        self.select(self.next_element(self.button))
+        self.select(self.next_element(self.current_button))
 
 
 class MenuWidget(QWidget):
@@ -225,8 +225,8 @@ class MenuWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.menus: List[Menu] = []
-        self.menu: Optional[Menu] = None
+        self.menu: List[Menu] = []
+        self.current_menu: Optional[Menu] = None
         self.button_style: ButtonStyle = ButtonStyle()
 
         self.layout = QStackedLayout()
@@ -238,36 +238,36 @@ class MenuWidget(QWidget):
         menu = Menu(caption)
         menu.button_style = self.button_style
         menu.button_clicked.connect(self.button_clicked)
-        self.menus.append(menu)
+        self.menu.append(menu)
         self.layout.addWidget(menu)
-        if self.menu is None:
+        if self.current_menu is None:
             self.show_menu(menu)
         return menu
 
     def show_menu(self, menu: Menu):
-        self.menu = menu
+        self.current_menu = menu
         self.layout.setCurrentWidget(menu)
 
     @pyqtSlot()
     def on_ok_click(self):
         if not self.active: return
-        if self.menu is None: return
-        self.menu.on_ok_click()
+        if self.current_menu is None: return
+        self.current_menu.on_ok_click()
 
     @pyqtSlot()
     def on_back_click(self):
         if not self.active: return
-        if self.menu is None: return
-        self.menu.on_back_click()
+        if self.current_menu is None: return
+        self.current_menu.on_back_click()
 
     @pyqtSlot()
     def on_up_click(self):
         if not self.active: return
-        if self.menu is None: return
-        self.menu.on_up_click()
+        if self.current_menu is None: return
+        self.current_menu.on_up_click()
 
     @pyqtSlot()
     def on_down_click(self):
         if not self.active: return
-        if self.menu is None: return
-        self.menu.on_down_click()
+        if self.current_menu is None: return
+        self.current_menu.on_down_click()
