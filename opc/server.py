@@ -16,7 +16,7 @@ class Worker(QObject):
         self.ai: OwenAI8AC = OwenAI8AC(unit=16)
         self.di: OwenDI16D = OwenDI16D(unit=2)
         self.running: bool = True
-        self.client = Client(method='rtu', port='COM9', timeout=0.05, baudrate=115200,retry_on_empty=True)
+        self.client = Client(method='rtu', port='COM9', timeout=0.05, baudrate=115200, retry_on_empty=True)
 
     @pyqtSlot()
     def do_work(self):
@@ -35,7 +35,7 @@ class Worker(QObject):
         self.running = False
 
 
-class Opc(QObject):
+class Server(QObject):
     stop_all = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -49,12 +49,13 @@ class Opc(QObject):
         self.worker.finished.connect(self.worker.deleteLater)
         self.th.finished.connect(self.th.deleteLater)
 
-        # self.worker.ai.pin[0].value_changed.connect(self.value_changed)
-        self.th.start()
+        self.sensor = {'ppm': self.worker.ai.pin[0],
+                       'pim': self.worker.ai.pin[1],
+                       'ptc1': self.worker.ai.pin[2],
+                       'ptc2': self.worker.ai.pin[3],
+                       'pupr': self.worker.ai.pin[4], }
 
-    @pyqtSlot(float)
-    def value_changed(self, value: float):
-        print(f'{value:5.3f}',self.sender())
+        self.th.start()
 
 
 @dataclass()
