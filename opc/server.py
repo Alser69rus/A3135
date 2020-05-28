@@ -22,7 +22,7 @@ class Worker(QObject):
     def do_work(self):
         while self.running:
             t = datetime.now()
-            self.ai.update(self.client)
+            # self.ai.update(self.client)
             # self.di.update(self.client)
             t = (datetime.now() - t).total_seconds()
             t = round(UPDATE_DELAY - t * 1000)

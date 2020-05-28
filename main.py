@@ -9,7 +9,7 @@ from opc.server import Server
 import logging
 
 # logging.basicConfig(level=logging.DEBUG,format='%(name)s %(asctime)s - %(levelname)s - %(message)s')
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class Main:
@@ -29,11 +29,12 @@ class Main:
 
         self.form.show()
         self.controller.text.setText('Hello')
-        self.controller.menu.show_menu('btp 020')
+        self.controller.menu.show_menu('БТП 020')
 
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     main = Main()
+    logging.debug(f'window size: {main.form.width()}x{main.form.height()}')
 
     sys.exit(app.exec_())

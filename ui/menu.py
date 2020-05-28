@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QWidget, QPushButton, QLabel, QVBoxLayout, QStackedLayout
-from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtGui import QFont, QIcon, QFontMetrics
 from PyQt5.QtCore import Qt, QSize, pyqtSignal, pyqtSlot, QObject
 from enum import Enum, auto
 from typing import List, Optional, Dict
+import logging
 
 ANIMATE_CLICK_DELAY = 50
 
@@ -38,13 +39,10 @@ class ButtonStyle:
             ButtonState.FAIL: QIcon('img\\fail.png'),
         }
 
-        self.state: ButtonState = ButtonState.NORMAL
-        self.selected: bool = False
-
-    def current(self) -> (str, QIcon):
-        background_color: str = self.color[self.state]
-        border: str = self.border[ButtonBorder.SELECTED] if self.selected else self.border[ButtonBorder.NORMAL]
-        icon = self.icon[self.state]
+    def current(self, state: ButtonState, selected: bool) -> (str, QIcon):
+        background_color: str = self.color[state]
+        border: str = self.border[ButtonBorder.SELECTED] if selected else self.border[ButtonBorder.NORMAL]
+        icon = self.icon[state]
 
         style: str = f'QPushButton' \
                      f'{{' \
@@ -52,7 +50,7 @@ class ButtonStyle:
                      f'border-radius:8px;' \
                      f'border-color:black;' \
                      f'text-align:left;' \
-                     f'padding: 8px;' \
+                     f'padding: 4px;' \
                      f'background-color:{background_color};' \
                      f'border-style:{border}' \
                      f'}}' \
@@ -70,9 +68,9 @@ class MenuButton(QPushButton):
     def __init__(self, text: str, parent=None):
         super().__init__(parent=parent)
         self.setFlat(True)
-        self.setFont(QFont('Segoi Ui', 16))
+        self.setFont(QFont('Segoi Ui', 12))
         self.setMouseTracking(True)
-        
+
         self.setText(text)
         self.setFocusPolicy(Qt.NoFocus)
         self.setIconSize(QSize(32, 32))
@@ -113,7 +111,7 @@ class MenuButton(QPushButton):
         self.state = ButtonState.FAIL
 
     def set_style(self):
-        style, icon = self.button_style.current()
+        style, icon = self.button_style.current(self._state, self._selected)
         self.setStyleSheet(style)
         self.setIcon(icon)
 
@@ -127,7 +125,7 @@ class Menu(QWidget):
     def __init__(self, caption: str, parent=None):
         super().__init__(parent=parent)
         self.caption = QLabel()
-        self.caption.setFont(QFont('Segoi Ui', 32))
+        self.caption.setFont(QFont('Segoi Ui', 20))
         self.caption.setAlignment(Qt.AlignCenter)
         self.caption.setText(caption)
 
@@ -140,7 +138,7 @@ class Menu(QWidget):
         self.vbox = QVBoxLayout()
         self.setLayout(self.vbox)
         self.vbox.addWidget(self.caption)
-        self.vbox.addSpacing(20)
+        self.vbox.addSpacing(10)
         self.vbox.addWidget(self.buttons_widget)
         self.vbox.addStretch(1)
 
