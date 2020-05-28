@@ -29,7 +29,7 @@ class Main:
 
         self.form.show()
         self.controller.text.setText('Hello')
-        self.controller.menu.show_menu('БТП 020')
+        self.controller.menu.show_menu('Главное')
 
 
 if __name__ == '__main__':
