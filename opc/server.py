@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, QThread
+from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, QThread, Qt
 import logging
 from dataclasses import dataclass, field
 from typing import List, Dict
@@ -30,6 +30,7 @@ class Worker(QObject):
                 self.thread().msleep(t)
         self.finished.emit()
 
+
     @pyqtSlot()
     def stop(self):
         self.running = False
@@ -45,9 +46,9 @@ class Server(QObject):
         self.worker.moveToThread(self.th)
         self.th.started.connect(self.worker.do_work)
         self.worker.finished.connect(self.th.quit)
-        self.stop_all.connect(self.worker.stop)
-        self.worker.finished.connect(self.worker.deleteLater)
-        self.th.finished.connect(self.th.deleteLater)
+        self.stop_all.connect(self.worker.stop, Qt.DirectConnection)
+        # self.worker.finished.connect(self.worker.deleteLater)
+        # self.th.finished.connect(self.th.deleteLater)
 
         self.sensor = {'ppm': self.worker.ai.pin[0],
                        'pim': self.worker.ai.pin[1],

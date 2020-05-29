@@ -21,6 +21,7 @@ class Main:
         self.form.show_panel('меню')
 
         self.stm = QStateMachine()
+
         self.server = Server()
 
         self.controller = Controller(form=self.form,

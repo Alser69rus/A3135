@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QObject, QStateMachine, pyqtSlot, pyqtSignal
+from PyQt5.QtCore import QObject, QStateMachine, pyqtSlot, pyqtSignal, QTimer
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtGui import QKeyEvent
@@ -37,6 +37,7 @@ class Controller(QObject):
         self.connect_button_panel()
         self.connect_main_menu()
         self.form.keyPressEvent = self.keyPressEvent
+        self.form.closeEvent = self.closeEvent
         self.connect_server()
 
     def connect_server(self):
@@ -59,6 +60,7 @@ class Controller(QObject):
         self.btn.up.clicked.connect(self.menu.on_up_click)
         self.btn.down.clicked.connect(self.menu.on_down_click)
         ""
+
     def keyPressEvent(self, event):
         if type(event) == QKeyEvent:
             if event.key() == Qt.Key_Escape:
@@ -76,3 +78,13 @@ class Controller(QObject):
 
     def on_menu_button_clicked(self):
         print(self.menu.prepare_menu.get_data_fields())
+
+    def closeEvent(self, QCloseEvent):
+        runing_states = [self.server.th.isRunning(), self.stm.isRunning()]
+        self.server.stop_all.emit()
+        self.stm.stop()
+        if any(runing_states):
+            QTimer.singleShot(500, self.form.close)
+            QCloseEvent.ignore()
+        else:
+            QCloseEvent.accept()

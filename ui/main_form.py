@@ -23,11 +23,9 @@ class MainForm(QtWidgets.QWidget):
         self.vbox.addWidget(self.workspace)
         self.vbox.addWidget(self.btn_panel)
 
-        # todo 2 Создать меню
-        # todo 2.4 напполнить меню для проекта и расположить его на форме
+
         # todo 2.5 сделать навигацию по меню
 
-        # todo 7 Создать виджет заполнения формы испытания
         # todo 8Создать виджет отчета
 
     @pyqtSlot(str)
