@@ -32,7 +32,7 @@ class Controller(QObject):
         self.graph = self.form.workspace.graph
         self.server = server
         self.sensor = server.sensor
-        self.manometer=self.form.manometers.manometer
+        self.manometer = self.form.manometers.manometer
 
         self.connect_button_panel()
         self.connect_main_menu()
@@ -46,7 +46,6 @@ class Controller(QObject):
         self.sensor['ptc2'].value_changed.connect(self.manometer['ptc2'].set_value)
         self.sensor['pupr'].value_changed.connect(self.manometer['pupr'].set_value)
 
-
     def connect_button_panel(self):
         self.btn.back = self.button_panel.back
         self.btn.up = self.button_panel.up
@@ -59,8 +58,7 @@ class Controller(QObject):
         self.btn.yes.clicked.connect(self.menu.on_ok_click)
         self.btn.up.clicked.connect(self.menu.on_up_click)
         self.btn.down.clicked.connect(self.menu.on_down_click)
-        self.menu.button_clicked.connect(self.on_menu_button_clicked)
-
+        ""
     def keyPressEvent(self, event):
         if type(event) == QKeyEvent:
             if event.key() == Qt.Key_Escape:
@@ -71,8 +69,10 @@ class Controller(QObject):
                 self.btn.down.animateClick(ANIMATE_CLICK_DELAY)
             elif event.key() == Qt.Key_Return:
                 self.btn.yes.animateClick(ANIMATE_CLICK_DELAY)
+            elif event.key() == Qt.Key_Enter:
+                self.btn.yes.animateClick(ANIMATE_CLICK_DELAY)
             elif event.key() == Qt.Key_Space:
                 self.btn.no.animateClick(ANIMATE_CLICK_DELAY)
 
     def on_menu_button_clicked(self):
-        print(self.sender().sender().sender())
+        print(self.menu.prepare_menu.get_data_fields())

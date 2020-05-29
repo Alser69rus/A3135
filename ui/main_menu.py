@@ -1,5 +1,6 @@
 from PyQt5.QtCore import pyqtSlot
 from ui.menu import MenuWidget
+from ui.prepare_menu import PrepareMenu
 
 
 class MainMenu(MenuWidget):
@@ -50,9 +51,11 @@ class MainMenu(MenuWidget):
         menu.add_button('Герметичность клапана', 'Проверка плотности атмосферного клапана')
         menu.add_button('Завершение', 'Завершение испытаний')
 
-        menu=self.add_menu('КЭБ 208','Программа испытания КЭБ 208')
+        menu = self.add_menu('КЭБ 208', 'Программа испытания КЭБ 208')
         menu.add_button('Подготовка к испытанию')
         menu.add_button('Время торможения', 'Проверка времени наполнения ТЦ (торможение)')
         menu.add_button('Герметичность соединений', 'Проверка плотности мест соединений')
         menu.add_button('Время отпуска', 'Проверка времени снижения давления в ТЦ (отпуск)')
         menu.add_button('Завершение', 'Завершение испытаний')
+
+        self.prepare_menu = PrepareMenu(self)
