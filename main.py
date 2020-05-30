@@ -1,10 +1,12 @@
 import sys
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import QStateMachine
+from PyQt5.QtCore import QStateMachine, QTimer
 
 from ui.main_form import MainForm
 from controller.controller import Controller
 from opc.server import Server
+
+from modules.menu import MenuState
 
 import logging
 
@@ -18,16 +20,18 @@ class Main:
         print('(c) ПКБ ЦТ, 2020')
 
         self.form = MainForm()
-        self.form.show_panel('меню')
-
         self.stm = QStateMachine()
-
         self.server = Server()
+        self.controller = Controller()
 
-        self.controller = Controller(form=self.form,
-                                     state_machine=self.stm,
-                                     server=self.server)
+        self.controller.connect_form(self.form)
+        self.controller.connect_server(self.server)
+        self.controller.connect_state_machine(self.stm)
 
+        self.controller.connect_manometers()
+        self.controller.connect_di_buttons()
+
+        self.form.show_panel('меню')
         self.form.show()
         self.controller.text.setText('Hello')
         self.controller.menu.show_menu('Подготовка к испытанию')
