@@ -6,7 +6,7 @@ from ui.main_form import MainForm
 from controller.controller import Controller
 from opc.server import Server
 
-from modules.menu import MenuState
+from modules.menu_state import MenuState
 
 import logging
 
@@ -31,10 +31,10 @@ class Main:
         self.controller.connect_manometers()
         self.controller.connect_di_buttons()
 
-        self.form.show_panel('меню')
+        self.controller.show_panel('меню')
         self.form.show()
         self.controller.text.setText('Hello')
-        self.controller.menu.show_menu('Подготовка к испытанию')
+        self.controller.show_menu('Главное')
 
 
 if __name__ == '__main__':

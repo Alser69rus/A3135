@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QStateMachine, QState, QEvent
 
+
 class MenuState(QState):
     def __init__(self, con):
         global ctrl

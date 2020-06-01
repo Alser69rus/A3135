@@ -52,6 +52,8 @@ class Controller(QObject):
         self.connect_menu(self.menu)
         self.connect_key_press_event(self.form)
         self.form.closeEvent = self.closeEvent
+        self.show_panel = self.form.show_panel
+        self.show_menu = self.menu.show_menu
 
     def connect_button_panel(self, panel):
         self.btn.back = panel.back
@@ -116,3 +118,9 @@ class Controller(QObject):
         self.di['down'].clicked.connect(partial(self.btn.down.animateClick, ANIMATE_CLICK_DELAY))
         self.di['yes'].clicked.connect(partial(self.btn.yes.animateClick, ANIMATE_CLICK_DELAY))
         self.di['no'].clicked.connect(partial(self.btn.no.animateClick, ANIMATE_CLICK_DELAY))
+
+    def show_panel(self, panel: str):
+        pass
+
+    def show_menu(self, menu: str):
+        pass
