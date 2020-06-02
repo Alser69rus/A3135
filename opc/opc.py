@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 import logging
 from datetime import datetime
 from dataclasses import dataclass
@@ -23,12 +23,11 @@ class AnalogItemType(QObject):
         self.definition: str = name
         self.value_precision: int = 3
 
-    @property
-    def value(self):
+    def get_value(self):
         return self._value
 
-    @value.setter
-    def value(self, value):
+    @pyqtSlot(float)
+    def set_value(self, value: float):
         eu_r = self.eu_range.high - self.eu_range.low
         i_r = self.instrument_range.high - self.instrument_range.low
         if i_r == 0:
@@ -63,3 +62,7 @@ class TwoStateDiscreteType(QObject):
         self._value = value
         if value: self.clicked.emit()
         self.value_changed.emit(value)
+
+    @pyqtSlot(bool)
+    def setValue(self, value: bool):
+        self.value = value

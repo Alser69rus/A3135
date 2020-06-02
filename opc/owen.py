@@ -24,7 +24,7 @@ class AI8AC(QObject):
             logging.warning(f"не удалось прочитать {self.description} с ошибкой {rr}")
             return
         for i in range(8):
-            self.pin[i].value = rr.registers[i]
+            self.pin[i].set_value(rr.registers[i])
         self.timestamp = datetime.now()
         self.updated.emit()
 

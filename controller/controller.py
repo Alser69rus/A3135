@@ -11,6 +11,7 @@ from opc.server import Server
 from ui.menu import MenuWidget
 from pyqtgraph import PlotWidget
 from opc.opc import AnalogItemType, TwoStateDiscreteType
+from ui.control_window import ControlWindow
 
 ANIMATE_CLICK_DELAY = 50
 
@@ -25,6 +26,8 @@ class Btn:
 
 
 class Controller(QObject):
+    close_all = pyqtSignal()
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.btn: Btn = Btn()
@@ -39,6 +42,9 @@ class Controller(QObject):
         self.images: Dict[str, QPixmap] = {}
         self.ai: Dict[str, AnalogItemType] = {}
         self.di: Dict[str, TwoStateDiscreteType] = {}
+
+        self.show_panel = None
+        self.show_menu = None
 
     def connect_form(self, form: MainForm):
         self.form = form
@@ -98,6 +104,7 @@ class Controller(QObject):
         running_states = [self.server.th.isRunning(), self.stm.isRunning()]
         self.server.stop_all.emit()
         self.stm.stop()
+        self.close_all.emit()
         if any(running_states):
             QTimer.singleShot(500, self.form.close)
             QCloseEvent.ignore()
@@ -119,8 +126,14 @@ class Controller(QObject):
         self.di['yes'].clicked.connect(partial(self.btn.yes.animateClick, ANIMATE_CLICK_DELAY))
         self.di['no'].clicked.connect(partial(self.btn.no.animateClick, ANIMATE_CLICK_DELAY))
 
-    def show_panel(self, panel: str):
-        pass
+    def connect_control_window(self, win: ControlWindow):
+        self.close_all.connect(win.close)
+        keys = ['ppm', 'pim', 'ptc1', 'ptc2', 'pupr']
+        for i in range(5):
+            key = keys[i]
+            win.manometer[i].valueChanged.connect(self.ai[key].set_value)
 
-    def show_menu(self, menu: str):
-        pass
+        for it in win.button.items():
+            button: QPushButton = it[1]
+            key = it[0]
+            button.clicked.connect(self.di[key].clicked)

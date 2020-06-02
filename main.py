@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import QStateMachine, QTimer
 
 from ui.main_form import MainForm
+from ui.control_window import ControlWindow
 from controller.controller import Controller
 from opc.server import Server
 
@@ -31,10 +32,14 @@ class Main:
         self.controller.connect_manometers()
         self.controller.connect_di_buttons()
 
-        self.controller.show_panel('меню')
+        self.controller.show_panel('меню манометры')
         self.form.show()
         self.controller.text.setText('Hello')
         self.controller.show_menu('Главное')
+
+        self.ctrl_win = ControlWindow()
+        self.controller.connect_control_window(self.ctrl_win)
+        self.ctrl_win.show()
 
 
 if __name__ == '__main__':

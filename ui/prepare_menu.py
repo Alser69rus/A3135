@@ -49,7 +49,7 @@ class PrepareMenu(QObject):
     def on_button_click(self):
         button = self.sender()
 
-        employees = QSettings('Сотрудники.ini', QSettings.IniFormat)
+        employees = QSettings('Настройки.ini', QSettings.IniFormat)
         employees.setIniCodec('UTF-8')
         employees = employees.value('employees')
 

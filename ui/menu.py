@@ -257,23 +257,27 @@ class MenuWidget(QWidget):
     @pyqtSlot()
     def on_ok_click(self):
         if not self.active: return
+        if not self.isVisible(): return
         if self.current_menu is None: return
         self.current_menu.on_ok_click()
 
     @pyqtSlot()
     def on_back_click(self):
         if not self.active: return
+        if not self.isVisible(): return
         if self.current_menu is None: return
         self.current_menu.on_back_click()
 
     @pyqtSlot()
     def on_up_click(self):
         if not self.active: return
+        if not self.isVisible(): return
         if self.current_menu is None: return
         self.current_menu.on_up_click()
 
     @pyqtSlot()
     def on_down_click(self):
         if not self.active: return
+        if not self.isVisible():return
         if self.current_menu is None: return
         self.current_menu.on_down_click()

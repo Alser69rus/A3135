@@ -21,7 +21,7 @@ class Value(QtWidgets.QLabel):
         self.setText(self.format.format(value))
 
 
-class Manometer(QtWidgets.QWidget):
+class Manometer16(QtWidgets.QWidget):
     def __init__(self, caption: str = 'Манометр', parent=None):
         width = 190
         height = 220
@@ -59,7 +59,7 @@ class Manometer(QtWidgets.QWidget):
         self.update()
 
 
-class Manometer_10(Manometer):
+class Manometer10(Manometer16):
     def __init__(self, caption: str = 'Манометр 1.0', parent=None):
         super().__init__(caption=caption, parent=parent)
         self.scale.label.max = 1.0
