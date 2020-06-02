@@ -52,17 +52,11 @@ class TwoStateDiscreteType(QObject):
         self.false_state: str = 'Откл.'
         self.true_state: str = 'Вкл.'
 
-    @property
-    def value(self):
+    def get_value(self):
         return self._value
 
-    @value.setter
-    def value(self, value):
+    def set_value(self, value):
         if self._value == value: return
         self._value = value
         if value: self.clicked.emit()
         self.value_changed.emit(value)
-
-    @pyqtSlot(bool)
-    def setValue(self, value: bool):
-        self.value = value
