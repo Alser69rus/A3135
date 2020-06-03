@@ -29,6 +29,41 @@ class ControlWindow(QWidget):
                 self.manometer.append(DialWidget10(name))
             self.manometr_layout.addWidget(self.manometer[i], 0, i)
 
+
+
+        self.switches_widget = QWidget()
+        self.vbox.addWidget(self.switches_widget)
+        self.switches_layout = QGridLayout()
+        self.switches_widget.setLayout(self.switches_layout)
+        self.switch: Dict[str, QPushButton] = {}
+        switches = [
+            ('rd 042', 'РД 042'),
+            ('upr rd 042', 'УПР. РД 042'),
+            ('tc2 8-20', 'ТЦ2 8 л - 20 л'),
+            ('leak 1', 'УТЕЧКА d 1'),
+            ('leak 0,5', 'УТЕЧКА d 0.5'),
+            ('accumulator tank', 'НАКОП. РЕЗ.'),
+            ('enter', 'ВХОД'),
+            ('ku 215', 'КУ 215'),
+            ('sub. el. braking', 'ЗАМ. ЭЛ. ТОРМ.'),
+            ('>60 km/h', '> 60 км/ч'),
+            ('ok', 'ОК'),
+        ]
+
+
+        for key, name in switches:
+            switch = QPushButton(name)
+            self.switch[key] = switch
+            switch.setFlat(True)
+            switch.setCheckable(True)
+            self.switches_layout.addWidget(switch)
+
+        radio_switches = [
+            '0 - rd 042',
+            '0 - keb 208',
+            '0- enter vr',
+            '0- ku',
+        ]
         self.buttons_widget = QWidget()
         self.button_layout = QHBoxLayout()
         self.vbox.addWidget(self.buttons_widget)
@@ -45,7 +80,6 @@ class ControlWindow(QWidget):
             button = QPushButton(name)
             self.button[key] = button
             self.button_layout.addWidget(button)
-
 
 class DialWidget16(QWidget):
     valueChanged = pyqtSignal(float)
