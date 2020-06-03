@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, QThread, Qt, QSettings
 from datetime import datetime
 from pymodbus.client.sync import ModbusSerialClient as Client
-from opc.owen import MV110_16D, MV110_8AC, MV110_32DN,MV_DI
+from opc.owen import MV110_16D, MV110_8AC, MV110_32DN, MV_DI
 from typing import Dict
 from opc.opc import AnalogItemType, TwoStateDiscreteType, Range
 
@@ -75,16 +75,16 @@ class Server(QObject):
                                                     'leak 1': self.worker.di.pin[10],
                                                     'leak 0,5': self.worker.di.pin[11],
                                                     'accumulator tank': self.worker.di.pin[12],
-                                                    # 'enter': self.worker.di.pin[13]
+                                                    'enter': self.worker.di.pin[13],
                                                     'ku 215': self.worker.di.pin[14],
                                                     'sub. el. braking': self.worker.di.pin[15],
-                                                    '>60 km/h': self.worker.di.pin[5],
-                                                    'ok': self.worker.di.pin[5],
-                                                    '0- vr': self.worker.di.pin[5],
-                                                    '0- ku': self.worker.di.pin[5],
-                                                    'keb 208': self.worker.di.pin[5],
-                                                    'red 211': self.worker.di.pin[5],
-                                                    'examination': self.worker.di.pin[5],
+                                                    '>60 km/h': self.worker.di.pin[16],
+                                                    'ok': self.worker.di.pin[17],
+                                                    '0- vr': self.worker.di.pin[18],
+                                                    '0- ku': self.worker.di.pin[19],
+                                                    'keb 208': self.worker.di.pin[20],
+                                                    'red 211': self.worker.di.pin[21],
+                                                    'examination': self.worker.di.pin[22],
                                                     }
 
         '''
