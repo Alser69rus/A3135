@@ -67,36 +67,21 @@ class Server(QObject):
                                                     'down': self.worker.di.pin[2],
                                                     'yes': self.worker.di.pin[3],
                                                     'no': self.worker.di.pin[4],
-                                                    'rd 042': self.worker.di.pin[5],
-                                                    'upr rd 042': self.worker.di.pin[6],
-                                                    '0 - rd 042': self.worker.di.pin[7],
-                                                    '0 - keb 208': self.worker.di.pin[8],
-                                                    'tc2 8-20': self.worker.di.pin[9],
-                                                    'leak 1': self.worker.di.pin[10],
-                                                    'leak 0,5': self.worker.di.pin[11],
-                                                    'accumulator tank': self.worker.di.pin[12],
-                                                    'enter': self.worker.di.pin[13],
-                                                    'ku 215': self.worker.di.pin[14],
-                                                    'sub. el. braking': self.worker.di.pin[15],
-                                                    '>60 km/h': self.worker.di.pin[16],
-                                                    'ok': self.worker.di.pin[17],
-                                                    '0- vr': self.worker.di.pin[18],
-                                                    '0- ku': self.worker.di.pin[19],
-                                                    'keb 208': self.worker.di.pin[20],
-                                                    'red 211': self.worker.di.pin[21],
-                                                    'examination': self.worker.di.pin[22],
+                                                    'examination': self.worker.di.pin[5],
+                                                    'ok': self.worker.di.pin[6],
+                                                    'auto release': self.worker.di.pin[7],
+                                                    'ku 215': self.worker.di.pin[8],
+                                                    'el. braking': self.worker.di.pin[9],
+                                                    '>60 km/h': self.worker.di.pin[10],
+                                                    'rd 042': self.worker.di.pin[11],
+                                                    'upr rd 042': self.worker.di.pin[12],
+                                                    'keb 208': self.worker.di.pin[13],
+                                                    'red 211': self.worker.di.pin[14],
+                                                    'leak 0,5': self.worker.di.pin[15],
+                                                    'leak 1': self.worker.di.pin[6],
+                                                    '0 - rd 042': self.worker.di.pin[17],
+                                                    '0 - keb 208': self.worker.di.pin[18],
+                                                    '0- vr': self.worker.di.pin[19],
+                                                    '0- ku': self.worker.di.pin[20],
                                                     }
-
-        '''
-
-13.	Тумблер «КЭБ 208 - ВЫКЛ» (1 сигнал «есть или нет»).
-14.	Тумблер «РЕД 211 - ВЫКЛ» (1 сигнал «есть или нет»).
-15.	Кнопка «ВОЗВРАТ» (1 сигнал «есть или нет»).
-16.	Кнопка «ВВЕРХ - ВНИЗ» (2 сигнала).
-17.	Кнопка «ДА» (1 сигнал «есть или нет»).
-18.	Кнопка «НЕТ» (1 сигнал «есть или нет»).
-19.	Кнопка «ИСПЫТАНИЕ» (1 сигнал «есть или нет») под вопросом, но лучше заведи сигнал может пригодится.
-
-        '''
-
         self.th.start()

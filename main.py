@@ -32,7 +32,7 @@ class Main:
         self.controller.connect_manometers()
         self.controller.connect_di_buttons()
 
-        self.controller.show_panel('текск манометры')
+        self.controller.show_panel('текст манометры')
         self.form.show()
         self.controller.text.setText('Hello')
         self.controller.show_menu('Главное')

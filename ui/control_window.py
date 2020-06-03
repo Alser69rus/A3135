@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QDial, QVBoxLayout, QHBoxLayout, QGridLayout, QDoubleSpinBox
-from PyQt5.QtWidgets import QLabel, QPushButton
+from PyQt5.QtWidgets import QLabel, QPushButton, QGroupBox, QRadioButton
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QSettings
 from typing import Union, List, Dict
@@ -10,6 +10,7 @@ class ControlWindow(QWidget):
         super().__init__(parent=parent)
         self.setWindowTitle('Окно эмуляции стенда')
         self.vbox = QVBoxLayout()
+        self.setFont(QFont('Segoi UI', 14))
         self.setLayout(self.vbox)
         self.manometers = QWidget()
         self.vbox.addWidget(self.manometers)
@@ -29,57 +30,90 @@ class ControlWindow(QWidget):
                 self.manometer.append(DialWidget10(name))
             self.manometr_layout.addWidget(self.manometer[i], 0, i)
 
-
-
         self.switches_widget = QWidget()
         self.vbox.addWidget(self.switches_widget)
         self.switches_layout = QGridLayout()
         self.switches_widget.setLayout(self.switches_layout)
         self.switch: Dict[str, QPushButton] = {}
         switches = [
+            ('ku 215', 'КУ 215'),
+            ('el. braking', 'ЗАМ. ЭЛ. ТОРМ.'),
+            ('>60 km/h', '> 60 км/ч'),
             ('rd 042', 'РД 042'),
             ('upr rd 042', 'УПР. РД 042'),
-            ('tc2 8-20', 'ТЦ2 8 л - 20 л'),
+            ('keb 208', 'КЭБ 208'),
+            ('red 211', 'РЕД 211.020'),
             ('leak 1', 'УТЕЧКА d 1'),
             ('leak 0,5', 'УТЕЧКА d 0.5'),
-            ('accumulator tank', 'НАКОП. РЕЗ.'),
-            ('enter', 'ВХОД'),
-            ('ku 215', 'КУ 215'),
-            ('sub. el. braking', 'ЗАМ. ЭЛ. ТОРМ.'),
-            ('>60 km/h', '> 60 км/ч'),
-            ('ok', 'ОК'),
         ]
 
-
-        for key, name in switches:
+        for i, (key, name) in enumerate(switches):
             switch = QPushButton(name)
+            switch.setFont(self.font())
+            switch.setStyleSheet(f'QPushButton {{border:2px;'
+                                 f'border-radius:8px;'
+                                 f'border-color:black;'
+                                 f'text-align:center;'
+                                 f'padding: 4px;'
+                                 f'border-style: solid;'
+                                 f'background-color: rgba(50,0,0,10%);}}'
+                                 f'QPushButton:checked {{'
+                                 f'background-color: rgba(0,200,0,50%);}}'
+                                 )
             self.switch[key] = switch
             switch.setFlat(True)
             switch.setCheckable(True)
-            self.switches_layout.addWidget(switch)
+            self.switches_layout.addWidget(switch, i // 3, i % 3)
 
-        radio_switches = [
-            '0 - rd 042',
-            '0 - keb 208',
-            '0- enter vr',
-            '0- ku',
+        self.radio_widget = QWidget()
+        self.vbox.addWidget(self.radio_widget)
+        self.radio_layout = QHBoxLayout()
+        self.radio_widget.setLayout(self.radio_layout)
+
+        radio = [
+            ('РД 042', ' - 0 - ', 'КЭБ 208',),
+            ('ВР', ' - 0 - ', 'КУ',),
         ]
+
+        self.group_box: Dict[str, QGroupBox] = {}
+        self.group_box_layout: List[QVBoxLayout] = []
+
+        for buttons in radio:
+            name = ''.join(buttons)
+            group_box = QGroupBox(name)
+            self.group_box[name] = group_box
+            self.radio_layout.addWidget(group_box)
+            layout = QVBoxLayout()
+            self.group_box_layout.append(layout)
+            group_box.setLayout(layout)
+            group_box.button = {}
+            for name in buttons:
+                button = QRadioButton(name)
+                layout.addWidget(button)
+                group_box.button[name] = button
+                if name == ' - 0 - ':
+                    button.setChecked(True)
+
         self.buttons_widget = QWidget()
-        self.button_layout = QHBoxLayout()
+        self.button_layout = QGridLayout()
         self.vbox.addWidget(self.buttons_widget)
         self.buttons_widget.setLayout(self.button_layout)
-        buttons = [('back', 'Назад'),
+        buttons = [('back', 'Возврат'),
                    ('up', 'Вверх'),
                    ('down', 'Вниз'),
                    ('yes', 'Да'),
                    ('no', 'Нет'),
+                   ('examination', 'Испытание'),
+                   ('ok', 'ОК'),
+                   ('auto release', 'АВТ ОТПУСК'),
                    ]
         self.button: Dict[QPushButton] = {}
 
-        for key, name in buttons:
+        for i,(key, name) in enumerate(buttons):
             button = QPushButton(name)
             self.button[key] = button
-            self.button_layout.addWidget(button)
+            self.button_layout.addWidget(button,i//5,i%5)
+
 
 class DialWidget16(QWidget):
     valueChanged = pyqtSignal(float)
