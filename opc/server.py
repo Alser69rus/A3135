@@ -18,13 +18,21 @@ class Worker(QObject):
         self.ai: MV110_8AC = MV110_8AC(client=self.client, unit=16)
         self.load_ai_settings()
         self.di: MV_DI = MV110_32DN(client=self.client, unit=2)
-        self.ai.pin[1].eu_range = Range(0, 1)
 
     def load_ai_settings(self):
         settings = QSettings('Настройки.ini', QSettings.IniFormat)
         settings.setIniCodec('UTF-8')
-        for i in range(5):
-            self.ai.pin[i].eu_range = Range(0, float(settings.value(f'Manometers/m{i}')))
+        manometers = [
+            ('ppm', 'Р пм'),
+            ('pim', 'Р им',),
+            ('ptc1', 'Р тц1',),
+            ('ptc2', 'Р тц2',),
+            ('pupr', 'Р упр рд/сд',),
+        ]
+        for i, (key, name) in enumerate(manometers):
+            manometer = self.ai.pin[i]
+            manometer.eu_range = Range(0, float(settings.value(f'Manometers/{key}')))
+            manometer.definition = name
 
     @pyqtSlot()
     def do_work(self):

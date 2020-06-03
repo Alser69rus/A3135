@@ -18,17 +18,19 @@ class Manometers(QtWidgets.QWidget):
         settings = QSettings('Настройки.ini', QSettings.IniFormat)
         settings.setIniCodec('UTF-8')
 
-        keys = ['ppm', 'pim', 'ptc1', 'ptc2', 'pupr']
-        names = ['P пм', 'Р им', 'Р тц1', 'Р тц2', 'Р упр рд/сд']
+        manometers = [
+            ('ppm', 'Р пм'),
+            ('pim', 'Р им',),
+            ('ptc1', 'Р тц1',),
+            ('ptc2', 'Р тц2',),
+            ('pupr', 'Р упр рд/сд',),
+        ]
 
-        for i in range(5):
-            max_value = float(settings.value(f'Manometers/m{i}', 1.6))
-            name = names[i]
-            key = keys[i]
+        for key, name in manometers:
+            max_value = float(settings.value(f'Manometers/m{key}', 1.6))
             if max_value == 1.6:
-                self.manometer[key] = Manometer16(name)
+                manometer = Manometer16(name)
             else:
-                self.manometer[key] = Manometer10(name)
-            self.hbox.addWidget(self.manometer[key])
-
-
+                manometer = Manometer10(name)
+            self.manometer[key] = manometer
+            self.hbox.addWidget(manometer)

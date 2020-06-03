@@ -128,10 +128,9 @@ class Controller(QObject):
 
     def connect_control_window(self, win: ControlWindow):
         self.close_all.connect(win.close)
-        keys = ['ppm', 'pim', 'ptc1', 'ptc2', 'pupr']
-        for i in range(5):
-            key = keys[i]
-            win.manometer[i].valueChanged.connect(self.ai[key].set_value)
+
+        for key in win.manometer.keys():
+            win.manometer[key].valueChanged.connect(self.ai[key].set_value)
 
         for it in win.button.items():
             button: QPushButton = it[1]

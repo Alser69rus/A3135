@@ -14,21 +14,29 @@ class ControlWindow(QWidget):
         self.setLayout(self.vbox)
         self.manometers = QWidget()
         self.vbox.addWidget(self.manometers)
-        self.manometr_layout = QGridLayout()
+        self.manometr_layout = QHBoxLayout()
         self.manometr_layout.setContentsMargins(0, 0, 0, 0)
         self.manometers.setLayout(self.manometr_layout)
-        self.manometer: List[Union[DialWidget16, DialWidget10]] = []
+
         settings = QSettings('Настройки.ini', QSettings.IniFormat)
         settings.setIniCodec('UTF-8')
-        names = ['Р пм', 'Р им', 'Р тц1', 'Р тц2', 'Р упр рд/сд']
-        for i in range(5):
-            max_value = float(settings.value(f'Manometers/m{i}', 1.6))
-            name = names[i]
+        manometers = [
+            ('ppm', 'Р пм'),
+            ('pim', 'Р им',),
+            ('ptc1', 'Р тц1',),
+            ('ptc2', 'Р тц2',),
+            ('pupr', 'Р упр рд/сд',),
+        ]
+        self.manometer: Dict[str, Union[DialWidget16, DialWidget10]] = {}
+
+        for key, name in manometers:
+            max_value = float(settings.value(f'Manometers/{key}', 1.6))
             if max_value == 1.6:
-                self.manometer.append(DialWidget16(name))
+                manometer = DialWidget16(name)
             else:
-                self.manometer.append(DialWidget10(name))
-            self.manometr_layout.addWidget(self.manometer[i], 0, i)
+                manometer = DialWidget10(name)
+            self.manometer[key] = manometer
+            self.manometr_layout.addWidget(manometer)
 
         self.switches_widget = QWidget()
         self.vbox.addWidget(self.switches_widget)
@@ -109,10 +117,10 @@ class ControlWindow(QWidget):
                    ]
         self.button: Dict[QPushButton] = {}
 
-        for i,(key, name) in enumerate(buttons):
+        for i, (key, name) in enumerate(buttons):
             button = QPushButton(name)
             self.button[key] = button
-            self.button_layout.addWidget(button,i//5,i%5)
+            self.button_layout.addWidget(button, i // 5, i % 5)
 
 
 class DialWidget16(QWidget):
