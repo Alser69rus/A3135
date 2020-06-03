@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QDial, QVBoxLayout, QHBoxLayout, QGridLayout, QDoubleSpinBox
 from PyQt5.QtWidgets import QLabel, QPushButton, QGroupBox, QRadioButton
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QSettings
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QSettings,Qt
 from typing import Union, List, Dict
 
 
@@ -136,6 +136,7 @@ class DialWidget16(QWidget):
         self.setLayout(self.vbox)
         self.caption = QLabel(caption)
         self.caption.setFont(QFont('Segoi UI', 14))
+        self.caption.setAlignment(Qt.AlignCenter)
         self.vbox.addWidget(self.caption)
         self.dial = QDial()
         self.vbox.addWidget(self.dial)

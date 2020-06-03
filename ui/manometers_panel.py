@@ -27,7 +27,7 @@ class Manometers(QtWidgets.QWidget):
         ]
 
         for key, name in manometers:
-            max_value = float(settings.value(f'Manometers/m{key}', 1.6))
+            max_value = float(settings.value(f'Manometers/{key}', 1.6))
             if max_value == 1.6:
                 manometer = Manometer16(name)
             else:
