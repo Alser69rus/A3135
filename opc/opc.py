@@ -23,7 +23,7 @@ class AnalogItemType(QObject):
         self.definition: str = name
         self.value_precision: int = 3
 
-    def get_value(self):
+    def get_value(self) -> float:
         return self._value
 
     @pyqtSlot(float)
@@ -52,11 +52,13 @@ class TwoStateDiscreteType(QObject):
         self.false_state: str = 'Откл.'
         self.true_state: str = 'Вкл.'
 
-    def get_value(self):
+    def get_value(self) -> bool:
         return self._value
 
-    def set_value(self, value):
+    @pyqtSlot(bool)
+    def set_value(self, value: bool):
         if self._value == value: return
         self._value = value
         if value: self.clicked.emit()
         self.value_changed.emit(value)
+

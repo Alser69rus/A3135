@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, QTimer
 from PyQt5.QtCore import Qt, QStateMachine
-from PyQt5.QtWidgets import QPushButton, QLabel
+from PyQt5.QtWidgets import QPushButton, QLabel, QRadioButton
 from PyQt5.QtGui import QKeyEvent, QPixmap
 from dataclasses import dataclass, field
 from typing import List, Dict
@@ -132,7 +132,20 @@ class Controller(QObject):
         for key in win.manometer.keys():
             win.manometer[key].valueChanged.connect(self.ai[key].set_value)
 
-        for it in win.button.items():
-            button: QPushButton = it[1]
-            key = it[0]
+        for key in win.button.keys():
+            button: QPushButton = win.button[key]
             button.clicked.connect(self.di[key].clicked)
+
+        for key in win.switch.keys():
+            switch: QPushButton = win.switch[key]
+            switch.toggled.connect(self.di[key].set_value)
+
+        radio = {
+            '0 - rd 042': win.radio['РД 042 - 0 - КЭБ 208'].button['РД 042'],
+            '0 - keb 208': win.radio['РД 042 - 0 - КЭБ 208'].button['КЭБ 208'],
+            '0- vr': win.radio['ВР - 0 - КУ'].button['ВР'],
+            '0- ku': win.radio['ВР - 0 - КУ'].button['КУ'],
+        }
+        for key in radio.keys():
+            radio_button: QRadioButton = radio[key]
+            radio_button.toggled.connect(self.di[key].set_value)

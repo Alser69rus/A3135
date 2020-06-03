@@ -83,13 +83,13 @@ class ControlWindow(QWidget):
             ('ВР', ' - 0 - ', 'КУ',),
         ]
 
-        self.group_box: Dict[str, QGroupBox] = {}
+        self.radio: Dict[str, QGroupBox] = {}
         self.group_box_layout: List[QVBoxLayout] = []
 
         for buttons in radio:
             name = ''.join(buttons)
             group_box = QGroupBox(name)
-            self.group_box[name] = group_box
+            self.radio[name] = group_box
             self.radio_layout.addWidget(group_box)
             layout = QVBoxLayout()
             self.group_box_layout.append(layout)
@@ -115,7 +115,7 @@ class ControlWindow(QWidget):
                    ('ok', 'ОК'),
                    ('auto release', 'АВТ ОТПУСК'),
                    ]
-        self.button: Dict[QPushButton] = {}
+        self.button: Dict[str,QPushButton] = {}
 
         for i, (key, name) in enumerate(buttons):
             button = QPushButton(name)
