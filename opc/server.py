@@ -88,7 +88,7 @@ class Server(QObject):
                                                     'keb 208': self.worker.di.pin[13],
                                                     'red 211': self.worker.di.pin[14],
                                                     'leak 0,5': self.worker.di.pin[15],
-                                                    'leak 1': self.worker.di.pin[6],
+                                                    'leak 1': self.worker.di.pin[16],
                                                     '0 - rd 042': self.worker.di.pin[17],
                                                     '0 - keb 208': self.worker.di.pin[18],
                                                     '0- vr': self.worker.di.pin[19],

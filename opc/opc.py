@@ -59,6 +59,7 @@ class TwoStateDiscreteType(QObject):
     def set_value(self, value: bool):
         if self._value == value: return
         self._value = value
-        if value: self.clicked.emit()
+        if value:
+            self.clicked.emit()
         self.value_changed.emit(value)
 

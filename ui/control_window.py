@@ -5,9 +5,9 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, QSettings, Qt
 from typing import Union, List, Dict
 from PyQt5 import QtGui
 
-FONT_SIZE = 14
-DIAL_WIDTH = 150
-DIAL_HEIGHT = 180
+FONT_SIZE = 12
+DIAL_WIDTH = 120
+DIAL_HEIGHT = 150
 
 
 class ControlWindow(QWidget):

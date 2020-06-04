@@ -12,6 +12,7 @@ from ui.menu import MenuWidget
 from pyqtgraph import PlotWidget
 from opc.opc import AnalogItemType, TwoStateDiscreteType
 from ui.control_window import ControlWindow
+from ui.diagnostic_window import DiagnosticWindow
 
 ANIMATE_CLICK_DELAY = 50
 
@@ -43,6 +44,7 @@ class Controller(QObject):
         self.ai: Dict[str, AnalogItemType] = {}
         self.di: Dict[str, TwoStateDiscreteType] = {}
         self.ctrl_win: QWidget = None
+        self.diag_win: QWidget = None
 
         self.show_panel = None
         self.show_menu = None
@@ -157,3 +159,16 @@ class Controller(QObject):
         for key in radio.keys():
             radio_button: QRadioButton = radio[key]
             radio_button.toggled.connect(self.di[key].set_value)
+
+    def connect_diagnostic_window(self, win: DiagnosticWindow):
+        self.diag_win = win
+        self.close_all.connect(win.close)
+
+        for key in win.manometers.keys():
+            self.ai[key].value_changed.connect(win.manometers[key].set_value)
+
+        for key in win.buttons.keys():
+            self.di[key].clicked.connect(partial(win.buttons[key].animateClick, ANIMATE_CLICK_DELAY))
+
+        for key in win.switches.keys():
+            self.di[key].value_changed.connect(win.switches[key].setChecked)

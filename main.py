@@ -4,6 +4,7 @@ from PyQt5.QtCore import QStateMachine, QTimer
 
 from ui.main_form import MainForm
 from ui.control_window import ControlWindow
+from ui.diagnostic_window import DiagnosticWindow
 from controller.controller import Controller
 from opc.server import Server
 
@@ -39,6 +40,10 @@ class Main:
 
         self.ctrl_win = ControlWindow()
         self.controller.connect_control_window(self.ctrl_win)
+
+        self.diag_win=DiagnosticWindow()
+        self.controller.connect_diagnostic_window(self.diag_win)
+        self.diag_win.show()
 
 
 
