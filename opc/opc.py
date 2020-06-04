@@ -2,6 +2,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 import logging
 from datetime import datetime
 from dataclasses import dataclass
+from typing import List
 
 
 @dataclass()
@@ -20,7 +21,7 @@ class AnalogItemType(QObject):
         self.eu_range: Range = Range(0, 1.6)
         self.instrument_range: Range = Range(4000, 20000)
         self.engineering_units: str = 'МПа'
-        self.definition: str = name
+        self.name: str = name
         self.value_precision: int = 3
 
     def get_value(self) -> float:
@@ -47,7 +48,7 @@ class TwoStateDiscreteType(QObject):
 
     def __init__(self, name: str = 'Дискретный вход', parent=None):
         super().__init__(parent=parent)
-        self.description: str = name
+        self.name: str = name
         self._value: bool = False
         self.false_state: str = 'Откл.'
         self.true_state: str = 'Вкл.'
@@ -63,3 +64,50 @@ class TwoStateDiscreteType(QObject):
             self.clicked.emit()
         self.value_changed.emit(value)
 
+
+class MultiStateDiscreteType(QObject):
+    value_changed = pyqtSignal(int)
+
+    def __init__(self, name: str = '', enum_values: List[str] = [], parent=None):
+        super().__init__(parent=parent)
+        self.name: str = name
+        self.enum_values: List[str] = enum_values
+        self._value: int = 0
+
+    def value_sa_text(self, value: int) -> str:
+        return self.enum_values[value]
+
+    def get_value(self) -> int:
+        return self._value
+
+    @pyqtSlot(int)
+    def set_value(self, value: int):
+        self._value = value
+
+
+class TwoStateWithNeutral(MultiStateDiscreteType):
+    def __init__(self, name: str = '', enum_values: List[str] = [], parent=None):
+        super().__init__(name=name, enum_values=enum_values, parent=parent)
+        self._state1: bool = False
+        self._state2: bool = False
+        self.set_value(0)
+
+    @pyqtSlot(bool)
+    def set_state1(self, value: bool):
+        self._state1 = value
+        self.set_state(self._state1, self._state2)
+
+    @pyqtSlot(bool)
+    def set_state2(self, value: bool):
+        self._state2 = value
+        self.set_state(self._state1, self._state2)
+
+    @pyqtSlot(bool, bool)
+    def set_state(self, state1: bool, state2: bool):
+        if state1 and not state2:
+            self.set_value(1)
+        elif state2 and not state1:
+            self.set_value(2)
+        else:
+            self.set_value(0)
+        self.value_changed.emit(self.get_value())
