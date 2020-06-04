@@ -14,6 +14,7 @@ class Worker(QObject):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.running: bool = True
+        self.skip_update: bool = False
         self.client = Client(method='rtu', port='COM9', timeout=0.05, baudrate=115200, retry_on_empty=True)
         self.ai: MV110_8AC = MV110_8AC(client=self.client, unit=16)
         self.load_ai_settings()
@@ -38,8 +39,9 @@ class Worker(QObject):
     def do_work(self):
         while self.running:
             t = datetime.now()
-            # self.ai.update()
-            # self.di.update()
+            # if not self.skip_update:
+                # self.ai.update()
+                # self.di.update()
             t = (datetime.now() - t).total_seconds()
             t = round(UPDATE_DELAY - t * 1000)
             if t > 0:

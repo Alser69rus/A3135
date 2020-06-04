@@ -39,7 +39,7 @@ class Main:
 
         self.ctrl_win = ControlWindow()
         self.controller.connect_control_window(self.ctrl_win)
-        self.ctrl_win.show()
+
 
 
 if __name__ == '__main__':

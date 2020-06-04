@@ -1,8 +1,13 @@
 from PyQt5.QtWidgets import QWidget, QDial, QVBoxLayout, QHBoxLayout, QGridLayout, QDoubleSpinBox
 from PyQt5.QtWidgets import QLabel, QPushButton, QGroupBox, QRadioButton
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QSettings,Qt
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QSettings, Qt
 from typing import Union, List, Dict
+from PyQt5 import QtGui
+
+FONT_SIZE = 14
+DIAL_WIDTH = 150
+DIAL_HEIGHT = 180
 
 
 class ControlWindow(QWidget):
@@ -10,7 +15,7 @@ class ControlWindow(QWidget):
         super().__init__(parent=parent)
         self.setWindowTitle('Окно эмуляции стенда')
         self.vbox = QVBoxLayout()
-        self.setFont(QFont('Segoi UI', 14))
+        self.setFont(QFont('Segoi UI', FONT_SIZE))
         self.setLayout(self.vbox)
         self.manometers = QWidget()
         self.vbox.addWidget(self.manometers)
@@ -115,12 +120,16 @@ class ControlWindow(QWidget):
                    ('ok', 'ОК'),
                    ('auto release', 'АВТ ОТПУСК'),
                    ]
-        self.button: Dict[str,QPushButton] = {}
+        self.button: Dict[str, QPushButton] = {}
 
         for i, (key, name) in enumerate(buttons):
             button = QPushButton(name)
             self.button[key] = button
             self.button_layout.addWidget(button, i // 5, i % 5)
+
+    def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
+        if a0.key() == Qt.Key_F11:
+            self.setVisible(False)
 
 
 class DialWidget16(QWidget):
@@ -128,14 +137,14 @@ class DialWidget16(QWidget):
 
     def __init__(self, caption: str, parent=None):
         super().__init__(parent=parent)
-        self.setFont(QFont('Segoi UI', 14))
-        self.setFixedWidth(150)
-        self.setFixedHeight(180)
+        self.setFont(QFont('Segoi UI', FONT_SIZE))
+        self.setFixedWidth(DIAL_WIDTH)
+        self.setFixedHeight(DIAL_HEIGHT)
         self.vbox = QVBoxLayout()
         self.vbox.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.vbox)
         self.caption = QLabel(caption)
-        self.caption.setFont(QFont('Segoi UI', 14))
+        self.caption.setFont(QFont('Segoi UI', FONT_SIZE))
         self.caption.setAlignment(Qt.AlignCenter)
         self.vbox.addWidget(self.caption)
         self.dial = QDial()

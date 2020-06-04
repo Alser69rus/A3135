@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, QTimer
 from PyQt5.QtCore import Qt, QStateMachine
-from PyQt5.QtWidgets import QPushButton, QLabel, QRadioButton
+from PyQt5.QtWidgets import QPushButton, QLabel, QRadioButton, QWidget
 from PyQt5.QtGui import QKeyEvent, QPixmap
 from dataclasses import dataclass, field
 from typing import List, Dict
@@ -42,6 +42,7 @@ class Controller(QObject):
         self.images: Dict[str, QPixmap] = {}
         self.ai: Dict[str, AnalogItemType] = {}
         self.di: Dict[str, TwoStateDiscreteType] = {}
+        self.ctrl_win: QWidget = None
 
         self.show_panel = None
         self.show_menu = None
@@ -91,6 +92,12 @@ class Controller(QObject):
                 self.btn.yes.animateClick(ANIMATE_CLICK_DELAY)
             elif event.key() == Qt.Key_Space:
                 self.btn.no.animateClick(ANIMATE_CLICK_DELAY)
+            elif event.key() == Qt.Key_F11:
+                if self.ctrl_win is None:
+                    return
+                state = not self.ctrl_win.isVisible()
+                self.ctrl_win.setVisible(state)
+                self.server.worker.skip_update = state
 
     def connect_server(self, server: Server):
         self.server = server
@@ -127,6 +134,7 @@ class Controller(QObject):
         self.di['no'].clicked.connect(partial(self.btn.no.animateClick, ANIMATE_CLICK_DELAY))
 
     def connect_control_window(self, win: ControlWindow):
+        self.ctrl_win = win
         self.close_all.connect(win.close)
 
         for key in win.manometer.keys():
