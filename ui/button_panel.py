@@ -1,58 +1,61 @@
-from PyQt5 import QtWidgets, QtGui
+from PyQt5.QtWidgets import QPushButton, QWidget, QHBoxLayout, QSizePolicy
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
+from typing import Dict, List
+from opc.opc import TwoStateDiscreteType
+from functools import partial
+
+ANIMATE_CLICK_DELAY = 50
 
 
-class ButtonPanel(QtWidgets.QWidget):
-    def __init__(self, parent=None):
+class ButtonPanel(QWidget):
+    def __init__(self, server, parent=None):
         super().__init__(parent=parent)
         self.setFocusPolicy(Qt.NoFocus)
-
-        self.back = QtWidgets.QPushButton('Возврат')
-        self.up = QtWidgets.QPushButton('Вверх')
-        self.down = QtWidgets.QPushButton('Вниз')
-        self.yes = QtWidgets.QPushButton('Да')
-        self.no = QtWidgets.QPushButton('Нет')
-
-        self.back.setFocusPolicy(Qt.NoFocus)
-        self.up.setFocusPolicy(Qt.NoFocus)
-        self.down.setFocusPolicy(Qt.NoFocus)
-        self.yes.setFocusPolicy(Qt.NoFocus)
-        self.no.setFocusPolicy(Qt.NoFocus)
-
-        self.back.setIcon(QtGui.QIcon('img\\back.png'))
-        self.up.setIcon(QtGui.QIcon('img\\up.png'))
-        self.down.setIcon(QtGui.QIcon('img\\down.png'))
-        self.yes.setIcon(QtGui.QIcon('img\\yes.png'))
-        self.no.setIcon(QtGui.QIcon('img\\no.png'))
-
-        self.hbox = QtWidgets.QHBoxLayout()
+        self.hbox = QHBoxLayout()
         self.setLayout(self.hbox)
-        self.hbox.addWidget(self.back)
-        self.hbox.addWidget(self.up)
-        self.hbox.addWidget(self.down)
-        self.hbox.addWidget(self.yes)
-        self.hbox.addWidget(self.no)
-
-        self.style_sheet = 'QPushButton' \
-                           '{' \
-                           'border:2px;' \
-                           'border-radius:8px;' \
-                           'border-color:black;' \
-                           'text-align:center;' \
-                           'padding: 4px;' \
-                           'background-color:rgba(10,10,10,10%);' \
-                           'border-style:none;' \
-                           'font:20px "Segoi UI";' \
-                           'min-width:80px;' \
-                           'icon-size: 32px 32px' \
-                           '}' \
-                           ' QPushButton:pressed' \
-                           '{' \
-                           'background-color:rgba(30,0,0,30%)' \
-                           '}'
-
-        self.setStyleSheet(self.style_sheet)
-
-        self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.setMinimumHeight(40)
         self.hbox.setContentsMargins(0, 0, 0, 0)
+
+        self.button_icons: Dict[str, QIcon] = {
+            'back': QIcon('img\\back.png'),
+            'up': QIcon('img\\up.png'),
+            'down': QIcon('img\\down.png'),
+            'yes': QIcon('img\\yes.png'),
+            'no': QIcon('img\\no.png'),
+        }
+
+        self.button: Dict[str, ButtonWidget] = {}
+        for key in self.button_icons.keys():
+            button = ButtonWidget(button=server.button[key], icon=self.button_icons[key])
+            self.button[key] = button
+            self.hbox.addWidget(button)
+
+
+class ButtonWidget(QPushButton):
+    def __init__(self, button: TwoStateDiscreteType, icon: QIcon, parent=None):
+        super().__init__(parent=parent)
+        button.clicked.connect(partial(self.animateClick, ANIMATE_CLICK_DELAY))
+        self.setText(button.name)
+        self.setFocusPolicy(Qt.NoFocus)
+        self.setIcon(icon)
+        self.setStyleSheet(
+            f'QPushButton'
+            f'{{'
+            f'border:2px;'
+            f'border-radius:8px;'
+            f'border-color:black;'
+            f'text-align:center;'
+            f'padding: 4px;'
+            f'background-color:rgba(10,10,10,10%);'
+            f'border-style:none;'
+            f'font:20px "Segoi UI";'
+            f'min-width:80px;'
+            f'icon-size: 32px 32px'
+            f'}}'
+            f' QPushButton:pressed'
+            f'{{'
+            f'background-color:rgba(30,0,0,30%)'
+            f'}}'
+        )

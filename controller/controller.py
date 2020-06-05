@@ -55,18 +55,10 @@ class Controller(QObject):
         self.images = self.image.images
         self.graph = form.workspace.graph
 
-        self.connect_button_panel(form.btn_panel)
         self.connect_menu(self.menu)
         self.form.closeEvent = self.closeEvent
         self.show_panel = self.form.show_panel
         self.show_menu = self.menu.show_menu
-
-    def connect_button_panel(self, panel):
-        self.btn.back = panel.back
-        self.btn.up = panel.up
-        self.btn.down = panel.down
-        self.btn.yes = panel.yes
-        self.btn.no = panel.no
 
     def connect_menu(self, menu):
         self.btn.back.clicked.connect(menu.on_back_click)
