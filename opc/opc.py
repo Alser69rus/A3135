@@ -83,7 +83,7 @@ class MultiStateDiscreteType(QObject):
     @pyqtSlot(int)
     def set_value(self, value: int):
         self._value = value
-        self.value_changed(value)
+        self.value_changed.emit(value)
 
 
 class TwoStateWithNeutralType(MultiStateDiscreteType):

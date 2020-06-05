@@ -125,7 +125,7 @@ class SwitchWidget(QPushButton):
         self.setCheckable(True)
         self.toggled.connect(switch.set_value)
         self.setStyleSheet(f'QPushButton {{'
-                           f'font-size:{FONT_SIZE}pt'
+                           f'font-size:{FONT_SIZE}pt;'
                            f'border:2px;'
                            f'border-radius:8px;'
                            f'border-color:black;'

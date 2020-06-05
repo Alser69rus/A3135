@@ -41,8 +41,6 @@ class Controller(QObject):
         self.image: QLabel = None
         self.graph: PlotWidget = None
         self.images: Dict[str, QPixmap] = {}
-        self.ai: Dict[str, AnalogItemType] = {}
-        self.di: Dict[str, TwoStateDiscreteType] = {}
         self.ctrl_win: QWidget = None
         self.diag_win: QWidget = None
 
@@ -95,16 +93,12 @@ class Controller(QObject):
             elif event.key() == Qt.Key_Space:
                 self.btn.no.animateClick(ANIMATE_CLICK_DELAY)
             elif event.key() == Qt.Key_F11:
-                if self.ctrl_win is None:
-                    return
-                state = not self.ctrl_win.isVisible()
-                self.ctrl_win.setVisible(state)
-                self.server.worker.skip_update = state
+                self.ctrl_win.setVisible(not self.ctrl_win.isVisible())
+            elif event.key() == Qt.Key_F12:
+                self.diag_win.setVisible(not self.diag_win.isVisible())
 
     def connect_server(self, server: Server):
         self.server = server
-        self.ai = server.manometer
-        self.di = server.di
 
     def connect_state_machine(self, stm: QStateMachine):
         self.stm = stm

@@ -30,8 +30,8 @@ class Main:
         self.controller.connect_server(self.server)
         self.controller.connect_state_machine(self.stm)
 
-        self.controller.connect_manometers()
-        self.controller.connect_di_buttons()
+        # self.controller.connect_manometers()
+        # self.controller.connect_di_buttons()
 
         self.controller.show_panel('текст манометры')
         self.form.show()
@@ -43,7 +43,7 @@ class Main:
 
         self.diag_win = DiagnosticWindow(server=self.server)
         self.controller.connect_diagnostic_window(self.diag_win)
-        self.diag_win.show()
+
 
 
 if __name__ == '__main__':

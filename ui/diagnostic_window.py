@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QHBoxLayout, QVBoxLayout
 from PyQt5.QtWidgets import QLabel, QPushButton
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QKeyEvent
 from PyQt5.QtCore import pyqtSlot, Qt
 from typing import Dict
 from functools import partial
@@ -25,6 +25,11 @@ class DiagnosticWindow(QWidget):
         self.vbox.addWidget(self.switch_panel)
 
         self.buttons_panel = ButtonsPanel(buttons=server.button)
+        self.vbox.addWidget(self.buttons_panel)
+
+    def keyPressEvent(self, a0: QKeyEvent) -> None:
+        if a0.key() == Qt.Key_F12:
+            self.setVisible(False)
 
 
 class ManometersPanel(QWidget):
