@@ -3,8 +3,6 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import QStateMachine, QTimer
 
 from ui.main_form import MainForm
-from ui.control_window import ControlWindow
-from ui.diagnostic_window import DiagnosticWindow
 from controller.controller import Controller
 from opc.server import Server
 
@@ -23,7 +21,7 @@ class Main:
 
         self.server = Server()
         self.controller = Controller()
-        self.form = MainForm()
+        self.form = MainForm(self.server)
         self.stm = QStateMachine()
 
         self.controller.connect_form(self.form)
@@ -38,11 +36,7 @@ class Main:
         self.controller.text.setText('Hello')
         self.controller.show_menu('Главное')
 
-        self.ctrl_win = ControlWindow(server=self.server)
-        self.controller.connect_control_window(self.ctrl_win)
 
-        self.diag_win = DiagnosticWindow(server=self.server)
-        self.controller.connect_diagnostic_window(self.diag_win)
 
 
 if __name__ == '__main__':

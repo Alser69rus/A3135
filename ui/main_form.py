@@ -1,13 +1,17 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtGui import QKeyEvent
 from ui.button_panel import ButtonPanel
 from ui.workspace import Workspace
 from ui.manometers_panel import Manometers
-from PyQt5 import QtGui
+from ui.control_window import ControlWindow
+from ui.diagnostic_window import DiagnosticWindow
+
+ANIMATE_CLICK_DELAY = 50
 
 
 class MainForm(QtWidgets.QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, server, parent=None):
         super().__init__(parent=parent)
         self.resize(1024, 768)
         self.setWindowTitle('Стенд А3139')
@@ -23,6 +27,10 @@ class MainForm(QtWidgets.QWidget):
         self.vbox.addWidget(self.workspace)
         self.vbox.addWidget(self.btn_panel)
 
+        self.ctrl_win = ControlWindow(server=server)
+        self.diag_win = DiagnosticWindow(server=server)
+
+
     @pyqtSlot(str)
     def show_panel(self, value: str):
         available_panel = {
@@ -37,3 +45,22 @@ class MainForm(QtWidgets.QWidget):
         }
         for panel in available_panel.keys():
             available_panel[panel].setVisible(panel in value)
+
+    def keyPressEvent(self, event):
+        if type(event) == QKeyEvent:
+            if event.key() == Qt.Key_Escape:
+                self.btn_panel.back.animateClick(ANIMATE_CLICK_DELAY)
+            elif event.key() == Qt.Key_Up:
+                self.btn_panel.up.animateClick(ANIMATE_CLICK_DELAY)
+            elif event.key() == Qt.Key_Down:
+                self.btn_panel.down.animateClick(ANIMATE_CLICK_DELAY)
+            elif event.key() == Qt.Key_Return:
+                self.btn_panel.yes.animateClick(ANIMATE_CLICK_DELAY)
+            elif event.key() == Qt.Key_Enter:
+                self.btn_panel.yes.animateClick(ANIMATE_CLICK_DELAY)
+            elif event.key() == Qt.Key_Space:
+                self.btn_panel.no.animateClick(ANIMATE_CLICK_DELAY)
+            elif event.key() == Qt.Key_F11:
+                self.ctrl_win.setVisible(not self.ctrl_win.isVisible())
+            elif event.key() == Qt.Key_F12:
+                self.diag_win.setVisible(not self.diag_win.isVisible())

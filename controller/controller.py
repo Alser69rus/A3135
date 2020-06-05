@@ -57,7 +57,6 @@ class Controller(QObject):
 
         self.connect_button_panel(form.btn_panel)
         self.connect_menu(self.menu)
-        self.connect_key_press_event(self.form)
         self.form.closeEvent = self.closeEvent
         self.show_panel = self.form.show_panel
         self.show_menu = self.menu.show_menu
@@ -77,25 +76,6 @@ class Controller(QObject):
 
     def connect_key_press_event(self, form):
         form.keyPressEvent = self.keyPressEvent
-
-    def keyPressEvent(self, event):
-        if type(event) == QKeyEvent:
-            if event.key() == Qt.Key_Escape:
-                self.btn.back.animateClick(ANIMATE_CLICK_DELAY)
-            elif event.key() == Qt.Key_Up:
-                self.btn.up.animateClick(ANIMATE_CLICK_DELAY)
-            elif event.key() == Qt.Key_Down:
-                self.btn.down.animateClick(ANIMATE_CLICK_DELAY)
-            elif event.key() == Qt.Key_Return:
-                self.btn.yes.animateClick(ANIMATE_CLICK_DELAY)
-            elif event.key() == Qt.Key_Enter:
-                self.btn.yes.animateClick(ANIMATE_CLICK_DELAY)
-            elif event.key() == Qt.Key_Space:
-                self.btn.no.animateClick(ANIMATE_CLICK_DELAY)
-            elif event.key() == Qt.Key_F11:
-                self.ctrl_win.setVisible(not self.ctrl_win.isVisible())
-            elif event.key() == Qt.Key_F12:
-                self.diag_win.setVisible(not self.diag_win.isVisible())
 
     def connect_server(self, server: Server):
         self.server = server
