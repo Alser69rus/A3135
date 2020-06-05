@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QDial, QVBoxLayout, QHBoxLayout, QGridLayou
 from PyQt5.QtWidgets import QLabel, QPushButton, QGroupBox, QRadioButton
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
-from typing import Dict
+from typing import Dict, List
 from PyQt5 import QtGui
 from opc.opc import AnalogItemType, TwoStateWithNeutralType, TwoStateDiscreteType
 
@@ -158,7 +158,27 @@ class SwitchWithNeutralWidget(QGroupBox):
         self.setTitle(switch.name)
         self.vbox = QVBoxLayout()
         self.setLayout(self.vbox)
-        self.buttons = [QRadioButton(value) for value in switch.enum_values]
+        self.buttons: List[QPushButton] = []
+        for value in switch.enum_values:
+            button = QPushButton(value)
+            self.buttons.append(button)
+            button.setFlat(True)
+            button.setCheckable(True)
+            button.setAutoExclusive(True)
+            button.setStyleSheet(
+                f'QPushButton {{'
+                f'font-size:{FONT_SIZE}pt;'
+                f'border:2px;'
+                f'border-radius:8px;'
+                f'border-color:black;'
+                f'text-align:center;'
+                f'padding: 4px;'
+                f'border-style: solid;'
+                f'background-color: rgba(50,0,100,10%);}}'
+                f'QPushButton:checked {{'
+                f'background-color: rgba(0,200,100,50%);}}'
+            )
+
         self.vbox.addWidget(self.buttons[1])
         self.vbox.addWidget(self.buttons[0])
         self.vbox.addWidget(self.buttons[2])

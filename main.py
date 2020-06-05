@@ -45,7 +45,6 @@ class Main:
         self.controller.connect_diagnostic_window(self.diag_win)
 
 
-
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     main = Main()
