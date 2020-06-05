@@ -206,3 +206,19 @@ class ButtonWidget(QPushButton):
         super().__init__(parent=parent)
         self.setText(button.name)
         self.clicked.connect(button.clicked)
+        self.setFlat(True)
+        self.setStyleSheet(
+            f'QPushButton {{'
+            f'font-size:{FONT_SIZE}pt;'
+            f'border:2px;'
+            f'border-radius:8px;'
+            f'border-color:black;'
+            f'text-align:center;'
+            f'padding: 4px;'
+            f'border-style: solid;'
+            f'background-color: rgba(200,200,0,10%);'
+            f'}}'
+            f'QPushButton:pressed {{'
+            f'background-color: rgba(0,200,0,50%);'
+            f'}}'
+        )

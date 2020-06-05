@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QHBoxLayout, QVBoxLayout
-from PyQt5.QtWidgets import QLabel, QPushButton
+from PyQt5.QtWidgets import QLabel, QPushButton, QGroupBox
 from PyQt5.QtGui import QFont, QKeyEvent
 from PyQt5.QtCore import pyqtSlot, Qt
-from typing import Dict
+from typing import Dict, List
 from functools import partial
 from opc.opc import AnalogItemType, TwoStateWithNeutralType, TwoStateDiscreteType
 
@@ -23,6 +23,9 @@ class DiagnosticWindow(QWidget):
 
         self.switch_panel = SwitchesPanel(switches=server.switch)
         self.vbox.addWidget(self.switch_panel)
+
+        self.switch_with_neutral_panel = SwitchesWithNeutralPanel(switches=server.switch_with_neutral)
+        self.vbox.addWidget(self.switch_with_neutral_panel)
 
         self.buttons_panel = ButtonsPanel(buttons=server.button)
         self.vbox.addWidget(self.buttons_panel)
@@ -145,3 +148,60 @@ class ButtonWidget(QPushButton):
             f'background-color: rgba(0,200,0,50%);'
             f'}}'
         )
+
+
+class SwitchesWithNeutralPanel(QWidget):
+    def __init__(self, switches: Dict[str, TwoStateWithNeutralType], parent=None):
+        super().__init__(parent=parent)
+        self.hbox = QHBoxLayout()
+        self.setLayout(self.hbox)
+
+        self.switch: Dict[str, SwitchWithNeutralWidget] = {}
+
+        for key in switches.keys():
+            switch = SwitchWithNeutralWidget(switch=switches[key])
+            self.switch[key] = switch
+            self.hbox.addWidget(switch)
+
+
+class SwitchWithNeutralWidget(QGroupBox):
+    def __init__(self, switch: TwoStateWithNeutralType, parent=None):
+        super().__init__(parent=parent)
+        self.setTitle(switch.name)
+        self.vbox = QVBoxLayout()
+        self.setLayout(self.vbox)
+        self.buttons: List[QPushButton] = []
+        for value in switch.enum_values:
+            button = QPushButton(value)
+            self.buttons.append(button)
+            button.setFlat(True)
+            button.setCheckable(True)
+            button.setAutoExclusive(True)
+            button.setStyleSheet(
+                f'QPushButton {{'
+                f'font-size:{FONT_SIZE}pt;'
+                f'border:2px;'
+                f'border-radius:8px;'
+                f'border-color:black;'
+                f'text-align:center;'
+                f'padding: 4px;'
+                f'border-style: solid;'
+                f'background-color: rgba(50,0,100,10%);}}'
+                f'QPushButton:checked {{'
+                f'background-color: rgba(0,200,100,50%);}}'
+            )
+
+        self.vbox.addWidget(self.buttons[1])
+        self.vbox.addWidget(self.buttons[0])
+        self.vbox.addWidget(self.buttons[2])
+        self.buttons[0].setChecked(True)
+        switch.value_changed.connect(self.set_value)
+
+    @pyqtSlot(int)
+    def set_value(self, value: int):
+        if value==1:
+            self.buttons[1].setChecked(True)
+        elif value==2:
+            self.buttons[2].setChecked(True)
+        else:
+            self.buttons[0].setChecked(True)
