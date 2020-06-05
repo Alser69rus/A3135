@@ -23,11 +23,6 @@ class MainForm(QtWidgets.QWidget):
         self.vbox.addWidget(self.workspace)
         self.vbox.addWidget(self.btn_panel)
 
-
-        # todo 2.5 сделать навигацию по меню
-
-        # todo 8Создать виджет отчета
-
     @pyqtSlot(str)
     def show_panel(self, value: str):
         available_panel = {

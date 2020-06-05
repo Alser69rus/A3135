@@ -49,14 +49,14 @@ class Server(QObject):
         self.worker.finished.connect(self.th.quit)
         self.stop_all.connect(self.worker.stop, Qt.DirectConnection)
 
-        self.ai: Dict[str, AnalogItemType] = self.get_ai()
+        self.manometer: Dict[str, AnalogItemType] = self.get_manometer()
         self.button: Dict[str, TwoStateDiscreteType] = self.get_button()
         self.switch: Dict[str, TwoStateDiscreteType] = self.get_switch()
         self.radio_switch: Dict[str, TwoStateWithNeutral] = self.get_radio_switch()
 
         self.th.start()
 
-    def get_ai(self) -> Dict[str, AnalogItemType]:
+    def get_manometer(self) -> Dict[str, AnalogItemType]:
         result: Dict[str, AnalogItemType] = {}
         ai = [
             ('p pm', 'Р пм', 1.6, self.worker.ai.pin[0]),
@@ -69,7 +69,6 @@ class Server(QObject):
             result[key] = manometer
             manometer.name = name
             manometer.eu_range.high = max_value
-
         return result
 
     def get_button(self) -> Dict[str, TwoStateDiscreteType]:
@@ -87,7 +86,6 @@ class Server(QObject):
         for key, name, button in buttons:
             result[key] = button
             button.name = name
-
         return result
 
     def get_switch(self) -> Dict[str, TwoStateDiscreteType]:
@@ -106,7 +104,6 @@ class Server(QObject):
         for key, name, switch in switches:
             result[key] = switch
             switch.name = name
-
         return result
 
     def get_radio_switch(self) -> Dict[str, TwoStateWithNeutral]:

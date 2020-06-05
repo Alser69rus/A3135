@@ -103,7 +103,7 @@ class Controller(QObject):
 
     def connect_server(self, server: Server):
         self.server = server
-        self.ai = server.ai
+        self.ai = server.manometer
         self.di = server.di
 
     def connect_state_machine(self, stm: QStateMachine):
