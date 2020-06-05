@@ -3,7 +3,7 @@ from datetime import datetime
 from pymodbus.client.sync import ModbusSerialClient as Client
 from opc.owen import MV110_16D, MV110_8AC, MV110_32DN, MV_DI
 from typing import Dict
-from opc.opc import AnalogItemType, TwoStateDiscreteType, TwoStateWithNeutral
+from opc.opc import AnalogItemType, TwoStateDiscreteType, TwoStateWithNeutralType
 
 UPDATE_DELAY = 50
 
@@ -52,7 +52,7 @@ class Server(QObject):
         self.manometer: Dict[str, AnalogItemType] = self.get_manometer()
         self.button: Dict[str, TwoStateDiscreteType] = self.get_button()
         self.switch: Dict[str, TwoStateDiscreteType] = self.get_switch()
-        self.radio_switch: Dict[str, TwoStateWithNeutral] = self.get_radio_switch()
+        self.switch_with_neutral: Dict[str, TwoStateWithNeutralType] = self.get_switch_with_neutral()
 
         self.th.start()
 
@@ -106,15 +106,15 @@ class Server(QObject):
             switch.name = name
         return result
 
-    def get_radio_switch(self) -> Dict[str, TwoStateWithNeutral]:
-        result: Dict[str, TwoStateWithNeutral] = {}
+    def get_switch_with_neutral(self) -> Dict[str, TwoStateWithNeutralType]:
+        result: Dict[str, TwoStateWithNeutralType] = {}
         radio_switch = [
             ('enter', 'ВР - 0 - КУ', ['- 0 -', 'ВР', 'КУ'], [self.worker.di.pin[17], self.worker.di.pin[18]]),
             ('rd-0-keb', 'РД 042 - 0 - КЭБ 208', ['- 0 -', 'РД 042', 'КЭБ 208'],
              [self.worker.di.pin[19], self.worker.di.pin[20]]),
         ]
         for key, name, enum, di in radio_switch:
-            radio_switch = TwoStateWithNeutral(name=name, enum_values=enum)
+            radio_switch = TwoStateWithNeutralType(name=name, enum_values=enum)
             result[key] = radio_switch
             di[0].value_changed.connect(radio_switch.set_state1)
             di[1].value_changed.connect(radio_switch.set_state2)

@@ -21,10 +21,10 @@ class Main:
         print('Стенд А3139')
         print('(c) ПКБ ЦТ, 2020')
 
-        self.form = MainForm()
-        self.stm = QStateMachine()
         self.server = Server()
         self.controller = Controller()
+        self.form = MainForm()
+        self.stm = QStateMachine()
 
         self.controller.connect_form(self.form)
         self.controller.connect_server(self.server)
@@ -38,13 +38,12 @@ class Main:
         self.controller.text.setText('Hello')
         self.controller.show_menu('Главное')
 
-        self.ctrl_win = ControlWindow()
+        self.ctrl_win = ControlWindow(server=self.server)
         self.controller.connect_control_window(self.ctrl_win)
 
-        self.diag_win=DiagnosticWindow()
+        self.diag_win = DiagnosticWindow()
         self.controller.connect_diagnostic_window(self.diag_win)
         self.diag_win.show()
-
 
 
 if __name__ == '__main__':

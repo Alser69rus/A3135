@@ -4,6 +4,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QSettings, Qt
 from typing import Union, List, Dict
 from PyQt5 import QtGui
+from opc.opc import AnalogItemType, TwoStateWithNeutralType, TwoStateDiscreteType
 
 FONT_SIZE = 12
 DIAL_WIDTH = 120
@@ -11,131 +12,34 @@ DIAL_HEIGHT = 150
 
 
 class ControlWindow(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, server, parent=None):
         super().__init__(parent=parent)
         self.setWindowTitle('Окно эмуляции стенда')
         self.vbox = QVBoxLayout()
         self.setFont(QFont('Segoi UI', FONT_SIZE))
         self.setLayout(self.vbox)
-        self.manometers = QWidget()
-        self.vbox.addWidget(self.manometers)
-        self.manometr_layout = QHBoxLayout()
-        self.manometr_layout.setContentsMargins(0, 0, 0, 0)
-        self.manometers.setLayout(self.manometr_layout)
 
-        settings = QSettings('Настройки.ini', QSettings.IniFormat)
-        settings.setIniCodec('UTF-8')
-        manometers = [
-            ('ppm', 'Р пм'),
-            ('pim', 'Р им',),
-            ('ptc1', 'Р тц1',),
-            ('ptc2', 'Р тц2',),
-            ('pupr', 'Р упр рд/сд',),
-        ]
-        self.manometer: Dict[str, Union[DialWidget16, DialWidget10]] = {}
+        self.manometers_panel = ManometersPanel(manometers=server.manometer)
+        self.vbox.addWidget(self.manometers_panel)
 
-        for key, name in manometers:
-            max_value = float(settings.value(f'Manometers/{key}', 1.6))
-            if max_value == 1.6:
-                manometer = DialWidget16(name)
-            else:
-                manometer = DialWidget10(name)
-            self.manometer[key] = manometer
-            self.manometr_layout.addWidget(manometer)
+        self.switches_panel = SwitchesPanel(switches=server.switch)
+        self.vbox.addWidget(self.switches_panel)
 
-        self.switches_widget = QWidget()
-        self.vbox.addWidget(self.switches_widget)
-        self.switches_layout = QGridLayout()
-        self.switches_widget.setLayout(self.switches_layout)
-        self.switch: Dict[str, QPushButton] = {}
-        switches = [
-            ('ku 215', 'КУ 215'),
-            ('el. braking', 'ЗАМ. ЭЛ. ТОРМ.'),
-            ('>60 km/h', '> 60 км/ч'),
-            ('rd 042', 'РД 042'),
-            ('upr rd 042', 'УПР. РД 042'),
-            ('keb 208', 'КЭБ 208'),
-            ('red 211', 'РЕД 211.020'),
-            ('leak 1', 'УТЕЧКА d 1'),
-            ('leak 0,5', 'УТЕЧКА d 0.5'),
-        ]
+        self.switches_with_neutral_panel = SwitchesWithNeutralPanel(switches=server.switch_with_neutral)
+        self.vbox.addWidget(self.switches_with_neutral_panel)
 
-        for i, (key, name) in enumerate(switches):
-            switch = QPushButton(name)
-            switch.setFont(self.font())
-            switch.setStyleSheet(f'QPushButton {{border:2px;'
-                                 f'border-radius:8px;'
-                                 f'border-color:black;'
-                                 f'text-align:center;'
-                                 f'padding: 4px;'
-                                 f'border-style: solid;'
-                                 f'background-color: rgba(50,0,0,10%);}}'
-                                 f'QPushButton:checked {{'
-                                 f'background-color: rgba(0,200,0,50%);}}'
-                                 )
-            self.switch[key] = switch
-            switch.setFlat(True)
-            switch.setCheckable(True)
-            self.switches_layout.addWidget(switch, i // 3, i % 3)
-
-        self.radio_widget = QWidget()
-        self.vbox.addWidget(self.radio_widget)
-        self.radio_layout = QHBoxLayout()
-        self.radio_widget.setLayout(self.radio_layout)
-
-        radio = [
-            ('РД 042', ' - 0 - ', 'КЭБ 208',),
-            ('ВР', ' - 0 - ', 'КУ',),
-        ]
-
-        self.radio: Dict[str, QGroupBox] = {}
-        self.group_box_layout: List[QVBoxLayout] = []
-
-        for buttons in radio:
-            name = ''.join(buttons)
-            group_box = QGroupBox(name)
-            self.radio[name] = group_box
-            self.radio_layout.addWidget(group_box)
-            layout = QVBoxLayout()
-            self.group_box_layout.append(layout)
-            group_box.setLayout(layout)
-            group_box.button = {}
-            for name in buttons:
-                button = QRadioButton(name)
-                layout.addWidget(button)
-                group_box.button[name] = button
-                if name == ' - 0 - ':
-                    button.setChecked(True)
-
-        self.buttons_widget = QWidget()
-        self.button_layout = QGridLayout()
-        self.vbox.addWidget(self.buttons_widget)
-        self.buttons_widget.setLayout(self.button_layout)
-        buttons = [('back', 'Возврат'),
-                   ('up', 'Вверх'),
-                   ('down', 'Вниз'),
-                   ('yes', 'Да'),
-                   ('no', 'Нет'),
-                   ('examination', 'Испытание'),
-                   ('ok', 'ОК'),
-                   ('auto release', 'АВТ ОТПУСК'),
-                   ]
-        self.button: Dict[str, QPushButton] = {}
-
-        for i, (key, name) in enumerate(buttons):
-            button = QPushButton(name)
-            self.button[key] = button
-            self.button_layout.addWidget(button, i // 5, i % 5)
+        self.buttons_panel = ButtonsPanel(buttons=server.button)
+        self.vbox.addWidget(self.buttons_panel)
 
     def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
         if a0.key() == Qt.Key_F11:
             self.setVisible(False)
 
 
-class DialWidget16(QWidget):
+class DialWidget(QWidget):
     valueChanged = pyqtSignal(float)
 
-    def __init__(self, caption: str, parent=None):
+    def __init__(self, manometer: AnalogItemType, parent=None):
         super().__init__(parent=parent)
         self.setFont(QFont('Segoi UI', FONT_SIZE))
         self.setFixedWidth(DIAL_WIDTH)
@@ -143,26 +47,27 @@ class DialWidget16(QWidget):
         self.vbox = QVBoxLayout()
         self.vbox.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.vbox)
-        self.caption = QLabel(caption)
+        self.caption = QLabel(manometer.name)
         self.caption.setFont(QFont('Segoi UI', FONT_SIZE))
         self.caption.setAlignment(Qt.AlignCenter)
         self.vbox.addWidget(self.caption)
         self.dial = QDial()
         self.vbox.addWidget(self.dial)
         self.dial.setMinimum(0)
-        self.dial.setMaximum(160)
+        self.dial.setMaximum(round(manometer.eu_range.high * 100))
         self.dial.setValue(0)
         self.dial.setNotchTarget(2)
         self.dial.setNotchesVisible(True)
         self.spin_box = QDoubleSpinBox()
         self.vbox.addWidget(self.spin_box)
         self.spin_box.setMinimum(0)
-        self.spin_box.setMaximum(1.6)
+        self.spin_box.setMaximum(manometer.eu_range.high)
         self.spin_box.setValue(0)
         self.spin_box.setDecimals(2)
         self.spin_box.setSingleStep(0.01)
         self.spin_box.valueChanged.connect(self.on_spin_box_value_changed)
         self.dial.valueChanged.connect(self.on_dial_value_changed)
+        self.valueChanged.connect(manometer.set_value)
 
     @pyqtSlot(float)
     def on_spin_box_value_changed(self, value: float):
@@ -184,8 +89,100 @@ class DialWidget16(QWidget):
         self.valueChanged.emit(signal)
 
 
-class DialWidget10(DialWidget16):
-    def __init__(self, caption: str, parent=None):
-        super().__init__(caption=caption, parent=parent)
-        self.dial.setMaximum(100)
-        self.spin_box.setMaximum(1.0)
+class ManometersPanel(QWidget):
+    def __init__(self, manometers: Dict[str, AnalogItemType], parent=None):
+        super().__init__(parent=parent)
+        self.hbox = QHBoxLayout()
+        self.setLayout(self.hbox)
+        self.hbox.setContentsMargins(0, 0, 0, 0)
+
+        self.manometer: Dict[str, DialWidget] = {}
+
+        for key in manometers.keys():
+            manometer = DialWidget(manometer=manometers[key])
+            self.manometer[key] = manometer
+            self.hbox.addWidget(manometer)
+
+
+class SwitchesPanel(QWidget):
+    def __init__(self, switches: Dict[str, TwoStateDiscreteType], parent=None):
+        super().__init__(parent=parent)
+        self.grid = QGridLayout()
+        self.setLayout(self.grid)
+
+        self.switch: Dict[str, SwitchWidget] = {}
+        for i, key in enumerate(switches.keys()):
+            switch = SwitchWidget(switch=switches[key])
+            self.switch[key] = switch
+            self.grid.addWidget(switch, i // 3, i % 3)
+
+
+class SwitchWidget(QPushButton):
+    def __init__(self, switch: TwoStateDiscreteType, parent=None):
+        super().__init__(parent=parent)
+        self.setText(switch.name)
+        self.setFlat(True)
+        self.setCheckable(True)
+        self.toggled.connect(switch.set_value)
+        self.setStyleSheet(f'QPushButton {{'
+                           f'font-size:{FONT_SIZE}pt'
+                           f'border:2px;'
+                           f'border-radius:8px;'
+                           f'border-color:black;'
+                           f'text-align:center;'
+                           f'padding: 4px;'
+                           f'border-style: solid;'
+                           f'background-color: rgba(50,0,0,10%);}}'
+                           f'QPushButton:checked {{'
+                           f'background-color: rgba(0,200,0,50%);}}'
+                           )
+
+
+class SwitchesWithNeutralPanel(QWidget):
+    def __init__(self, switches: Dict[str, TwoStateWithNeutralType], parent=None):
+        super().__init__(parent=parent)
+        self.hbox = QHBoxLayout()
+        self.setLayout(self.hbox)
+
+        self.switch: Dict[str, SwitchWithNeutralWidget] = {}
+
+        for key in switches.keys():
+            switch = SwitchWithNeutralWidget(switch=switches[key])
+            self.switch[key] = switch
+            self.hbox.addWidget(switch)
+
+
+class SwitchWithNeutralWidget(QGroupBox):
+    def __init__(self, switch: TwoStateWithNeutralType, parent=None):
+        super().__init__(parent=parent)
+        self.setTitle(switch.name)
+        self.vbox = QVBoxLayout()
+        self.setLayout(self.vbox)
+        self.buttons = [QRadioButton(value) for value in switch.enum_values]
+        self.vbox.addWidget(self.buttons[1])
+        self.vbox.addWidget(self.buttons[0])
+        self.vbox.addWidget(self.buttons[2])
+        self.buttons[0].setChecked(True)
+        self.buttons[1].toggled.connect(switch.set_state1)
+        self.buttons[2].toggled.connect(switch.set_state2)
+
+
+class ButtonsPanel(QWidget):
+    def __init__(self, buttons: Dict[str, TwoStateDiscreteType], parent=None):
+        super().__init__(parent=parent)
+        self.grid = QGridLayout()
+        self.setLayout(self.grid)
+
+        self.button: Dict[str, ButtonWidget] = {}
+
+        for i, key in enumerate(buttons.keys()):
+            button = ButtonWidget(buttons[key])
+            self.button[key] = button
+            self.grid.addWidget(button, i // 5, i % 5)
+
+
+class ButtonWidget(QPushButton):
+    def __init__(self, button: TwoStateDiscreteType, parent=None):
+        super().__init__(parent=parent)
+        self.setText(button.name)
+        self.clicked.connect(button.clicked)
