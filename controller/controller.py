@@ -142,12 +142,3 @@ class Controller(QObject):
     def connect_diagnostic_window(self, win: DiagnosticWindow):
         self.diag_win = win
         self.close_all.connect(win.close)
-
-        for key in win.manometers.keys():
-            self.ai[key].value_changed.connect(win.manometers[key].set_value)
-
-        for key in win.buttons.keys():
-            self.di[key].clicked.connect(partial(win.buttons[key].animateClick, ANIMATE_CLICK_DELAY))
-
-        for key in win.switches.keys():
-            self.di[key].value_changed.connect(win.switches[key].setChecked)

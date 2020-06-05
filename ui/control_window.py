@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QDial, QVBoxLayout, QHBoxLayout, QGridLayout, QDoubleSpinBox
 from PyQt5.QtWidgets import QLabel, QPushButton, QGroupBox, QRadioButton
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QSettings, Qt
-from typing import Union, List, Dict
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt
+from typing import Dict
 from PyQt5 import QtGui
 from opc.opc import AnalogItemType, TwoStateWithNeutralType, TwoStateDiscreteType
 
@@ -176,7 +176,7 @@ class ButtonsPanel(QWidget):
         self.button: Dict[str, ButtonWidget] = {}
 
         for i, key in enumerate(buttons.keys()):
-            button = ButtonWidget(buttons[key])
+            button = ButtonWidget(button=buttons[key])
             self.button[key] = button
             self.grid.addWidget(button, i // 5, i % 5)
 

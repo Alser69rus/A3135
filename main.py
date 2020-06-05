@@ -41,7 +41,7 @@ class Main:
         self.ctrl_win = ControlWindow(server=self.server)
         self.controller.connect_control_window(self.ctrl_win)
 
-        self.diag_win = DiagnosticWindow()
+        self.diag_win = DiagnosticWindow(server=self.server)
         self.controller.connect_diagnostic_window(self.diag_win)
         self.diag_win.show()
 
