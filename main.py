@@ -20,23 +20,16 @@ class Main:
         print('(c) ПКБ ЦТ, 2020')
 
         self.server = Server()
-        self.controller = Controller()
         self.form = MainForm(self.server)
         self.stm = QStateMachine()
-
-        self.controller.connect_form(self.form)
-        self.controller.connect_server(self.server)
-        self.controller.connect_state_machine(self.stm)
-
-        # self.controller.connect_manometers()
-        # self.controller.connect_di_buttons()
+        self.controller = Controller(server=self.server,
+                                     form=self.form,
+                                     stm=self.stm)
 
         self.controller.show_panel('меню')
         self.form.show()
         self.controller.text.setText('Hello')
         self.controller.show_menu('Главное')
-
-
 
 
 if __name__ == '__main__':
