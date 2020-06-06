@@ -2,6 +2,10 @@ from PyQt5 import QtWidgets, QtCore
 from dataclasses import dataclass, field
 from PyQt5.QtCore import QPointF, QRectF, QLineF, pyqtSlot
 from PyQt5.QtGui import QPen, QBrush, QColor, QPainter, QFont
+from opc.opc import AnalogItemType
+
+WIDGET_WIDTH = 190
+WIDGET_HEIGHT = 220
 
 
 class Caption(QtWidgets.QLabel):
@@ -21,15 +25,13 @@ class Value(QtWidgets.QLabel):
         self.setText(self.format.format(value))
 
 
-class Manometer16(QtWidgets.QWidget):
-    def __init__(self, caption: str = 'Манометр', parent=None):
-        width = 190
-        height = 220
+class Manometer(QtWidgets.QWidget):
+    def __init__(self, manometer: AnalogItemType, parent=None):
         super().__init__(parent=parent)
         self.setMinimumSize(150, 150)
-        self.setFixedSize(width, height)
+        self.setFixedSize(WIDGET_WIDTH, WIDGET_HEIGHT)
 
-        self.caption = Caption(caption)
+        self.caption = Caption(manometer.name)
         self.value = Value()
         self.vbox = QtWidgets.QVBoxLayout()
         self.setLayout(self.vbox)
@@ -39,6 +41,13 @@ class Manometer16(QtWidgets.QWidget):
 
         self.scale = Scale()
         self.arrow = Arrow()
+
+        self.scale.label.max = manometer.eu_range.high
+        self.scale.primary.count = round(10 * manometer.eu_range.high)
+        self.scale.secondary.count = 2
+        self.scale.tertiary.count = 2
+
+        manometer.value_changed.connect(self.set_value)
 
     def paintEvent(self, QPaintEvent):
         painter = QPainter(self)
@@ -57,15 +66,6 @@ class Manometer16(QtWidgets.QWidget):
         angle = value * angle_range / value_range
         self.arrow.angle = self.scale.angle.min + angle
         self.update()
-
-
-class Manometer10(Manometer16):
-    def __init__(self, caption: str = 'Манометр 1.0', parent=None):
-        super().__init__(caption=caption, parent=parent)
-        self.scale.label.max = 1.0
-        self.scale.primary.count = 10
-        self.scale.secondary.count = 2
-        self.scale.tertiary.count = 2
 
 
 @dataclass

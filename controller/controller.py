@@ -87,7 +87,7 @@ class Controller(QObject):
             QCloseEvent.accept()
 
     def connect_manometers(self):
-        manometer = self.form.manometers.manometer
+        manometer = self.form.manometers_panel.manometer
         self.ai['ppm'].value_changed.connect(manometer['ppm'].set_value)
         self.ai['pim'].value_changed.connect(manometer['pim'].set_value)
         self.ai['ptc1'].value_changed.connect(manometer['ptc1'].set_value)
