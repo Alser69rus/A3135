@@ -29,8 +29,7 @@ class MainForm(QtWidgets.QWidget):
 
         self.ctrl_win = ControlWindow(server=server)
         self.diag_win = DiagnosticWindow(server=server)
-
-
+        self.connect_menu()
 
     @pyqtSlot(str)
     def show_panel(self, value: str):
@@ -65,3 +64,10 @@ class MainForm(QtWidgets.QWidget):
                 self.ctrl_win.setVisible(not self.ctrl_win.isVisible())
             elif event.key() == Qt.Key_F12:
                 self.diag_win.setVisible(not self.diag_win.isVisible())
+
+    def connect_menu(self):
+        menu = self.workspace.menu
+        self.button_panel.button['back'].clicked.connect(menu.on_back_click)
+        self.button_panel.button['up'].clicked.connect(menu.on_up_click)
+        self.button_panel.button['down'].clicked.connect(menu.on_down_click)
+        self.button_panel.button['yes'].clicked.connect(menu.on_ok_click)
