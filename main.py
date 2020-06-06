@@ -26,7 +26,7 @@ class Main:
                                      form=self.form,
                                      stm=self.stm)
 
-        self.controller.show_panel('меню')
+        self.controller.show_panel('манометры текст график')
         self.form.show()
         self.controller.text.setText('Hello')
         self.controller.show_menu('Главное')

@@ -1,6 +1,7 @@
-from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtGui import QKeyEvent
+from typing import Dict
 from ui.button_panel import ButtonPanel
 from ui.workspace import Workspace
 from ui.manometers_panel import ManometersPanel
@@ -10,20 +11,28 @@ from ui.diagnostic_window import DiagnosticWindow
 ANIMATE_CLICK_DELAY = 50
 
 
-class MainForm(QtWidgets.QWidget):
+class MainForm(QWidget):
     def __init__(self, server, parent=None):
         super().__init__(parent=parent)
         self.resize(1024, 768)
         self.setWindowTitle('Стенд А3139')
 
-        self.vbox = QtWidgets.QVBoxLayout()
+        self.vbox = QVBoxLayout()
         self.vbox.setContentsMargins(4, 4, 4, 4)
-        self.manometers_panel = ManometersPanel(server=server)
         self.workspace = Workspace()
+        self.panel: Dict[str, QWidget] = {
+            'манометры': ManometersPanel(server=server),
+            'меню': self.workspace.menu,
+            'текст': self.workspace.text,
+            'картинка': self.workspace.img,
+            'график': self.workspace.graph,
+            'отчет': self.workspace.report,
+        }
+
         self.button_panel = ButtonPanel(server=server)
 
         self.setLayout(self.vbox)
-        self.vbox.addWidget(self.manometers_panel)
+        self.vbox.addWidget(self.panel['манометры'])
         self.vbox.addWidget(self.workspace)
         self.vbox.addWidget(self.button_panel)
 
@@ -33,18 +42,8 @@ class MainForm(QtWidgets.QWidget):
 
     @pyqtSlot(str)
     def show_panel(self, value: str):
-        available_panel = {
-            'манометры': self.manometers_panel,
-            'меню': self.workspace.menu,
-            'текст': self.workspace.text,
-            'картинка': self.workspace.img,
-            'график': self.workspace.graph,
-            'настройки': self.workspace.settings,
-            'заголовок': self.workspace.report_header,
-            'отчет': self.workspace.report,
-        }
-        for panel in available_panel.keys():
-            available_panel[panel].setVisible(panel in value)
+        for key in self.panel.keys():
+            self.panel[key].setVisible(key in value)
 
     def keyPressEvent(self, event):
         if type(event) == QKeyEvent:

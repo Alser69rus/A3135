@@ -1,18 +1,14 @@
-from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, QTimer
-from PyQt5.QtCore import Qt, QStateMachine
-from PyQt5.QtWidgets import QPushButton, QLabel, QRadioButton, QWidget
-from PyQt5.QtGui import QKeyEvent, QPixmap
-from dataclasses import dataclass, field
-from typing import List, Dict, Union
-from functools import partial
+from PyQt5.QtCore import QObject, pyqtSignal, QTimer
+from PyQt5.QtCore import QStateMachine
+from PyQt5.QtWidgets import QPushButton, QLabel, QWidget
+from PyQt5.QtGui import QPixmap
+from typing import Dict, Union
 
 from ui.main_form import MainForm
 from opc.server import Server
 from ui.menu import MenuWidget
 from pyqtgraph import PlotWidget
-from opc.opc import AnalogItemType, TwoStateDiscreteType
-from ui.control_window import ControlWindow
-from ui.diagnostic_window import DiagnosticWindow
+from opc.opc import TwoStateDiscreteType
 
 ANIMATE_CLICK_DELAY = 50
 
@@ -36,6 +32,7 @@ class Controller(QObject):
 
         self.show_panel = form.show_panel
         self.show_menu = self.menu.show_menu
+
         self.form.closeEvent = self.closeEvent
         self.close_all.connect(self.ctrl_win.close)
         self.close_all.connect(self.diag_win.close)

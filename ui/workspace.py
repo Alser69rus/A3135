@@ -15,20 +15,10 @@ class Workspace(QtWidgets.QWidget):
         self.text = TextWidget()
         self.img = ImageWidget()
         self.graph = Plot()
-        self.settings = QtWidgets.QWidget()
-        self.report_header = QtWidgets.QWidget()
         self.report = QtWidgets.QWidget()
-
 
         self.hbox.addWidget(self.menu)
         self.hbox.addWidget(self.text)
         self.hbox.addWidget(self.img)
         self.hbox.addWidget(self.graph)
-        self.hbox.addWidget(self.settings)
-        self.hbox.addWidget(self.report_header)
         self.hbox.addWidget(self.report)
-
-
-        self.settings.setStyleSheet('QWidget{ background: cyan }')
-        self.report_header.setStyleSheet('QWidget{ background: blue }')
-        self.report.setStyleSheet('QWidget{ background: magenta }')
