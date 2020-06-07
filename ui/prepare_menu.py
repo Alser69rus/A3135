@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDialog, QInputDialog
+from PyQt5.QtWidgets import QDialog, QInputDialog,QPushButton
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject, QSettings
 from PyQt5.QtGui import QFont
 from ui.menu import MenuWidget, Menu, MenuButton
@@ -24,7 +24,7 @@ class PrepareMenu(QObject):
             button.name = name
             button.data = ''
 
-        menu.add_button('Приступить к испытанию')
+        self.done = menu.add_button('Приступить к испытанию')
         self.menu: Menu = menu
         self.reset()
 

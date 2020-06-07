@@ -32,6 +32,7 @@ class Controller(QObject):
 
         self.show_panel = form.show_panel
         self.show_menu = self.menu.show_menu
+        self.reset_prepare = self.menu.reset_prepare
 
         self.form.closeEvent = self.closeEvent
         self.close_all.connect(self.ctrl_win.close)

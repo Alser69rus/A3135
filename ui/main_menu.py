@@ -1,4 +1,5 @@
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import QWidget
 from ui.menu import MenuWidget
 from ui.prepare_menu import PrepareMenu
 
@@ -6,12 +7,12 @@ from ui.prepare_menu import PrepareMenu
 class MainMenu(MenuWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        menu = self.add_menu('Главное', 'Главное меню')
-        menu.add_button('БТП 020', 'Испытание БТП 020')
-        menu.add_button('РД 042', 'Испытание РД 042')
-        menu.add_button('КУ 215', 'Испытание КУ 215')
-        menu.add_button('КЭБ 208', 'Испытание КЭБ 208')
-        menu.add_button('Выход')
+        menu = self.add_menu('Главное меню')
+        self.main_btp = menu.add_button('Испытание БТП 020')
+        self.main_rd = menu.add_button('Испытание РД 042')
+        self.main_ku = menu.add_button('Испытание КУ 215')
+        self.main_keb = menu.add_button('Испытание КЭБ 208')
+        self.main_exit = menu.add_button('Выход')
 
         menu = self.add_menu('БТП 020', 'Программа испытания БТП 020')
         menu.add_button('Подготовка', 'Подготовка к испытанию')
@@ -58,4 +59,7 @@ class MainMenu(MenuWidget):
         menu.add_button('Время отпуска', 'Проверка времени снижения давления в ТЦ (отпуск)')
         menu.add_button('Завершение', 'Завершение испытаний')
 
-        self.prepare_menu = PrepareMenu(self)
+        self.prepare_menu: QWidget = PrepareMenu(self)
+
+    def reset_prepare(self):
+        self.prepare_menu.reset()
