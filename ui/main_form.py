@@ -14,7 +14,7 @@ ANIMATE_CLICK_DELAY = 50
 class MainForm(QWidget):
     def __init__(self, server, parent=None):
         super().__init__(parent=parent)
-        self.resize(1024, 768)
+        self.setFixedSize(1024,768)
         self.setWindowTitle('Стенд А3139')
 
         self.vbox = QVBoxLayout()
