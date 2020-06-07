@@ -32,6 +32,10 @@ class ButtonPanel(QWidget):
             self.button[key] = button
             self.hbox.addWidget(button)
 
+    def button_enable(self, buttons: str):
+        for key in self.button.keys():
+            self.button[key].setEnabled(key in buttons)
+
 
 class ButtonWidget(QPushButton):
     def __init__(self, button: TwoStateDiscreteType, icon: QIcon, parent=None):
