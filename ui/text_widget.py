@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import Qt
 
@@ -9,3 +9,4 @@ class TextWidget(QLabel):
         self.setFont(QFont('Segoi ui', 14))
         self.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.setMinimumWidth(200)
+        self.setWordWrap(True)

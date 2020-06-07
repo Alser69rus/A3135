@@ -10,6 +10,7 @@ UPDATE_DELAY = 50
 
 class Worker(QObject):
     finished = pyqtSignal()
+    updated = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -30,6 +31,7 @@ class Worker(QObject):
             t = round(UPDATE_DELAY - t * 1000)
             if t > 0:
                 self.thread().msleep(t)
+            self.updated.emit()
         self.finished.emit()
 
     @pyqtSlot()

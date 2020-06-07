@@ -31,7 +31,6 @@ class Main:
         self.controller.show_panel('меню')
         self.controller.text.setText('Hello')
         self.controller.show_menu('Главное меню')
-        self.controller.button_enable('back up down yes')
         self.form.show()
 
         self.menu_state = MenuState(self.controller)

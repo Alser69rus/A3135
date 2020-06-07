@@ -7,6 +7,7 @@ from typing import Dict, Union
 from ui.main_form import MainForm
 from opc.server import Server
 from ui.menu import MenuWidget
+from ui.main_menu import MainMenu
 from pyqtgraph import PlotWidget
 from opc.opc import TwoStateDiscreteType
 
@@ -15,6 +16,7 @@ ANIMATE_CLICK_DELAY = 50
 
 class Controller(QObject):
     close_all = pyqtSignal()
+    server_updated = pyqtSignal()
 
     def __init__(self, server: Server, form: MainForm, stm: QStateMachine, parent=None):
         super().__init__(parent=parent)
@@ -22,7 +24,7 @@ class Controller(QObject):
         self.form = form
         self.stm = stm
 
-        self.menu: MenuWidget = form.workspace.menu
+        self.menu: MainMenu = form.workspace.menu
         self.text: QLabel = form.workspace.text
         self.image: QLabel = form.workspace.img
         self.graph: PlotWidget = form.workspace.graph
@@ -33,11 +35,13 @@ class Controller(QObject):
         self.show_panel = form.show_panel
         self.show_menu = self.menu.show_menu
         self.reset_prepare = self.menu.reset_prepare
-        self.button_enable=self.form.button_panel.button_enable
+        self.button_enable = self.form.button_panel.button_enable
+        self.setText = self.text.setText
 
         self.form.closeEvent = self.closeEvent
         self.close_all.connect(self.ctrl_win.close)
         self.close_all.connect(self.diag_win.close)
+        self.server.worker.updated.connect(self.server_updated)
 
         self.button: Dict[str, Union[TwoStateDiscreteType, QPushButton]] = {}
         panel_buttons = self.form.button_panel.button.keys()
