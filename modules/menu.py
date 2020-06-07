@@ -14,21 +14,15 @@ class MenuState(QState):
         global ctrl, menu
         ctrl = controller
         menu = ctrl.menu
-        # self.main_menu = MainMenu(self)
-        self.prepare_btp = ReportData(self)
-        self.reset_btp = Reset(self)
-        # self.btp020 = BTP020(self)
+
+        self.main_menu = Menu('Главное меню', self)
+        self.btp: QState = SubMenu(self.main_menu, menu.main_btp, 'БТП 020', self)
+        self.rd: QState = SubMenu(self.main_menu, menu.main_rd, 'РД 042', self)
+        self.ku: QState = SubMenu(self.main_menu, menu.main_ku, 'КУ 215', self)
+        self.keb: QState = SubMenu(self.main_menu, menu.main_keb, 'КЭБ 208', self)
         self.finish = QFinalState(self)
-
         self.setInitialState(self.main_menu)
-
         self.main_menu.addTransition(menu.main_exit.clicked, self.finish)
-        self.main_menu.addTransition(menu.main_btp.clicked, self.prepare_btp)
-        self.prepare_btp.addTransition(ctrl.button['back'].clicked, self.main_menu)
-        self.prepare_btp.addTransition(menu.prepare_menu.done.clicked, self.reset_btp)
-        self.reset_btp.addTransition(self.btp020)
-        self.btp020.addTransition(ctrl.button['back'].clicked, self.main_menu)
-
         self.finished.connect(ctrl.form.close)
 
     def onEntry(self, event: QEvent) -> None:
@@ -40,16 +34,19 @@ class MenuState(QState):
 
 
 class SubMenu(QState):
-    def __init__(self, menu_name, parent=None):
+    def __init__(self, main_menu: QState, button: QPushButton, menu_name: str, parent=None):
         super().__init__(parent=parent)
         self.reset = Reset(parent=self)
         self.report_data = ReportData(parent=self)
         self.menu = Menu(menu_name=menu_name, parent=self)
-        self.finish = QFinalState()
+        self.finish = QFinalState(self)
         self.setInitialState(self.reset)
         self.reset.addTransition(self.report_data)
         self.report_data.addTransition(ctrl.button['back'].clicked, self.finish)
         self.report_data.addTransition(menu.prepare_menu.done.clicked, self.menu)
+        self.menu.addTransition(ctrl.button['back'].clicked, self.finish)
+        main_menu.addTransition(button.clicked, self)
+        self.addTransition(self.finished, main_menu)
 
 
 class Reset(QState):
