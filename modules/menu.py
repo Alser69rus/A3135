@@ -1,7 +1,6 @@
-from PyQt5.QtCore import QStateMachine, QState, QEvent, QFinalState
+from PyQt5.QtCore import QState, QEvent, QFinalState
 from PyQt5.QtWidgets import QPushButton
 from controller.controller import Controller
-from typing import Dict
 from ui.main_menu import MainMenu
 
 ctrl: Controller
@@ -37,7 +36,7 @@ class SubMenu(QState):
     def __init__(self, main_menu: QState, button: QPushButton, menu_name: str, parent=None):
         super().__init__(parent=parent)
         self.reset = Reset(parent=self)
-        self.report_data = ReportData(parent=self)
+        self.report_data = Menu('Подготовка к испытанию', parent=self)
         self.menu = Menu(menu_name=menu_name, parent=self)
         self.finish = QFinalState(self)
         self.setInitialState(self.reset)
@@ -56,11 +55,6 @@ class Reset(QState):
         menu.menu['РД 042'].reset()
         menu.menu['КУ 215'].reset()
         menu.menu['КЭБ 208'].reset()
-
-
-class ReportData(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.show_menu('Подготовка к испытанию')
 
 
 class Menu(QState):
