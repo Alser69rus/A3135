@@ -17,6 +17,7 @@ class Prepare(QState):
 
         self.start = Start(self)
         self.check_pim = CheckPim(self)
+        self.check_tank = CheckTank(self)
         self.check_zam_el_torm = CheckZamElTorm(self)
         self.check_speed_60 = CheckSpeed60(self)
         self.set_bto = SetBTO(self)
@@ -26,7 +27,8 @@ class Prepare(QState):
         self.setInitialState(self.start)
         self.start.addTransition(ctrl.switch['ku 215'].high_value, self.check_pim)
         self.check_pim.addTransition(ctrl.server_updated, self.check_pim)
-        self.check_pim.addTransition(self.check_pim.done, self.check_zam_el_torm)
+        self.check_pim.addTransition(self.check_pim.done, self.check_tank)
+        self.check_tank.addTransition(ctrl.button['yes'].clicked, self.check_zam_el_torm)
         self.check_zam_el_torm.addTransition(ctrl.switch['el. braking'].low_value, self.check_speed_60)
         self.check_speed_60.addTransition(ctrl.switch['>60 km/h'].low_value, self.set_bto)
         self.set_bto.addTransition(ctrl.button['yes'].clicked, self.enter_vr)
@@ -50,16 +52,23 @@ class CheckPim(QState):
 
     def onEntry(self, event: QEvent) -> None:
         text = f'<p>Необходимо сбросить до нуля давление в импульсной магистрали. ' \
-               f'Для этого переведите ручку крана в отпускное положение.</p>' \
-               f'<p>Вклучите тумблер "НАКОП. РЕЗ." в положение "СБРОС".</p>'
+               f'Для этого переведите ручку крана в отпускное положение.</p>'
 
         ctrl.setText(text)
         if ctrl.manometer['p im'].get_value() < 0.005:
             self.done.emit()
 
 
+class CheckTank(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.button_enable('back yes')
+        ctrl.setText(f'<p>Включите тумблер "НАКОП. РЕЗ." в положение "СБРОС".</p>'
+                     f'<p><br>Для продолжения нажмите "ДА".</p>')
+
+
 class CheckZamElTorm(QState):
     def onEntry(self, event: QEvent) -> None:
+        ctrl.button_enable('back')
         text = f'<p>Выключите тумблер "ЗАМ. ЭЛ. ТОРМ."</p>'
         ctrl.setText(text)
 

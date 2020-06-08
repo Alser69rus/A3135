@@ -2,6 +2,7 @@ from PyQt5.QtCore import QState, QEvent, QFinalState
 from controller.controller import Controller
 from modules.btp.prepare import Prepare
 from modules.btp.auto_breaking import AutoBreaking
+from modules.btp.kvt_breaking import KvtBreaking
 from modules.btp.data import BtpData
 
 ctrl: Controller
@@ -26,6 +27,7 @@ class Btp(QState):
 
         self.prepare = Prepare(controller=ctrl, menu_state=self.menu)
         self.auto_breaking = AutoBreaking(controller=ctrl, menu_state=self.menu)
+        self.kvt_breaking = KvtBreaking(controller=ctrl, menu_state=self.menu)
 
 
 class Reset(QState):
