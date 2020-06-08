@@ -46,7 +46,8 @@ class ControlWindow(QWidget):
                 switch.set_value(switch.get_value())
             for key in self.server.switch_with_neutral.keys():
                 switch = self.server.switch_with_neutral[key]
-                switch.set_value(switch.get_value())
+                switch.set_state1(switch._state1)
+                switch.set_state2(switch._state2)
         else:
             self.server.worker.skip_update = False
 

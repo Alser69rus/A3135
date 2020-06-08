@@ -93,11 +93,16 @@ class MultiStateDiscreteType(QObject):
 
     @pyqtSlot(int)
     def set_value(self, value: int):
+        if value == self._value: return
         self._value = value
         self.value_changed.emit(value)
 
 
 class TwoStateWithNeutralType(MultiStateDiscreteType):
+    state_one = pyqtSignal()
+    state_two = pyqtSignal()
+    state_neutral = pyqtSignal()
+
     def __init__(self, name: str = '', enum_values: List[str] = [], parent=None):
         super().__init__(name=name, enum_values=enum_values, parent=parent)
         self._state1: bool = False
@@ -118,7 +123,10 @@ class TwoStateWithNeutralType(MultiStateDiscreteType):
     def set_state(self, state1: bool, state2: bool):
         if state1 and not state2:
             self.set_value(1)
+            self.state_one.emit()
         elif state2 and not state1:
             self.set_value(2)
+            self.state_two.emit()
         else:
             self.set_value(0)
+            self.state_neutral.emit()

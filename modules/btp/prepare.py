@@ -30,8 +30,7 @@ class Prepare(QState):
         self.check_zam_el_torm.addTransition(ctrl.switch['el. braking'].low_value, self.check_speed_60)
         self.check_speed_60.addTransition(ctrl.switch['>60 km/h'].low_value, self.set_bto)
         self.set_bto.addTransition(ctrl.button['yes'].clicked, self.enter_vr)
-        self.enter_vr.addTransition(ctrl.server_updated, self.enter_vr)
-        self.enter_vr.addTransition(self.enter_vr.done, self.btp_to_stand)
+        self.enter_vr.addTransition(ctrl.switch_with_neutral['enter'].state_one, self.btp_to_stand)
         self.btp_to_stand.addTransition(ctrl.button['yes'].clicked, self.finish)
 
 
@@ -82,14 +81,10 @@ class SetBTO(QState):
 
 
 class EnterVr(QState):
-    done = pyqtSignal()
-
     def onEntry(self, event: QEvent) -> None:
         ctrl.button_enable('back')
         text = f'<p>Включите тумблер "ВХОД" в положение "ВР".</p>'
         ctrl.setText(text)
-        if ctrl.switch_with_neutral['enter'].value_sa_text() == 'ВР':
-            self.done.emit()
 
 
 class BtpToStand(QState):
