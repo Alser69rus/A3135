@@ -14,6 +14,8 @@ DIAL_HEIGHT = 150
 class ControlWindow(QWidget):
     def __init__(self, server, parent=None):
         super().__init__(parent=parent)
+        self.server = server
+        server.worker.updated.connect(self.emulate_server_update)
         self.setWindowTitle('Окно эмуляции стенда')
         self.vbox = QVBoxLayout()
         self.setFont(QFont('Segoi UI', FONT_SIZE))
@@ -34,6 +36,19 @@ class ControlWindow(QWidget):
     def keyPressEvent(self, a0: QtGui.QKeyEvent) -> None:
         if a0.key() == Qt.Key_F11:
             self.setVisible(False)
+
+    @pyqtSlot()
+    def emulate_server_update(self):
+        if self.isVisible():
+            self.server.worker.skip_update = True
+            for key in self.server.switch.keys():
+                switch = self.server.switch[key]
+                switch.set_value(switch.get_value())
+            for key in self.server.switch_with_neutral.keys():
+                switch = self.server.switch_with_neutral[key]
+                switch.set_value(switch.get_value())
+        else:
+            self.server.worker.skip_update = False
 
 
 class DialWidget(QWidget):

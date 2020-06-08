@@ -24,8 +24,10 @@ class Worker(QObject):
     def do_work(self):
         while self.running:
             t = datetime.now()
-            # self.ai.update()
-            # self.di.update()
+            if not self.skip_update:
+                t = t
+                # self.ai.update()
+                # self.di.update()
             t = (datetime.now() - t).total_seconds()
             t = round(UPDATE_DELAY - t * 1000)
             if t > 0:

@@ -21,15 +21,14 @@ class AutoBreaking(QState):
 
 
 class Start(QState):
-    done = pyqtSignal()
-
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст')
-        ctrl.button_enable('back')
-        text = f'<p><font color="red">ВНИМАНИЕ! БТО испытывается с исправным КУ 215.</font></p>' \
-               f'<p>Установите КУ 215 на прижим, включите пневмотумблер "ПРИЖИМ КУ 215".</p>' \
-               f'<p>Включите тумблер "КУ 215".</p>'
-
+        ctrl.button_enable('back yes')
+        text = f'<p>Переведите ручку КУ 215 в 1 положение</p>' \
+               f'<p><br>Для продолжения нажмите "ДА".</p>'
         ctrl.setText(text)
-        if ctrl.switch['ku 215'].get_value():
-            self.done.emit()
+
+
+class Check1(QState):
+    def onEntry(self, event: QEvent) -> None:
+        pass

@@ -24,14 +24,11 @@ class Prepare(QState):
         self.btp_to_stand = BtpToStand(self)
 
         self.setInitialState(self.start)
-        self.start.addTransition(ctrl.server_updated, self.start)
-        self.start.addTransition(self.start.done, self.check_pim)
+        self.start.addTransition(ctrl.switch['ku 215'].high_value, self.check_pim)
         self.check_pim.addTransition(ctrl.server_updated, self.check_pim)
         self.check_pim.addTransition(self.check_pim.done, self.check_zam_el_torm)
-        self.check_zam_el_torm.addTransition(ctrl.server_updated, self.check_zam_el_torm)
-        self.check_zam_el_torm.addTransition(self.check_zam_el_torm.done, self.check_speed_60)
-        self.check_speed_60.addTransition(ctrl.server_updated, self.check_speed_60)
-        self.check_speed_60.addTransition(self.check_speed_60.done, self.set_bto)
+        self.check_zam_el_torm.addTransition(ctrl.switch['el. braking'].low_value, self.check_speed_60)
+        self.check_speed_60.addTransition(ctrl.switch['>60 km/h'].low_value, self.set_bto)
         self.set_bto.addTransition(ctrl.button['yes'].clicked, self.enter_vr)
         self.enter_vr.addTransition(ctrl.server_updated, self.enter_vr)
         self.enter_vr.addTransition(self.enter_vr.done, self.btp_to_stand)
@@ -39,8 +36,6 @@ class Prepare(QState):
 
 
 class Start(QState):
-    done = pyqtSignal()
-
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст')
         ctrl.button_enable('back')
@@ -49,8 +44,6 @@ class Start(QState):
                f'<p>Включите тумблер "КУ 215".</p>'
 
         ctrl.setText(text)
-        if ctrl.switch['ku 215'].get_value():
-            self.done.emit()
 
 
 class CheckPim(QState):
@@ -67,23 +60,15 @@ class CheckPim(QState):
 
 
 class CheckZamElTorm(QState):
-    done = pyqtSignal()
-
     def onEntry(self, event: QEvent) -> None:
         text = f'<p>Выключите тумблер "ЗАМ. ЭЛ. ТОРМ."</p>'
         ctrl.setText(text)
-        if not ctrl.switch['el. braking'].get_value():
-            self.done.emit()
 
 
 class CheckSpeed60(QState):
-    done = pyqtSignal()
-
     def onEntry(self, event: QEvent) -> None:
         text = f'<p>Выключите тумблер "> 60 км/ч"</p>'
         ctrl.setText(text)
-        if not ctrl.switch['>60 km/h'].get_value():
-            self.done.emit()
 
 
 class SetBTO(QState):

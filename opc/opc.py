@@ -17,6 +17,7 @@ class AnalogItemType(QObject):
     def __init__(self, name: str = 'Аналоговый вход', parent=None):
         super().__init__(parent=parent)
         self._value: float = 0.0
+        self.instrument_value: float = 0.0
         self.timestamp: datetime = datetime.now()
         self.eu_range: Range = Range(0, 1.6)
         self.instrument_range: Range = Range(4000, 20000)
@@ -29,10 +30,11 @@ class AnalogItemType(QObject):
 
     @pyqtSlot(float)
     def set_value(self, value: float):
+        self.instrument_value = value
         eu_r = self.eu_range.high - self.eu_range.low
         i_r = self.instrument_range.high - self.instrument_range.low
         if i_r == 0:
-            logging.error(f'Диапазон {self.definition} равен 0')
+            logging.error(f'Диапазон {self.name} равен 0')
             return
         value = (value - self.instrument_range.low) * eu_r / i_r + self.eu_range.low
         value = round(value, self.value_precision)
@@ -45,6 +47,8 @@ class AnalogItemType(QObject):
 class TwoStateDiscreteType(QObject):
     value_changed = pyqtSignal(bool)
     clicked = pyqtSignal()
+    high_value = pyqtSignal()
+    low_value = pyqtSignal()
 
     def __init__(self, name: str = 'Дискретный вход', parent=None):
         super().__init__(parent=parent)
@@ -56,8 +60,15 @@ class TwoStateDiscreteType(QObject):
     def get_value(self) -> bool:
         return self._value
 
+    def value_as_text(self) -> str:
+        return self.true_state if self._value else self.false_state
+
     @pyqtSlot(bool)
     def set_value(self, value: bool):
+        if value:
+            self.high_value.emit()
+        else:
+            self.low_value.emit()
         if self._value == value: return
         self._value = value
         if value:
@@ -111,4 +122,3 @@ class TwoStateWithNeutralType(MultiStateDiscreteType):
             self.set_value(2)
         else:
             self.set_value(0)
-
