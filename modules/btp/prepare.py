@@ -103,7 +103,7 @@ class EnterVr(QState):
         ctrl.button_enable('back')
         text = f'<p>Включите тумблер "ВХОД" в положение "ВР".</p>'
         ctrl.setText(text)
-        if ctrl.switch_with_neutral['enter'].get_value()==1:
+        if ctrl.switch_with_neutral['enter'].value_sa_text() == 'ВР':
             self.done.emit()
 
 
@@ -114,5 +114,3 @@ class BtpToStand(QState):
                f'<p><br>Для продолжения нажмите "ДА".</p>'
         ctrl.setText(text)
         ctrl.menu.current_menu.current_button.set_success()
-
-

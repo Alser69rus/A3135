@@ -74,8 +74,8 @@ class MultiStateDiscreteType(QObject):
         self.enum_values: List[str] = enum_values
         self._value: int = 0
 
-    def value_sa_text(self, value: int) -> str:
-        return self.enum_values[value]
+    def value_sa_text(self) -> str:
+        return self.enum_values[self._value]
 
     def get_value(self) -> int:
         return self._value

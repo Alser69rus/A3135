@@ -12,7 +12,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG, format='%(name)s %(asctime)s - %(levelname)s - %(message)s')
 
 
-# logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.WARNING)
 
 
 class Main:
