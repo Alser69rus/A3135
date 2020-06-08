@@ -10,6 +10,7 @@ from ui.menu import MenuWidget
 from ui.main_menu import MainMenu
 from pyqtgraph import PlotWidget
 from opc.opc import TwoStateDiscreteType
+from modules.btp.data import BtpData
 
 ANIMATE_CLICK_DELAY = 50
 
@@ -55,6 +56,9 @@ class Controller(QObject):
         self.manometer = server.manometer
         self.switch = server.switch
         self.switch_with_neutral = server.switch_with_neutral
+
+        self.btp=BtpData()
+
 
     def closeEvent(self, QCloseEvent):
         running_states = [self.server.th.isRunning(), self.stm.isRunning()]

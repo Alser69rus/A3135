@@ -2,6 +2,7 @@ from PyQt5.QtCore import QState, QEvent, QFinalState
 from controller.controller import Controller
 from modules.btp.prepare import Prepare
 from modules.btp.auto_breaking import AutoBreaking
+from modules.btp.data import BtpData
 
 ctrl: Controller
 
@@ -31,6 +32,7 @@ class Reset(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.menu.reset_prepare()
         ctrl.menu.menu['БТП 020'].reset()
+        ctrl.btp = BtpData()
 
 
 class ReportData(QState):

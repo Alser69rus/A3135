@@ -28,6 +28,9 @@ class AnalogItemType(QObject):
     def get_value(self) -> float:
         return self._value
 
+    def value_as_text(self) -> str:
+        return f'{self.get_value():5.{self.value_precision}f} {self.engineering_units}'
+
     @pyqtSlot(float)
     def set_value(self, value: float):
         self.instrument_value = value
