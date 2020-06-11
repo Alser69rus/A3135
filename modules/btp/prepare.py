@@ -16,29 +16,39 @@ class Prepare(QState):
         menu_state.addTransition(menu.button['Подготовка'].clicked, self)
 
         self.start = Start(self)
-        self.check_pim = CheckPim(self)
-        self.check_tank = CheckTank(self)
-        self.check_zam_el_torm = CheckZamElTorm(self)
-        self.check_speed_60 = CheckSpeed60(self)
+        self.ppm = Ppm(self)
+        self.ku_215 = KU215(self)
+        self.pim = Pim(self)
+        self.tank = Tank(self)
+        self.el_breaking = ElBreaking(self)
+        self.speed_60 = Speed60(self)
         self.set_bto = SetBTO(self)
-        self.enter_vr = EnterVr(self)
+        self.enter = Enter(self)
         self.btp_to_stand = BtpToStand(self)
 
         self.setInitialState(self.start)
-        self.start.addTransition(ctrl.switch['ku 215'].high_value, self.check_pim)
-        self.check_pim.addTransition(ctrl.server_updated, self.check_pim)
-        self.check_pim.addTransition(self.check_pim.done, self.check_tank)
-        self.check_tank.addTransition(ctrl.switch_with_neutral['tank'].state_two, self.check_zam_el_torm)
-        self.check_zam_el_torm.addTransition(ctrl.switch['el. braking'].low_value, self.check_speed_60)
-        self.check_speed_60.addTransition(ctrl.switch['>60 km/h'].low_value, self.set_bto)
-        self.set_bto.addTransition(ctrl.button['yes'].clicked, self.enter_vr)
-        self.enter_vr.addTransition(ctrl.switch_with_neutral['enter'].state_one, self.btp_to_stand)
+        self.start.addTransition(self.ku_215)
+        self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.ppm)
+        self.ppm.addTransition(ctrl.server_updated, self.ppm)
+        self.ppm.addTransition(self.ppm.done, self.pim)
+        self.pim.addTransition(ctrl.server_updated, self.pim)
+        self.pim.addTransition(self.pim.done, self.tank)
+        self.tank.addTransition(ctrl.switch_with_neutral['tank'].state_two, self.el_breaking)
+        self.el_breaking.addTransition(ctrl.switch['el. braking'].low_value, self.speed_60)
+        self.speed_60.addTransition(ctrl.switch['>60 km/h'].low_value, self.set_bto)
+        self.set_bto.addTransition(ctrl.button['yes'].clicked, self.enter)
+        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_one, self.btp_to_stand)
         self.btp_to_stand.addTransition(ctrl.button['yes'].clicked, self.finish)
 
 
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст')
+        ctrl.button_enable('back')
+
+
+class KU215(QState):
+    def onEntry(self, event: QEvent) -> None:
         ctrl.button_enable('back')
         text = f'<p><font color="red">ВНИМАНИЕ! БТО испытывается с исправным КУ 215.</font></p>' \
                f'<p>Установите КУ 215 на прижим, включите пневмотумблер "ПРИЖИМ КУ 215".</p>' \
@@ -47,7 +57,17 @@ class Start(QState):
         ctrl.setText(text)
 
 
-class CheckPim(QState):
+class Ppm(QState):
+    done = pyqtSignal()
+
+    def onEntry(self, event: QEvent) -> None:
+        text = f'<p>Необходимо в питательной магистрали установить давление в пределах 0,75...1,0 МПа.</p>'
+        ctrl.setText(text)
+        if 0.75 <= ctrl.manometer['p pm'].get_value() <= 1.0:
+            self.done.emit()
+
+
+class Pim(QState):
     done = pyqtSignal()
 
     def onEntry(self, event: QEvent) -> None:
@@ -59,20 +79,20 @@ class CheckPim(QState):
             self.done.emit()
 
 
-class CheckTank(QState):
+class Tank(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.button_enable('back yes')
         ctrl.setText(f'<p>Включите тумблер "НАКОП. РЕЗ." в положение "СБРОС".</p>')
 
 
-class CheckZamElTorm(QState):
+class ElBreaking(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.button_enable('back')
         text = f'<p>Выключите тумблер "ЗАМ. ЭЛ. ТОРМ."</p>'
         ctrl.setText(text)
 
 
-class CheckSpeed60(QState):
+class Speed60(QState):
     def onEntry(self, event: QEvent) -> None:
         text = f'<p>Выключите тумблер "> 60 км/ч"</p>'
         ctrl.setText(text)
@@ -88,7 +108,7 @@ class SetBTO(QState):
         ctrl.setText(text)
 
 
-class EnterVr(QState):
+class Enter(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.button_enable('back')
         text = f'<p>Включите тумблер "ВХОД" в положение "ВР".</p>'
