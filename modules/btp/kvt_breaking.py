@@ -137,7 +137,7 @@ class ShowResult(QState):
         data = ctrl.btp.kvt_breaking
         stage = data.stage[row]
         rang = data.range_as_text(row)
-        tc1 = data.tc2_as_text(row)
+        tc1 = data.tc1_as_text(row)
         tc2 = data.tc2_as_text(row)
         return f'<tr><td>   {stage}  </td><td>   {rang}   </td>' \
                f'<td align="center">   {tc1}   </td><td align="center">   {tc2}   </td></tr>'

@@ -1,6 +1,7 @@
 import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QStateMachine, QState
+import pyqtgraph as pg
 
 from ui.main_form import MainForm
 from controller.controller import Controller
@@ -40,7 +41,8 @@ class Main:
 
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
+    # app = QtWidgets.QApplication(sys.argv)
+    app=pg.Qt.QtWidgets.QApplication([])
     main = Main()
     if main.form.width() > 1024 or main.form.height() > 768:
         logging.debug(f'window size: {main.form.width()}x{main.form.height()}')

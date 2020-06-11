@@ -57,8 +57,8 @@ class Controller(QObject):
         self.switch = server.switch
         self.switch_with_neutral = server.switch_with_neutral
 
-        self.btp=BtpData()
-
+        self.btp = BtpData()
+        print(self.graph)
 
     def closeEvent(self, QCloseEvent):
         running_states = [self.server.th.isRunning(), self.stm.isRunning()]
