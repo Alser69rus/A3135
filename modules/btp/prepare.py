@@ -28,7 +28,7 @@ class Prepare(QState):
         self.start.addTransition(ctrl.switch['ku 215'].high_value, self.check_pim)
         self.check_pim.addTransition(ctrl.server_updated, self.check_pim)
         self.check_pim.addTransition(self.check_pim.done, self.check_tank)
-        self.check_tank.addTransition(ctrl.button['yes'].clicked, self.check_zam_el_torm)
+        self.check_tank.addTransition(ctrl.switch_with_neutral['tank'].state_two, self.check_zam_el_torm)
         self.check_zam_el_torm.addTransition(ctrl.switch['el. braking'].low_value, self.check_speed_60)
         self.check_speed_60.addTransition(ctrl.switch['>60 km/h'].low_value, self.set_bto)
         self.set_bto.addTransition(ctrl.button['yes'].clicked, self.enter_vr)
@@ -62,8 +62,7 @@ class CheckPim(QState):
 class CheckTank(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.button_enable('back yes')
-        ctrl.setText(f'<p>Включите тумблер "НАКОП. РЕЗ." в положение "СБРОС".</p>'
-                     f'<p><br>Для продолжения нажмите "ДА".</p>')
+        ctrl.setText(f'<p>Включите тумблер "НАКОП. РЕЗ." в положение "СБРОС".</p>')
 
 
 class CheckZamElTorm(QState):
