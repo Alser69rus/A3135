@@ -112,9 +112,10 @@ class Server(QObject):
     def get_switch_with_neutral(self) -> Dict[str, TwoStateWithNeutralType]:
         result: Dict[str, TwoStateWithNeutralType] = {}
         radio_switch = [
-            ('enter', 'ВР - 0 - КУ', ['- 0 -', 'ВР', 'КУ'], [self.worker.di.pin[17], self.worker.di.pin[18]]),
+            ('enter', 'ВХОД', ['- 0 -', 'ВР', 'КУ'], [self.worker.di.pin[17], self.worker.di.pin[18]]),
             ('rd-0-keb', 'РД 042 - 0 - КЭБ 208', ['- 0 -', 'РД 042', 'КЭБ 208'],
              [self.worker.di.pin[19], self.worker.di.pin[20]]),
+            ('tank', 'НАКОП. РЕЗ.', ['- 0 -', 'ЗАР.', 'СБРОС'], [self.worker.di.pin[21], self.worker.di.pin[22]]),
         ]
         for key, name, enum, di in radio_switch:
             radio_switch = TwoStateWithNeutralType(name=name, enum_values=enum)
