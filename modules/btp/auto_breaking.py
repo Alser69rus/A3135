@@ -48,10 +48,28 @@ class Start(QState):
         ctrl.menu.current_menu.current_button.set_normal()
 
 
-class Check(QState):
+class Ppm(QState):
+    done = pyqtSignal()
+
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText(f'<p>Установите давление в питательной магистрали в пределах 0,75...1,0 МПа.</p>')
+        if 0.75 <= ctrl.manometer['p pm'].get_value() <= 1.0:
+            self.done.emit()
+
+
+class KU215(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText(f'<p>Включите тумблер "КУ 215".</p>')
+
+
+class Enter(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText(f'<p>Включите тумблер "ВХОД" в положение "ВР".</p>')
+
+
+class HandlePosition(QState):
     def __init__(self, stage: int, parent=None):
         super().__init__(parent=parent)
-        self.stage = stage
         step = (
             'в первое положение',
             'во второе положение',
@@ -62,7 +80,39 @@ class Check(QState):
             'в первое положение',
             'в отпускное положение',
         )
-        self.step: str = step[stage]
+        self.position: str = step[stage]
+
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.show_panel('манометры текст график')
+        ctrl.setText(f'Переведите рукоятку в {self.position}.')
+
+
+class CheckP(QState):
+    done = pyqtSignal()
+
+    def __init__(self, stage: int, parent=None):
+        super().__init__(parent=parent)
+        if stage == 0:
+            self.check = lambda p: p > ctrl.btp.auto_breaking.range[7][1]
+        elif 1 <= stage <= 3:
+            self.check = lambda p: p > ctrl.btp.auto_breaking.range[stage - 1][1]
+        elif 4 <= stage <= 7:
+            self.check = lambda p: p < ctrl.btp.auto_breaking.range[stage - 1][0]
+        else:
+            self.check = None
+
+    def onEntry(self, event: QEvent) -> None:
+        p = ctrl.manometer['p im'].get_value()
+        if self.check(p):
+            self.done.emit()
+
+
+class Measure(QState):
+    def __init__(self, stage: int, parent=None):
+        super().__init__(parent=parent)
+        self.stage = stage
+
+        self.step: str =
 
     def onEntry(self, event: QEvent) -> None:
         text = f'<p>Переведите ручку КУ 215 {self.step}.</p>' \
@@ -73,6 +123,21 @@ class Check(QState):
     def onExit(self, event: QEvent) -> None:
         ctrl.btp.auto_breaking.tc1[self.stage] = ctrl.manometer['p tc1'].get_value()
         ctrl.btp.auto_breaking.tc2[self.stage] = ctrl.manometer['p tc2'].get_value()
+
+
+class Check(QState):
+    def __init__(self, stage: int, parent=None):
+        super().__init__(parent=parent)
+        self.ppm = Ppm(self)
+        self.ku_215 = KU215(self)
+        self.enter = Enter(self)
+        self.measure = Measure(stage=stage, parent=self)
+
+        self.setInitialState(self.ppm)
+        self.ppm.addTransition(ctrl.server_updated, self.ppm)
+        self.ppm.addTransition(self.ppm.done, self.ku_215)
+        self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.enter)
+        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_one, self.measure)
 
 
 class ShowResult(QState):

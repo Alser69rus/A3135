@@ -61,7 +61,7 @@ class Ppm(QState):
     done = pyqtSignal()
 
     def onEntry(self, event: QEvent) -> None:
-        text = f'<p>Необходимо в питательной магистрали установить давление в пределах 0,75...1,0 МПа.</p>'
+        text = f'<p>Установите давление в питательной магистрали в пределах 0,75...1,0 МПа.</p>'
         ctrl.setText(text)
         if 0.75 <= ctrl.manometer['p pm'].get_value() <= 1.0:
             self.done.emit()
