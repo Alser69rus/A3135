@@ -1,4 +1,5 @@
-from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal, pyqtBoundSignal
+from PyQt5.QtCore import QState, QFinalState, QEvent
+
 from controller.controller import Controller
 from modules.btp.common import Common
 

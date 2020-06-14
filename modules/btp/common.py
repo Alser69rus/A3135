@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QState, QEvent
 from PyQt5.QtCore import pyqtSignal
+
 from controller.controller import Controller
 
 ctrl: Controller

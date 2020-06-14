@@ -1,14 +1,13 @@
-import sys
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import QStateMachine, QState
-import pyqtgraph as pg
-
-from ui.main_form import MainForm
-from controller.controller import Controller
-from opc.server import Server
-from modules.menu import MenuState
-
 import logging
+import sys
+
+from PyQt5 import QtWidgets
+from PyQt5.QtCore import QStateMachine
+
+from controller.controller import Controller
+from modules.menu import MenuState
+from opc.server import Server
+from ui.main_form import MainForm
 
 logging.basicConfig(level=logging.DEBUG, format='%(name)s %(asctime)s - %(levelname)s - %(message)s')
 
