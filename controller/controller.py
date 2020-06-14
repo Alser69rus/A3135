@@ -6,7 +6,6 @@ from typing import Dict, Union
 
 from ui.main_form import MainForm
 from opc.server import Server
-from ui.menu import MenuWidget
 from ui.main_menu import MainMenu
 from opc.opc import TwoStateDiscreteType
 from modules.btp.data import BtpData

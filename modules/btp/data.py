@@ -53,39 +53,15 @@ class Breaking:
 
 
 @dataclass()
-class Filling:
-    t: float = -1.0
-    t1: datetime = datetime.now()
-    t2: datetime = datetime.now()
-    tc1 = []
-    tc2 = []
-    t_arr = []
-
-    def set_t1(self) -> None:
-        self.t1 = datetime.now()
-        self.tc1 = []
-        self.tc2 = []
-        self.t_arr = []
-
-    def set_t2(self, tc1: float, tc2: float) -> None:
-        self.t2 = datetime.now()
-        t = (self.t2 - self.t1).total_seconds()
-        self.t = round(t, 1)
-        self.t_arr.append(t)
-        self.tc1.append(tc1)
-        self.tc2.append(tc2)
-
-    def t_as_text(self) -> str:
-        if self.t < 0:
-            return '-'
-        return f'{self.t:.1f}'
+class TimeFill:
+    time: float = 0
 
     def success(self) -> bool:
-        return self.t <= 4.0
+        return 0 < self.time <= 4
 
 
 @dataclass()
 class BtpData:
     auto_breaking: Breaking = field(default_factory=Breaking)
     kvt_breaking: Breaking = field(default_factory=Breaking)
-    filing: Filling = field(default_factory=Filling)
+    time_fill: TimeFill = field(default_factory=TimeFill)

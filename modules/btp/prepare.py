@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal, pyqtBoundSignal
 from controller.controller import Controller
+from modules.btp.common import Common
 
 ctrl: Controller
 
@@ -9,6 +10,7 @@ class Prepare(QState):
         super().__init__(parent=controller.stm)
         global ctrl
         ctrl = controller
+        common: Common = Common(controller=ctrl)
         self.finish = QFinalState(self)
         self.addTransition(self.finished, menu_state)
         menu = ctrl.menu.menu['БТП 020']
@@ -16,18 +18,20 @@ class Prepare(QState):
         menu_state.addTransition(menu.button['Подготовка'].clicked, self)
 
         self.start = Start(self)
-        self.ppm = Ppm(self)
-        self.ku_215 = KU215(self)
-        self.pim = Pim(self)
-        self.tank = Tank(self)
-        self.el_breaking = ElBreaking(self)
-        self.speed_60 = Speed60(self)
+        self.ppm = common.Ppm(self)
+        self.install_ku = InstallKU(self)
+        self.ku_215 = common.KU215(self)
+        self.pim = common.Pim(self)
+        self.tank = common.Tank(state='СБРОС', parent=self)
+        self.el_breaking = common.ElBreaking(self)
+        self.speed_60 = common.Speed60(self)
         self.set_bto = SetBTO(self)
-        self.enter = Enter(self)
-        self.btp_to_stand = BtpToStand(self)
+        self.enter = common.Enter(state='ВР', parent=self)
+        self.connect_btp = ConnectBTP(self)
 
         self.setInitialState(self.start)
-        self.start.addTransition(self.ku_215)
+        self.start.addTransition(self.install_ku)
+        self.install_ku.addTransition(ctrl.button['yes'].clicked, self.ku_215)
         self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.ppm)
         self.ppm.addTransition(ctrl.server_updated, self.ppm)
         self.ppm.addTransition(self.ppm.done, self.pim)
@@ -37,8 +41,8 @@ class Prepare(QState):
         self.el_breaking.addTransition(ctrl.switch['el. braking'].low_value, self.speed_60)
         self.speed_60.addTransition(ctrl.switch['>60 km/h'].low_value, self.set_bto)
         self.set_bto.addTransition(ctrl.button['yes'].clicked, self.enter)
-        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_one, self.btp_to_stand)
-        self.btp_to_stand.addTransition(ctrl.button['yes'].clicked, self.finish)
+        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_one, self.connect_btp)
+        self.connect_btp.addTransition(ctrl.button['yes'].clicked, self.finish)
 
 
 class Start(QState):
@@ -47,54 +51,12 @@ class Start(QState):
         ctrl.button_enable('back')
 
 
-class KU215(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
-        text = f'<p><font color="red">ВНИМАНИЕ! БТО испытывается с исправным КУ 215.</font></p>' \
-               f'<p>Установите КУ 215 на прижим, включите пневмотумблер "ПРИЖИМ КУ 215".</p>' \
-               f'<p>Включите тумблер "КУ 215".</p>'
-
-        ctrl.setText(text)
-
-
-class Ppm(QState):
-    done = pyqtSignal()
-
-    def onEntry(self, event: QEvent) -> None:
-        text = f'<p>Установите давление в питательной магистрали в пределах 0,75...1,0 МПа.</p>'
-        ctrl.setText(text)
-        if 0.75 <= ctrl.manometer['p pm'].get_value() <= 1.0:
-            self.done.emit()
-
-
-class Pim(QState):
-    done = pyqtSignal()
-
-    def onEntry(self, event: QEvent) -> None:
-        text = f'<p>Необходимо сбросить до нуля давление в импульсной магистрали. ' \
-               f'Для этого переведите ручку крана в отпускное положение.</p>'
-
-        ctrl.setText(text)
-        if ctrl.manometer['p im'].get_value() < 0.005:
-            self.done.emit()
-
-
-class Tank(QState):
+class InstallKU(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.button_enable('back yes')
-        ctrl.setText(f'<p>Включите тумблер "НАКОП. РЕЗ." в положение "СБРОС".</p>')
-
-
-class ElBreaking(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
-        text = f'<p>Выключите тумблер "ЗАМ. ЭЛ. ТОРМ."</p>'
-        ctrl.setText(text)
-
-
-class Speed60(QState):
-    def onEntry(self, event: QEvent) -> None:
-        text = f'<p>Выключите тумблер "> 60 км/ч"</p>'
+        text = f'<p><font color="red">ВНИМАНИЕ! БТО испытывается с исправным КУ 215.</font></p>' \
+               f'<p>Установите КУ 215 на прижим, включите пневмотумблер "ПРИЖИМ КУ 215".</p>' \
+               f'<p><br>Для продолжения нажмите "ДА"</p>'
         ctrl.setText(text)
 
 
@@ -108,14 +70,7 @@ class SetBTO(QState):
         ctrl.setText(text)
 
 
-class Enter(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
-        text = f'<p>Включите тумблер "ВХОД" в положение "ВР".</p>'
-        ctrl.setText(text)
-
-
-class BtpToStand(QState):
+class ConnectBTP(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.button_enable('back yes')
         text = f'<p>Включите пневмотумблер "БТП К СТЕНДУ".</p>' \
