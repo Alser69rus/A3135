@@ -3,6 +3,10 @@ from controller.controller import Controller
 
 ctrl: Controller
 
+DATA_SIZE = 100
+EPS = 0.005
+DELAY = 5
+
 
 class AutoBreaking(QState):
     def __init__(self, controller: Controller, menu_state: QState):
@@ -28,21 +32,23 @@ class AutoBreaking(QState):
 
         self.setInitialState(self.start)
         self.start.addTransition(self.check_1)
-        self.check_1.addTransition(ctrl.button['yes'].clicked, self.check_2)
-        self.check_2.addTransition(ctrl.button['yes'].clicked, self.check_3)
-        self.check_3.addTransition(ctrl.button['yes'].clicked, self.check_4)
-        self.check_4.addTransition(ctrl.button['yes'].clicked, self.check_5)
-        self.check_5.addTransition(ctrl.button['yes'].clicked, self.check_6)
-        self.check_6.addTransition(ctrl.button['yes'].clicked, self.check_7)
-        self.check_7.addTransition(ctrl.button['yes'].clicked, self.check_8)
-        self.check_8.addTransition(ctrl.button['yes'].clicked, self.show_result)
+        self.check_1.addTransition(self.check_1.finished, self.check_2)
+        self.check_2.addTransition(self.check_2.finished, self.check_3)
+        self.check_3.addTransition(self.check_3.finished, self.check_4)
+        self.check_4.addTransition(self.check_4.finished, self.check_5)
+        self.check_5.addTransition(self.check_5.finished, self.check_6)
+        self.check_6.addTransition(self.check_6.finished, self.check_7)
+        self.check_7.addTransition(self.check_7.finished, self.check_8)
+        self.check_8.addTransition(self.check_8.finished, self.show_result)
         self.show_result.addTransition(ctrl.button['yes'].clicked, self.finish)
 
 
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.show_panel('манометры текст')
-        ctrl.button_enable('back yes')
+        ctrl.show_panel('манометры текст график')
+        ctrl.graph.show_graph('p im p tc1 p tc2')
+        ctrl.graph.reset()
+        ctrl.button_enable('back')
         ctrl.btp.auto_breaking.tc1 = [-1.0] * 8
         ctrl.btp.auto_breaking.tc2 = [-1.0] * 8
         ctrl.menu.current_menu.current_button.set_normal()
@@ -83,11 +89,10 @@ class HandlePosition(QState):
         self.position: str = step[stage]
 
     def onEntry(self, event: QEvent) -> None:
-        ctrl.show_panel('манометры текст график')
         ctrl.setText(f'Переведите рукоятку в {self.position}.')
 
 
-class CheckP(QState):
+class CheckHandlePosition(QState):
     done = pyqtSignal()
 
     def __init__(self, stage: int, parent=None):
@@ -102,25 +107,35 @@ class CheckP(QState):
             self.check = None
 
     def onEntry(self, event: QEvent) -> None:
-        p = ctrl.manometer['p im'].get_value()
-        if self.check(p):
+        pim = ctrl.manometer['p im'].get_value()
+        if self.check(pim):
+            ctrl.graph.reset()
+            ctrl.graph.start()
             self.done.emit()
 
 
-class Measure(QState):
+class PressureStabilization(QState):
+    done = pyqtSignal()
+
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.graph.update()
+        data = ctrl.graph.data['p im']
+        data = data[-DATA_SIZE:]
+        dp = max(data) - min(data)
+        dt = ctrl.graph.dt
+        ctrl.setText(f'<p>Ожидается стабилизация давления в импульсной магистрали.</p>'
+                     f'<p>Разность давлений за последние 5 с: {dp:.3f} МПа.</p>'
+                     f'<p>Времени прошло с начала измерения: {dt:.1f} с.</p>')
+        if dp <= EPS and dt >= DELAY:
+            self.done.emit()
+
+
+class SaveResult(QFinalState):
     def __init__(self, stage: int, parent=None):
         super().__init__(parent=parent)
         self.stage = stage
 
-        self.step: str =''
-
     def onEntry(self, event: QEvent) -> None:
-        text = f'<p>Переведите ручку КУ 215 {self.step}.</p>' \
-               f'<p>После того как давление в импульсной магистрали "Р им" стабилизируется (~10 с), ' \
-               f'нажмите кнопку "ДА".</p>'
-        ctrl.setText(text)
-
-    def onExit(self, event: QEvent) -> None:
         ctrl.btp.auto_breaking.tc1[self.stage] = ctrl.manometer['p tc1'].get_value()
         ctrl.btp.auto_breaking.tc2[self.stage] = ctrl.manometer['p tc2'].get_value()
 
@@ -131,13 +146,21 @@ class Check(QState):
         self.ppm = Ppm(self)
         self.ku_215 = KU215(self)
         self.enter = Enter(self)
-        self.measure = Measure(stage=stage, parent=self)
+        self.handle_position = HandlePosition(stage=stage, parent=self)
+        self.check_handle_position = CheckHandlePosition(stage=stage, parent=self)
+        self.pressure_stabilization = PressureStabilization(self)
+        self.save_result = SaveResult(stage=stage, parent=self)
 
         self.setInitialState(self.ppm)
         self.ppm.addTransition(ctrl.server_updated, self.ppm)
         self.ppm.addTransition(self.ppm.done, self.ku_215)
         self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.enter)
-        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_one, self.measure)
+        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_one, self.handle_position)
+        self.handle_position.addTransition(self.check_handle_position)
+        self.check_handle_position.addTransition(ctrl.server_updated, self.check_handle_position)
+        self.check_handle_position.addTransition(self.check_handle_position.done, self.pressure_stabilization)
+        self.pressure_stabilization.addTransition(ctrl.server_updated, self.pressure_stabilization)
+        self.pressure_stabilization.addTransition(self.pressure_stabilization.done, self.save_result)
 
 
 class ShowResult(QState):

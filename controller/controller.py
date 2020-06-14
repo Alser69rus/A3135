@@ -8,9 +8,9 @@ from ui.main_form import MainForm
 from opc.server import Server
 from ui.menu import MenuWidget
 from ui.main_menu import MainMenu
-from pyqtgraph import PlotWidget
 from opc.opc import TwoStateDiscreteType
 from modules.btp.data import BtpData
+from ui.graph_widget import Plot
 
 ANIMATE_CLICK_DELAY = 50
 
@@ -28,7 +28,7 @@ class Controller(QObject):
         self.menu: MainMenu = form.workspace.menu
         self.text: QLabel = form.workspace.text
         self.image: QLabel = form.workspace.img
-        self.graph: PlotWidget = form.workspace.graph
+        self.graph: Plot = form.workspace.graph
         self.images: Dict[str, QPixmap] = form.workspace.img.images
         self.ctrl_win: QWidget = form.ctrl_win
         self.diag_win: QWidget = form.diag_win
@@ -58,7 +58,6 @@ class Controller(QObject):
         self.switch_with_neutral = server.switch_with_neutral
 
         self.btp = BtpData()
-
 
     def closeEvent(self, QCloseEvent):
         running_states = [self.server.th.isRunning(), self.stm.isRunning()]

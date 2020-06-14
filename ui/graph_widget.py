@@ -44,7 +44,11 @@ class Plot(pg.PlotWidget):
         server.worker.updated.connect(self.on_server_update)
 
     def show_graph(self, keys):
+        legend = self.plotItem.legend
+        for _, label in legend.items[:]:
+            legend.removeItem(label.text)
         self.clear()
+        self.plotItem.legend.items = []
         for key in self.graph.keys():
             if key in keys:
                 self.addItem(self.graph[key])

@@ -39,10 +39,8 @@ class Main:
         self.stm.start()
 
 
-
 if __name__ == '__main__':
-    # app = QtWidgets.QApplication(sys.argv)
-    app=pg.Qt.QtWidgets.QApplication([])
+    app = QtWidgets.QApplication(sys.argv)
     main = Main()
     if main.form.width() > 1024 or main.form.height() > 768:
         logging.debug(f'window size: {main.form.width()}x{main.form.height()}')
