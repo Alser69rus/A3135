@@ -1,11 +1,8 @@
 from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal, pyqtBoundSignal
 from controller.controller import Controller
+from modules.btp.common import Common
 
 ctrl: Controller
-
-DATA_SIZE = 100
-EPS = 0.005
-DELAY = 5
 
 
 class AutoBreaking(QState):
@@ -13,6 +10,7 @@ class AutoBreaking(QState):
         super().__init__(parent=controller.stm)
         global ctrl
         ctrl = controller
+        common = Common(controller=ctrl)
         self.finish = QFinalState(self)
         self.addTransition(self.finished, menu_state)
         self.addTransition(ctrl.button['back'].clicked, self.finish)
@@ -20,7 +18,7 @@ class AutoBreaking(QState):
         menu_state.addTransition(menu.button['торможение автоматическое'].clicked, self)
 
         self.start = Start(self)
-        self.pim = Pim(self)
+        self.pim = common.Pim(self)
         self.check_1 = Check(stage=0, parent=self)
         self.check_2 = Check(stage=1, parent=self)
         self.check_3 = Check(stage=2, parent=self)
@@ -29,7 +27,7 @@ class AutoBreaking(QState):
         self.check_6 = Check(stage=5, parent=self)
         self.check_7 = Check(stage=6, parent=self)
         self.check_8 = Check(stage=7, parent=self)
-        self.show_result = ShowResult(self)
+        self.show_result = ShowResult(parent=self)
 
         self.setInitialState(self.start)
         self.start.addTransition(self.pim)
@@ -56,101 +54,6 @@ class Start(QState):
         ctrl.menu.current_menu.current_button.set_normal()
 
 
-class Pim(QState):
-    done = pyqtSignal()
-
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Переведите ручку крана в отпускное положение и сбросьте давление до 0 МПа.</p>')
-        if ctrl.manometer['p im'].get_value() <= 0.005:
-            self.done.emit()
-
-
-class Ppm(QState):
-    done = pyqtSignal()
-
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Установите давление в питательной магистрали в пределах 0,75...1,0 МПа.</p>')
-        if 0.75 <= ctrl.manometer['p pm'].get_value() <= 1.0:
-            self.done.emit()
-
-
-class ElBreaking(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Выключите тумблер "ЗАМ. ЭЛ. ТОРМ.".</p>')
-
-
-class Speed60(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Выключите тумблер ">60 км/ч".</p>')
-
-
-class KU215(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Включите тумблер "КУ 215".</p>')
-
-
-class Enter(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Включите тумблер "ВХОД" в положение "ВР".</p>')
-
-
-class HandlePosition(QState):
-    def __init__(self, stage: int, parent=None):
-        super().__init__(parent=parent)
-        step = (
-            'в первое положение',
-            'во второе положение',
-            'в третье положение',
-            'в четвертое положение',
-            'в третье положение',
-            'в во второе положение',
-            'в первое положение',
-            'в отпускное положение',
-        )
-        self.position: str = step[stage]
-
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'Переведите рукоятку в {self.position}.')
-
-
-class CheckHandlePosition(QState):
-    done = pyqtSignal()
-
-    def __init__(self, stage: int, parent=None):
-        super().__init__(parent=parent)
-        if stage == 0:
-            self.check = lambda p: p > ctrl.btp.auto_breaking.range[7][1]
-        elif 1 <= stage <= 3:
-            self.check = lambda p: p > ctrl.btp.auto_breaking.range[stage - 1][1]
-        elif 4 <= stage <= 7:
-            self.check = lambda p: p < ctrl.btp.auto_breaking.range[stage - 1][0]
-        else:
-            self.check = None
-
-    def onEntry(self, event: QEvent) -> None:
-        pim = ctrl.manometer['p im'].get_value()
-        if self.check(pim):
-            ctrl.graph.reset()
-            ctrl.graph.start()
-            self.done.emit()
-
-
-class PressureStabilization(QState):
-    done = pyqtSignal()
-
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.graph.update()
-        data = ctrl.graph.data['p im']
-        data = data[-DATA_SIZE:]
-        dp = max(data) - min(data)
-        dt = ctrl.graph.dt
-        ctrl.setText(f'<p>Ожидается стабилизация давления в импульсной магистрали.</p>'
-                     f'<p>Текущая разность давлений: {dp:.3f} МПа.</p>'
-                     f'<p>Времени прошло с начала измерения: {dt:.1f} с.</p>')
-        if dp <= EPS and dt >= DELAY:
-            self.done.emit()
-
-
 class SaveResult(QFinalState):
     def __init__(self, stage: int, parent=None):
         super().__init__(parent=parent)
@@ -164,14 +67,15 @@ class SaveResult(QFinalState):
 class Check(QState):
     def __init__(self, stage: int, parent=None):
         super().__init__(parent=parent)
-        self.ppm = Ppm(self)
-        self.el_breaking = ElBreaking(self)
-        self.speed_60 = Speed60(self)
-        self.ku_215 = KU215(self)
-        self.enter = Enter(self)
-        self.handle_position = HandlePosition(stage=stage, parent=self)
-        self.check_handle_position = CheckHandlePosition(stage=stage, parent=self)
-        self.pressure_stabilization = PressureStabilization(self)
+        common = Common(controller=ctrl)
+        self.ppm = common.Ppm(self)
+        self.el_breaking = common.ElBreaking(self)
+        self.speed_60 = common.Speed60(self)
+        self.ku_215 = common.KU215(self)
+        self.enter = common.Enter(state='ВР', parent=self)
+        self.handle_position = common.HandlePosition(stage=stage, parent=self)
+        self.check_handle_position = common.CheckHandlePosition(stage=stage, data=ctrl.btp.auto_breaking, parent=self)
+        self.pressure_stabilization = common.PressureStabilization(self)
         self.save_result = SaveResult(stage=stage, parent=self)
 
         self.setInitialState(self.ppm)
