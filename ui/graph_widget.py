@@ -52,6 +52,7 @@ class Plot(pg.PlotWidget):
         for key in self.graph.keys():
             if key in keys:
                 self.addItem(self.graph[key])
+        self.reset()
 
     def reset(self):
         self.data['time'] = []

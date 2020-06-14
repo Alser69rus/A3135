@@ -3,6 +3,10 @@ from controller.controller import Controller
 
 ctrl: Controller
 
+DATA_SIZE = 100
+EPS = 0.005
+DELAY = 5
+
 
 class KvtBreaking(QState):
     def __init__(self, controller: Controller, menu_state: QState):
@@ -16,10 +20,7 @@ class KvtBreaking(QState):
         menu_state.addTransition(menu.button['торможение КВТ'].clicked, self)
 
         self.start = Start(self)
-        self.el_breaking = ElBreaking(self)
-        self.speed_60 = Speed60(self)
-        self.p_im = Pim(self)
-        self.enter = Enter(self)
+        self.pim = Pim(self)
         self.check_1 = Check(stage=0, parent=self)
         self.check_2 = Check(stage=1, parent=self)
         self.check_3 = Check(stage=2, parent=self)
@@ -31,30 +32,53 @@ class KvtBreaking(QState):
         self.show_result = ShowResult(self)
 
         self.setInitialState(self.start)
-        self.start.addTransition(self.el_breaking)
-        self.el_breaking.addTransition(ctrl.switch['el. braking'].low_value, self.speed_60)
-        self.speed_60.addTransition(ctrl.switch['>60 km/h'].low_value, self.p_im)
-        self.p_im.addTransition(ctrl.server_updated, self.p_im)
-        self.p_im.addTransition(self.p_im.done, self.enter)
-        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_two, self.check_1)
-        self.check_1.addTransition(ctrl.button['yes'].clicked, self.check_2)
-        self.check_2.addTransition(ctrl.button['yes'].clicked, self.check_3)
-        self.check_3.addTransition(ctrl.button['yes'].clicked, self.check_4)
-        self.check_4.addTransition(ctrl.button['yes'].clicked, self.check_5)
-        self.check_5.addTransition(ctrl.button['yes'].clicked, self.check_6)
-        self.check_6.addTransition(ctrl.button['yes'].clicked, self.check_7)
-        self.check_7.addTransition(ctrl.button['yes'].clicked, self.check_8)
-        self.check_8.addTransition(ctrl.button['yes'].clicked, self.show_result)
+        self.start.addTransition(self.pim)
+        self.pim.addTransition(ctrl.server_updated, self.pim)
+        self.pim.addTransition(self.pim.done, self.check_1)
+        self.check_1.addTransition(self.check_1.finished, self.check_2)
+        self.check_2.addTransition(self.check_2.finished, self.check_3)
+        self.check_3.addTransition(self.check_3.finished, self.check_4)
+        self.check_4.addTransition(self.check_4.finished, self.check_5)
+        self.check_5.addTransition(self.check_5.finished, self.check_6)
+        self.check_6.addTransition(self.check_6.finished, self.check_7)
+        self.check_7.addTransition(self.check_7.finished, self.check_8)
+        self.check_8.addTransition(self.check_8.finished, self.show_result)
         self.show_result.addTransition(ctrl.button['yes'].clicked, self.finish)
 
 
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.show_panel('манометры текст')
-        ctrl.button_enable('back yes')
+        ctrl.show_panel('манометры текст график')
+        ctrl.graph.show_graph('p im p tc1 p tc2')
+        ctrl.graph.reset()
+        ctrl.button_enable('back')
+
         ctrl.btp.kvt_breaking.tc1 = [-1.0] * 8
         ctrl.btp.kvt_breaking.tc2 = [-1.0] * 8
         ctrl.menu.current_menu.current_button.set_normal()
+
+
+class Pim(QState):
+    done = pyqtSignal()
+
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText(f'<p>Переведите ручку крана в отпускное положение и сбросьте давление до 0 МПа.</p>')
+        if ctrl.manometer['p im'].get_value() <= 0.005:
+            self.done.emit()
+
+
+class Ppm(QState):
+    done = pyqtSignal()
+
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText(f'<p>Установите давление в питательной магистрали в пределах 0,75...1,0 МПа.</p>')
+        if 0.75 <= ctrl.manometer['p pm'].get_value() <= 1.0:
+            self.done.emit()
+
+
+class KU215(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText(f'<p>Включите тумблер "КУ 215".</p>')
 
 
 class ElBreaking(QState):
@@ -67,24 +91,14 @@ class Speed60(QState):
         ctrl.setText(f'<p>Выключите тумблер ">60 км/ч".</p>')
 
 
-class Pim(QState):
-    done = pyqtSignal()
-
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Переведите ручку крана в отпускное положение</p>')
-        if ctrl.manometer['p im'].get_value() <= 0.005:
-            self.done.emit()
-
-
 class Enter(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.setText(f'<p>Включите тумблер "ВХОД" в положение "КУ"</p>')
 
 
-class Check(QState):
+class HandlePosition(QState):
     def __init__(self, stage: int, parent=None):
         super().__init__(parent=parent)
-        self.stage = stage
         step = (
             'в первое положение',
             'во второе положение',
@@ -95,17 +109,85 @@ class Check(QState):
             'в первое положение',
             'в отпускное положение',
         )
-        self.step: str = step[stage]
+        self.position: str = step[stage]
 
     def onEntry(self, event: QEvent) -> None:
-        text = f'<p>Переведите ручку КУ 215 {self.step}.</p>' \
-               f'<p>После того как давление в импульсной магистрали "Р им" стабилизируется (~10 с), ' \
-               f'нажмите кнопку "ДА".</p>'
-        ctrl.setText(text)
+        ctrl.setText(f'Переведите рукоятку в {self.position}.')
 
-    def onExit(self, event: QEvent) -> None:
+
+class CheckHandlePosition(QState):
+    done = pyqtSignal()
+
+    def __init__(self, stage: int, parent=None):
+        super().__init__(parent=parent)
+        if stage == 0:
+            self.check = lambda p: p > ctrl.btp.auto_breaking.range[7][1]
+        elif 1 <= stage <= 3:
+            self.check = lambda p: p > ctrl.btp.auto_breaking.range[stage - 1][1]
+        elif 4 <= stage <= 7:
+            self.check = lambda p: p < ctrl.btp.auto_breaking.range[stage - 1][0]
+        else:
+            self.check = None
+
+    def onEntry(self, event: QEvent) -> None:
+        pim = ctrl.manometer['p im'].get_value()
+        if self.check(pim):
+            ctrl.graph.reset()
+            ctrl.graph.start()
+            self.done.emit()
+
+
+class PressureStabilization(QState):
+    done = pyqtSignal()
+
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.graph.update()
+        data = ctrl.graph.data['p im']
+        data = data[-DATA_SIZE:]
+        dp = max(data) - min(data)
+        dt = ctrl.graph.dt
+        ctrl.setText(f'<p>Ожидается стабилизация давления в импульсной магистрали.</p>'
+                     f'<p>Текущая разность давлений: {dp:.3f} МПа.</p>'
+                     f'<p>Времени прошло с начала измерения: {dt:.1f} с.</p>')
+        if dp <= EPS and dt >= DELAY:
+            self.done.emit()
+
+
+class SaveResult(QFinalState):
+    def __init__(self, stage: int, parent=None):
+        super().__init__(parent=parent)
+        self.stage = stage
+
+    def onEntry(self, event: QEvent) -> None:
         ctrl.btp.kvt_breaking.tc1[self.stage] = ctrl.manometer['p tc1'].get_value()
         ctrl.btp.kvt_breaking.tc2[self.stage] = ctrl.manometer['p tc2'].get_value()
+
+
+class Check(QState):
+    def __init__(self, stage: int, parent=None):
+        super().__init__(parent=parent)
+        self.ppm = Ppm(self)
+        self.el_breaking = ElBreaking(self)
+        self.speed_60 = Speed60(self)
+        self.ku_215 = KU215(self)
+        self.enter = Enter(self)
+        self.handle_position = HandlePosition(stage=stage, parent=self)
+        self.check_handle_position = CheckHandlePosition(stage=stage, parent=self)
+        self.pressure_stabilization = PressureStabilization(self)
+        self.save_result = SaveResult(stage=stage, parent=self)
+
+        self.setInitialState(self.ppm)
+        self.ppm.addTransition(ctrl.server_updated, self.ppm)
+        self.ppm.addTransition(self.ppm.done, self.el_breaking)
+        self.el_breaking.addTransition(ctrl.switch['el. braking'].low_value, self.speed_60)
+        self.speed_60.addTransition(ctrl.switch['>60 km/h'].low_value, self.ku_215)
+        self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.enter)
+        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_two, self.handle_position)
+        self.handle_position.addTransition(self.check_handle_position)
+        self.check_handle_position.addTransition(ctrl.server_updated, self.check_handle_position)
+        self.check_handle_position.addTransition(self.check_handle_position.done, self.pressure_stabilization)
+        self.pressure_stabilization.addTransition(ctrl.server_updated, self.pressure_stabilization)
+        self.pressure_stabilization.addTransition(self.pressure_stabilization.done, self.save_result)
 
 
 class ShowResult(QState):
@@ -128,7 +210,7 @@ class ShowResult(QState):
         text += f'<p><br>Для продолжения нажмите "ВОЗВРАТ".</p>'
         ctrl.setText(text)
 
-        if ctrl.btp.auto_breaking.success():
+        if ctrl.btp.kvt_breaking.success():
             ctrl.menu.current_menu.current_button.set_success()
         else:
             ctrl.menu.current_menu.current_button.set_fail()
