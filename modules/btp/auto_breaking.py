@@ -112,7 +112,7 @@ class Measure(QState):
         super().__init__(parent=parent)
         self.stage = stage
 
-        self.step: str =
+        self.step: str =''
 
     def onEntry(self, event: QEvent) -> None:
         text = f'<p>Переведите ручку КУ 215 {self.step}.</p>' \
