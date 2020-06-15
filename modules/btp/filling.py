@@ -1,5 +1,7 @@
-from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal, pyqtBoundSignal
+from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal
+
 from controller.controller import Controller
+from modules.btp.common import Common
 
 ctrl: Controller
 p = None
@@ -10,6 +12,7 @@ class Filling(QState):
         super().__init__(parent=controller.stm)
         global ctrl
         ctrl = controller
+        common = Common(controller=ctrl)
         self.finish = QFinalState(self)
         self.addTransition(self.finished, menu_state)
         self.addTransition(ctrl.button['back'].clicked, self.finish)
@@ -17,103 +20,67 @@ class Filling(QState):
         menu_state.addTransition(menu.button['Время наполненя ТЦ'].clicked, self)
 
         self.start = Start(self)
-        self.pim = Pim(self)
-'''
-
-
-
-        self.check_1 = Check(stage=0, parent=self)
-        self.check_2 = Check(stage=1, parent=self)
-        self.check_3 = Check(stage=2, parent=self)
-        self.check_4 = Check(stage=3, parent=self)
-        self.check_5 = Check(stage=4, parent=self)
-        self.check_6 = Check(stage=5, parent=self)
-        self.check_7 = Check(stage=6, parent=self)
-        self.check_8 = Check(stage=7, parent=self)
+        self.pim = common.Pim(self)
+        self.el_breaking = common.ElBreaking(self)
+        self.speed_60 = common.Speed60(self)
+        self.ppm = common.Ppm(self)
+        self.ku_215 = common.KU215(self)
+        self.enter = common.Enter(state='КУ', parent=self)
+        self.handle_position_four = HandlePositionFour(self)
+        self.measure = Measure(self)
         self.show_result = ShowResult(self)
 
         self.setInitialState(self.start)
         self.start.addTransition(self.pim)
-'''
-
-
-
-        # self.start = Start(self)
-        # self.el_breaking = ElBreaking(self)
-        # self.speed_60 = Speed60(self)
-        # self.p_im = Pim(self)
-        # self.enter = Enter(self)
-        # self.wait = Wait(self)
-        # self.measure = Measure(self)
-        #
-        # self.setInitialState(self.start)
-        # self.start.addTransition(self.el_breaking)
-        # self.el_breaking.addTransition(ctrl.switch['el. braking'].low_value, self.speed_60)
-        # self.speed_60.addTransition(ctrl.switch['>60 km/h'].low_value, self.p_im)
-        # self.p_im.addTransition(ctrl.server_updated, self.p_im)
-        # self.p_im.addTransition(self.p_im.done, self.enter)
-        # self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_two, self.wait)
-        # self.wait.addTransition(ctrl.server_updated, self.wait)
-        # self.wait.addTransition(self.wait.done, self.measure)
-        # self.measure.addTransition(ctrl.server_updated, self.measure)
+        self.pim.addTransition(ctrl.server_updated, self.pim)
+        self.pim.addTransition(self.pim.done, self.ppm)
+        self.ppm.addTransition(ctrl.server_updated, self.ppm)
+        self.ppm.addTransition(self.ppm.done, self.el_breaking)
+        self.el_breaking.addTransition(ctrl.switch['el. braking'].low_value, self.speed_60)
+        self.speed_60.addTransition(ctrl.switch['>60 km/h'].low_value, self.ku_215)
+        self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.enter)
+        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_two, self.handle_position_four)
+        self.handle_position_four.addTransition(ctrl.server_updated, self.handle_position_four)
+        self.handle_position_four.addTransition(self.handle_position_four.done, self.measure)
+        self.measure.addTransition(ctrl.server_updated, self.measure)
+        self.measure.addTransition(self.measure.done, self.show_result)
+        self.show_result.addTransition(ctrl.button['yes'].clicked, self.finish)
 
 
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.show_panel('манометры текст')
+        ctrl.show_panel('манометры текст график')
+        ctrl.graph.show_graph('p im p tc1 p tc2')
         ctrl.button_enable('back')
-        ctrl.btp.kvt_breaking.tc1 = -1.0
+        ctrl.btp.time_fill.time = 0
         ctrl.menu.current_menu.current_button.set_normal()
 
 
-class ElBreaking(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'Выключите тумблер "ЗАМ. ЭЛ. ТОРМ."')
-
-
-class Speed60(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'Выключите тумблер ">60 км/ч".')
-
-
-class Pim(QState):
+class HandlePositionFour(QState):
     done = pyqtSignal()
 
     def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'Переведите ручку крана в отпускное положение.')
-        if ctrl.manometer['p im'].get_value() <= 0.005:
-            self.done.emit()
-
-
-class Enter(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'Включите тумблер "ВХОД" в  положение "КУ".')
-
-
-class Wait(QState):
-    done = pyqtSignal()
-
-    def onEntry(self, event: QEvent) -> None:
-        global p
-
         ctrl.setText(f'Переведите ручку КУ 215 в четвертое положение за один прием.')
-        ctrl.btp.filing.set_t1()
-        manometers = ['p im', 'p tc1', 'p tc2']
-        p = [ctrl.manometer[key].get_value() > 0.005 for key in manometers]
-        if any(p):
+        if ctrl.manometer['p im'].get_value() > 0.005:
+            ctrl.graph.start()
             self.done.emit()
-            ctrl.show_panel('манометры график')
 
 
 class Measure(QState):
     done = pyqtSignal()
 
     def onEntry(self, event: QEvent) -> None:
-        tc1 = (ctrl.manometer['p tc1'].get_value(), ctrl.manometer['p tc1'].name, 'm')
-        tc2 = (ctrl.manometer['p tc2'].get_value(), ctrl.manometer['p tc2'].name, 'c')
-        ctrl.btp.filing.set_t2(tc1[0], tc2[0])
-        t = ctrl.btp.filing.t_arr
-        p1 = ctrl.btp.filing.tc1
-        p2 = ctrl.btp.filing.tc2
-        ctrl.graph.ptc1.setData(x=t, y=p1)
-        ctrl.graph.ptc2.setData(x=t, y=p2)
+        ctrl.graph.update()
+        tc1 = ctrl.manometer['p tc1'].get_value()
+        tc2 = ctrl.manometer['p tc2'].get_value()
+        t = ctrl.graph.dt
+
+        if tc1 >= 0.35 and tc2 >= 0.35 or t > 6:
+            self.done.emit()
+
+
+class ShowResult(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.show_panel('текст')
+        ctrl.button_enable('back yes')
+        ctrl.setText(f'<p>Время наполнения ТЦ1</p>')
