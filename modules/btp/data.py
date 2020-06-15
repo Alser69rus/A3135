@@ -73,4 +73,4 @@ class BtpData:
     auto_breaking: Breaking = field(default_factory=Breaking)
     kvt_breaking: Breaking = field(default_factory=Breaking)
     fill_time: FillTime = field(default_factory=FillTime)
-
+    tightness: str = '-'
