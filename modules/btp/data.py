@@ -51,15 +51,25 @@ class Breaking:
 
 
 @dataclass()
-class TimeFill:
-    time: float = 0
+class FillTime:
+    tc1: float = 0
+    tc2: float = 0
 
     def success(self) -> bool:
-        return 0 < self.time <= 4
+        return 0 < self.tc1 <= 4 and 0 < self.tc2 <= 4
+
+    @staticmethod
+    def time_as_text(value: float) -> str:
+        if value == 0:
+            return '-'
+        elif 0 < value <= 4:
+            return f'{value:.1f}'
+        else:
+            return f'{value:.1f} (не норма)'
 
 
 @dataclass()
 class BtpData:
     auto_breaking: Breaking = field(default_factory=Breaking)
     kvt_breaking: Breaking = field(default_factory=Breaking)
-    time_fill: TimeFill = field(default_factory=TimeFill)
+    fill_time: FillTime = field(default_factory=FillTime)
