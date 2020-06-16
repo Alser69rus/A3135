@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 
 
 @dataclass()
@@ -69,8 +70,38 @@ class FillTime:
 
 
 @dataclass()
+class EmptyTime:
+    tc = [0.0, 0.0]
+    t = [datetime.now(), datetime.now()]
+    running = [False, False]
+
+    def start(self, tc: int):
+        self.tc[tc] = 0.0
+        self.t[tc] = datetime.now()
+        self.running[tc] = True
+
+    def stop(self, tc: int):
+        if self.running[tc]:
+            self.running[tc] = False
+            self.tc[tc] = (datetime.now() - self.t[tc]).total_seconds()
+
+    def success(self) -> bool:
+        return all([0 < t <= 13 for t in self.tc])
+
+    def time_as_text(self, tc: int) -> str:
+        t: float = self.tc[tc]
+        if t == 0:
+            return '-'
+        elif 0 < t <= 13:
+            return f'{t:.1f}'
+        else:
+            return f'{t:.1f} (не норма)'
+
+
+@dataclass()
 class BtpData:
     auto_breaking: Breaking = field(default_factory=Breaking)
     kvt_breaking: Breaking = field(default_factory=Breaking)
     fill_time: FillTime = field(default_factory=FillTime)
+    empty_time: EmptyTime = field(default_factory=EmptyTime)
     tightness: str = '-'

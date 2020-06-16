@@ -6,6 +6,7 @@ from modules.btp.auto_breaking import AutoBreaking
 from modules.btp.kvt_breaking import KvtBreaking
 from modules.btp.filling import Filling
 from modules.btp.tightness import Tightness
+from modules.btp.emptying import Emptying
 
 ctrl: Controller
 
@@ -32,6 +33,7 @@ class Btp(QState):
         self.kvt_breaking = KvtBreaking(controller=ctrl, menu_state=self.menu)
         self.filling = Filling(controller=ctrl, menu_state=self.menu)
         self.tightness = Tightness(controller=ctrl, menu_state=self.menu)
+        self.emptying = Emptying(controller=ctrl, menu_state=self.menu)
 
 
 class Reset(QState):

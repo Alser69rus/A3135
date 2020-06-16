@@ -24,7 +24,7 @@ class Common:
         self.HandlePosition = HandlePosition
         self.CheckHandlePosition = CheckHandlePosition
         self.PressureStabilization = PressureStabilization
-
+        self.HandlePositionFour = HandlePositionFour
 
 
 class Ppm(QState):
@@ -143,4 +143,10 @@ class PressureStabilization(QState):
             self.done.emit()
 
 
+class HandlePositionFour(QState):
+    done = pyqtSignal()
 
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText(f'Переведите ручку КУ 215 в четвертое положение за один прием.')
+        if ctrl.manometer['p im'].get_value() >= 0.37:
+            self.done.emit()
