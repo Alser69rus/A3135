@@ -74,11 +74,11 @@ class FillTime:
             self.tc[tc] = (datetime.now() - self.t[tc]).total_seconds()
 
     def success(self) -> bool:
-        return all([0 < t <= 4 for t in self.tc])
+        return all([0.05 < t <= 4 for t in self.tc])
 
     def time_as_text(self, tc: int) -> str:
         value = self.tc[tc]
-        if value == 0:
+        if value < 0.05:
             return '-'
         elif 0 < value <= 4:
             return f'{value:.1f}'
@@ -103,11 +103,11 @@ class EmptyTime:
             self.tc[tc] = (datetime.now() - self.t[tc]).total_seconds()
 
     def success(self) -> bool:
-        return all([0 < t <= 13 for t in self.tc])
+        return all([0.05 < t <= 13 for t in self.tc])
 
     def time_as_text(self, tc: int) -> str:
         t: float = self.tc[tc]
-        if t == 0:
+        if t < 0.05:
             return '-'
         elif 0 < t <= 13:
             return f'{t:.1f}'
