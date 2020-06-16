@@ -3,18 +3,20 @@ from datetime import datetime
 
 
 @dataclass()
-class Breaking:
-    stage = (
-        '1 ступень',
-        '2 ступень',
-        '3 ступень',
-        '4 ступень',
-        '3 ступень',
-        '2 ступень',
-        '1 ступень',
-        'отпускное',
+class KU215:
+    handle = (
+        'отпускное положение',
+        'первое положение',
+        'второе положение',
+        'третье положение',
+        'четвертое положение',
+        'третье положение',
+        'второе положение',
+        'первое положение',
+        'отпускное положение',
     )
     range = (
+        (0.0, 0.005),
         (0.10, 0.13),
         (0.17, 0.20),
         (0.27, 0.30),
@@ -22,33 +24,39 @@ class Breaking:
         (0.27, 0.30),
         (0.17, 0.20),
         (0.10, 0.13),
-        (0.00, 0.01),
+        (0.0, 0.005),
     )
-    tc1 = [-1.0] * 8
-    tc2 = [-1.0] * 8
 
-    def range_as_text(self, stage: int) -> str:
-        low, high = self.range[stage]
+
+@dataclass()
+class Breaking:
+    tc = [[-1.0] * 8, [-1.0] * 8]
+    ku_215: KU215 = field(default_factory=KU215)
+
+    def position_as_text(self, position: int):
+        return self.ku_215.handle[position]
+
+    def range_as_text(self, position: int) -> str:
+        low, high = self.ku_215.range[position]
         return f'{low:.3f} - {high:.3f}'
 
-    def tc1_as_text(self, stage: int) -> str:
-        value: float = self.tc1[stage]
-        low, high = self.range[stage]
-        res = '' if low <= value <= high else '(не норма)'
-        if value < -0.1: return '-'
-        return f'{value:5.3f} {res}'
-
-    def tc2_as_text(self, stage: int) -> str:
-        value: float = self.tc2[stage]
-        low, high = self.range[stage]
-        res = '' if low <= value <= high else '(не норма)'
-        if value < -0.1: return '-'
-        return f'{value:5.3f} {res}'
+    def tc_as_text(self, tc: int, position: int) -> str:
+        value: float = self.tc[tc][position]
+        low, high = self.ku_215.range[position]
+        if value < -0.1:
+            return '-'
+        elif low <= value <= high:
+            return f'{value:5.3f}'
+        else:
+            return f'{value:5.3f} (не норма)'
 
     def success(self) -> bool:
-        res1 = [self.range[i][0] <= self.tc1[i] <= self.range[i][1] for i in range(8)]
-        res2 = [self.range[i][0] <= self.tc2[i] <= self.range[i][1] for i in range(8)]
-        return all(res1 + res2)
+        res = []
+        for i in range(8):
+            low, high = self.ku_215.range[i]
+            res.append(low <= self.tc[0][i] <= high)
+            res.append(low <= self.tc[1][i] <= high)
+        return all(res)
 
 
 @dataclass()
