@@ -10,10 +10,12 @@ class ManometersPanel(QtWidgets.QWidget):
         self.setLayout(self.hbox)
         self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         self.hbox.setContentsMargins(0, 0, 0, 0)
-        self.setMinimumHeight(150)
+
         self.manometer: Dict[str, Manometer] = {}
 
         for key in server.manometer.keys():
             manometer = Manometer(server.manometer[key])
+            self.setMinimumHeight(manometer.height()+4)
             self.manometer[key] = manometer
             self.hbox.addWidget(manometer)
+

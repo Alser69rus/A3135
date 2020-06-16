@@ -24,6 +24,7 @@ class Common:
         self.HandlePosition = HandlePosition
         self.CheckHandlePosition = CheckHandlePosition
         self.PressureStabilization = PressureStabilization
+        self.CheckKuPressure = CheckKuPressure
         self.HandlePositionFour = HandlePositionFour
 
 
@@ -141,6 +142,30 @@ class PressureStabilization(QState):
                      f'<p>Времени прошло с начала измерения: {dt:.1f} с.</p>')
         if dp <= EPS and dt >= DELAY:
             self.done.emit()
+
+
+class CheckKuPressure(QState):
+    done = pyqtSignal()
+
+    def __init__(self, stage: int, parent=None):
+        super().__init__(parent=parent)
+        self.stage = stage
+
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.button_enable('back')
+
+        low, high = ctrl.btp.ku_215.range[self.stage]
+        p = ctrl.manometer['p im'].get_value()
+        if low <= p <= high:
+            self.done.emit()
+        else:
+            ctrl.menu.current_menu.current_button.set_fail()
+            ctrl.show_panel('текст манометры')
+            ctrl.setText(f'<p>Давление в импульсной магистрали  должно находится в пределах '
+                         f'от {low:.3f} до {high:.3f} МПа.</p>'
+                         f'<p>Текущее значение давления Рим: {p:.3f} МПа</p>'
+                         f'<p>Это может говорить о неисправности КУ.</p>'
+                         f'<p><br>Для возврата в меню нажмите "ВОЗВРАТ"</p>')
 
 
 class HandlePositionFour(QState):

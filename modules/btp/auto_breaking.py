@@ -50,8 +50,7 @@ class Start(QState):
         ctrl.show_panel('манометры текст график')
         ctrl.graph.show_graph('p im p tc1 p tc2')
         ctrl.button_enable('back')
-        ctrl.btp.auto_breaking.tc1 = [-1.0] * 8
-        ctrl.btp.auto_breaking.tc2 = [-1.0] * 8
+        ctrl.btp.auto_breaking.tc = [[-1.0] * 8, [-1.0] * 8]
         ctrl.menu.current_menu.current_button.set_normal()
 
 
@@ -61,8 +60,8 @@ class SaveResult(QFinalState):
         self.stage = stage
 
     def onEntry(self, event: QEvent) -> None:
-        ctrl.btp.auto_breaking.tc1[self.stage] = ctrl.manometer['p tc1'].get_value()
-        ctrl.btp.auto_breaking.tc2[self.stage] = ctrl.manometer['p tc2'].get_value()
+        ctrl.btp.auto_breaking.tc[0][self.stage] = ctrl.manometer['p tc1'].get_value()
+        ctrl.btp.auto_breaking.tc[1][self.stage] = ctrl.manometer['p tc2'].get_value()
 
 
 class Check(QState):
@@ -75,8 +74,9 @@ class Check(QState):
         self.ku_215 = common.KU215(self)
         self.enter = common.Enter(state='ВР', parent=self)
         self.handle_position = common.HandlePosition(stage=stage, parent=self)
-        self.check_handle_position = common.CheckHandlePosition(stage=stage, data=ctrl.btp.auto_breaking, parent=self)
+        self.check_handle_position = common.CheckHandlePosition(stage=stage, data=ctrl.btp.ku_215, parent=self)
         self.pressure_stabilization = common.PressureStabilization(self)
+        self.check_ku_pressure = common.CheckKuPressure(stage=stage, parent=self)
         self.save_result = SaveResult(stage=stage, parent=self)
 
         self.setInitialState(self.ppm)
@@ -90,7 +90,8 @@ class Check(QState):
         self.check_handle_position.addTransition(ctrl.server_updated, self.check_handle_position)
         self.check_handle_position.addTransition(self.check_handle_position.done, self.pressure_stabilization)
         self.pressure_stabilization.addTransition(ctrl.server_updated, self.pressure_stabilization)
-        self.pressure_stabilization.addTransition(self.pressure_stabilization.done, self.save_result)
+        self.pressure_stabilization.addTransition(self.pressure_stabilization.done, self.check_ku_pressure)
+        self.check_ku_pressure.addTransition(self.check_ku_pressure.done, self.save_result)
 
 
 class ShowResult(QState):
@@ -119,9 +120,9 @@ class ShowResult(QState):
 
     def get_row(self, row: int):
         data = ctrl.btp.auto_breaking
-        stage = data.stage[row]
+        stage = data.position_as_text(row)
         rang = data.range_as_text(row)
-        tc1 = data.tc1_as_text(row)
-        tc2 = data.tc2_as_text(row)
+        tc1 = data.tc_as_text(0, row)
+        tc2 = data.tc_as_text(1, row)
         return f'<tr><td>   {stage}  </td><td>   {rang}   </td>' \
                f'<td align="center">   {tc1}   </td><td align="center">   {tc2}   </td></tr>'

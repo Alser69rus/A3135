@@ -5,18 +5,16 @@ from datetime import datetime
 @dataclass()
 class KU215:
     handle = (
-        'отпускное положение',
-        'первое положение',
-        'второе положение',
-        'третье положение',
-        'четвертое положение',
-        'третье положение',
-        'второе положение',
-        'первое положение',
-        'отпускное положение',
+        '1 ступень',
+        '2 ступень',
+        '3 ступень',
+        '4 ступень',
+        '3 ступень',
+        '2 ступень',
+        '1 ступень',
+        'отпуск',
     )
     range = (
-        (0.0, 0.005),
         (0.10, 0.13),
         (0.17, 0.20),
         (0.27, 0.30),
@@ -119,6 +117,7 @@ class EmptyTime:
 
 @dataclass()
 class BtpData:
+    ku_215: KU215 = field(default_factory=KU215)
     auto_breaking: Breaking = field(default_factory=Breaking)
     kvt_breaking: Breaking = field(default_factory=Breaking)
     fill_time: FillTime = field(default_factory=FillTime)
