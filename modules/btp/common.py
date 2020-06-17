@@ -44,8 +44,13 @@ class Pim(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.button_enable('back')
         ctrl.setText(f'<p>Переведите ручку крана в отпускное положение и сбросьте давление в '
-                     f'импульсной магистралидо нуля.</p>')
-        if ctrl.manometer['p im'].get_value() <= 0.005:
+                     f'импульсной магистрали, ТЦ1 и ТЦ2 до нуля.</p>')
+        p = [
+            ctrl.manometer['p im'].get_value() <= 0.005,
+            ctrl.manometer['p tc1'].get_value() <= 0.005,
+            ctrl.manometer['p tc2'].get_value() <= 0.005,
+        ]
+        if all(p):
             self.done.emit()
 
 
@@ -136,12 +141,41 @@ class PressureStabilization(QState):
         data = ctrl.graph.data['p im']
         data = data[-DATA_SIZE:]
         dp = max(data) - min(data)
+        p = self.p_percent(dp)
         dt = ctrl.graph.dt
+        t = self.t_percent(dt)
+        value = min(t, p)
+        num = round(value / 4)
+        text = f'■' * num
+        color = self.color(value)
+        ctrl.form.progress_bar.setValue(value)
         ctrl.setText(f'<p>Ожидается стабилизация давления в импульсной магистрали.</p>'
-                     f'<p>Текущая разность давлений: {dp:.3f} МПа.</p>'
-                     f'<p>Времени прошло с начала измерения: {dt:.1f} с.</p>')
+                     f'<p>Завершено на {value}%</p>'
+                     f'<p><font color="{color}">{text:○<25}</font></p>')
         if dp <= EPS and dt >= DELAY:
             self.done.emit()
+
+    @staticmethod
+    def norm(value: float) -> int:
+        value = round(value)
+        if value < 0:
+            value = 0
+        elif value > 100:
+            value = 100
+        return value
+
+    def t_percent(self, value: float) -> int:
+        return self.norm(100 * value / DELAY)
+
+    def p_percent(self, value: float) -> int:
+        return self.norm(100 - 5 * (value - EPS) / EPS)
+
+    @staticmethod
+    def color(value: int) -> str:
+        r = 200 - value * 2
+        g = 0 + value * 2
+        b = 50
+        return f'#{r:0>2x}{g:0>2x}{b:0>2x}'
 
 
 class CheckKuPressure(QState):

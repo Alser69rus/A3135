@@ -40,7 +40,6 @@ class Substitution(QState):
         self.pim.addTransition(ctrl.server_updated, self.pim)
         self.pim.addTransition(self.pim.done, self.enter)
         self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_neutral, self.el_breaking_on)
-        self.el_breaking_on.addTransition(ctrl.server_updated, self.el_breaking_on)
         self.el_breaking_on.addTransition(ctrl.switch['el. braking'].high_value, self.measure)
         self.measure.addTransition(ctrl.server_updated, self.measure)
         self.measure.addTransition(self.measure.done, self.el_breaking_off)
@@ -59,6 +58,8 @@ class Start(QState):
 class ElBreakingOn(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.setText(f'Включите тумблер "ЗАМ. ЭЛ. ТОРМ."')
+
+    def onExit(self, event: QEvent) -> None:
         ctrl.graph.start()
         ctrl.btp.substitution.start()
 

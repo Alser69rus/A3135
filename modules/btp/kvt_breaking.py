@@ -47,7 +47,7 @@ class KvtBreaking(QState):
 
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.show_panel('манометры текст график')
+        ctrl.show_panel('манометры текст график прогресс')
         ctrl.graph.show_graph('p im p tc1 p tc2')
         ctrl.graph.reset()
         ctrl.button_enable('back')

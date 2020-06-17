@@ -94,7 +94,7 @@ class ShowResult(QState):
         tc1 = data.time_as_text(0)
         tc2 = data.time_as_text(1)
         ctrl.setText(f'<p><table border="2" cellpadding="4">'
-                     f'<caption>Проверка времени наполнения ТЦ при управлении'
+                     f'<caption>Проверка времени снижения давления ТЦ при управлении'
                      f' краном вспомогательного тормоза (КВТ)</caption>'
                      f'<tr><th>Наименование</th><th>Норма, МПа</th><th>ТЦ1 факт, с</th><th>ТЦ2 факт, с</th></tr>'
                      f'<tr><td>Время снижения давления ТЦ <br>при управлении КВТ<br>(с 0,35 до 0 МПа)</td>'

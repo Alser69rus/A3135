@@ -83,7 +83,6 @@ class Server(QObject):
             ('yes', 'ДА', self.worker.di.pin[3]),
             ('no', 'НЕТ', self.worker.di.pin[4]),
             ('examination', 'ИСПЫТАНИЕ', self.worker.di.pin[5]),
-            ('ok', 'ОК', self.worker.di.pin[6]),
             ('auto release', 'АВТ ОТПУСК', self.worker.di.pin[7]),
         ]
         for key, name, button in buttons:
@@ -103,6 +102,7 @@ class Server(QObject):
             ('red 211', 'РЕД 211.020', self.worker.di.pin[14]),
             ('leak 0,5', 'УТЕЧКА d 1', self.worker.di.pin[15]),
             ('leak 1', 'УТЕЧКА d 0.5', self.worker.di.pin[16]),
+            ('ok', 'ОК', self.worker.di.pin[6]),
         ]
         for key, name, switch in switches:
             result[key] = switch

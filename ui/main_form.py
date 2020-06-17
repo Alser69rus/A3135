@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QProgressBar
 from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtGui import QKeyEvent
 from typing import Dict
@@ -20,6 +20,9 @@ class MainForm(QWidget):
         self.vbox = QVBoxLayout()
         self.vbox.setContentsMargins(4, 4, 4, 4)
         self.workspace = Workspace(server=server)
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setMaximum(100)
+        self.progress_bar.setTextVisible(True)
         self.panel: Dict[str, QWidget] = {
             'манометры': ManometersPanel(server=server),
             'меню': self.workspace.menu,
@@ -27,6 +30,7 @@ class MainForm(QWidget):
             'картинка': self.workspace.img,
             'график': self.workspace.graph,
             'отчет': self.workspace.report,
+            'прогресс': self.progress_bar,
         }
 
         self.button_panel = ButtonPanel(server=server)
@@ -34,6 +38,7 @@ class MainForm(QWidget):
         self.setLayout(self.vbox)
         self.vbox.addWidget(self.panel['манометры'])
         self.vbox.addWidget(self.workspace)
+        self.vbox.addWidget(self.progress_bar)
         self.vbox.addWidget(self.button_panel)
 
         self.ctrl_win = ControlWindow(server=server)
