@@ -19,11 +19,14 @@ class Btp(QState):
         self.finish = QFinalState(self)
         self.addTransition(self.finished, menu)
         self.reset = Reset(self)
+        self.disable_menu = DisableMenu(self)
         self.report_data = ReportData(self)
         self.menu = Menu(self)
-        self.setInitialState(self.reset)
         menu.addTransition(ctrl.menu.menu['Главное меню'].button['БТП 020'].clicked, self)
-        self.reset.addTransition(self.report_data)
+
+        self.setInitialState(self.reset)
+        self.reset.addTransition(self.disable_menu)
+        self.disable_menu.addTransition(self.report_data)
         self.report_data.addTransition(ctrl.button['back'].clicked, self.finish)
         self.report_data.addTransition(ctrl.menu.prepare_menu.done.clicked, self.menu)
         self.menu.addTransition(ctrl.button['back'].clicked, self.finish)
@@ -41,6 +44,23 @@ class Reset(QState):
         ctrl.menu.reset_prepare()
         ctrl.menu.menu['БТП 020'].reset()
         ctrl.btp = BtpData()
+
+
+class DisableMenu(QState):
+    def onEntry(self, event: QEvent) -> None:
+        menu = ctrl.menu.menu['БТП 020']
+        buttons = [
+            'торможение автоматическое',
+            'торможение КВТ',
+            'Время наполненя ТЦ',
+            'Герметичность',
+            'Время снижения',
+            'Замещение торможения',
+            'Повышенная скорость',
+            'Завершение',
+        ]
+        for name in buttons:
+            menu.button[name].setEnabled(False)
 
 
 class ReportData(QState):
