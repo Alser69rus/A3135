@@ -123,3 +123,4 @@ class BtpData:
     fill_time: FillTime = field(default_factory=FillTime)
     empty_time: EmptyTime = field(default_factory=EmptyTime)
     tightness: str = '-'
+    substitution: FillTime = field(default_factory=FillTime)

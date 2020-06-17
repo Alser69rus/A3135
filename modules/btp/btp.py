@@ -7,6 +7,7 @@ from modules.btp.kvt_breaking import KvtBreaking
 from modules.btp.filling import Filling
 from modules.btp.tightness import Tightness
 from modules.btp.emptying import Emptying
+from modules.btp.substitution import Substitution
 
 ctrl: Controller
 
@@ -37,6 +38,7 @@ class Btp(QState):
         self.filling = Filling(controller=ctrl, menu_state=self.menu)
         self.tightness = Tightness(controller=ctrl, menu_state=self.menu)
         self.emptying = Emptying(controller=ctrl, menu_state=self.menu)
+        self.substitution = Substitution(controller=ctrl, menu_state=self.menu)
 
 
 class Reset(QState):
@@ -60,7 +62,7 @@ class DisableMenu(QState):
             'Завершение',
         ]
         for name in buttons:
-            menu.button[name].setEnabled(False)
+            menu.button[name].setEnabled(True)
 
 
 class ReportData(QState):
