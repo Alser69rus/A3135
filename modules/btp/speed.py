@@ -4,7 +4,6 @@ from controller.controller import Controller
 from modules.btp.common import Common
 
 ctrl: Controller
-p = None
 
 
 class Speed(QState):

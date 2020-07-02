@@ -9,6 +9,7 @@ from modules.btp.tightness import Tightness
 from modules.btp.emptying import Emptying
 from modules.btp.substitution import Substitution
 from modules.btp.speed import Speed
+from modules.btp.end import Ending
 
 ctrl: Controller
 
@@ -41,6 +42,7 @@ class Btp(QState):
         self.emptying = Emptying(controller=ctrl, menu_state=self.menu)
         self.substitution = Substitution(controller=ctrl, menu_state=self.menu)
         self.speed = Speed(controller=ctrl, menu_state=self.menu)
+        self.ending = Ending(controller=ctrl, menu_state=self.menu)
 
 
 class Reset(QState):
