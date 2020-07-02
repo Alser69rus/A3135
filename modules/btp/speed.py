@@ -141,5 +141,3 @@ class ShowResult(QState):
             ctrl.menu.current_menu.current_button.set_success()
         else:
             ctrl.menu.current_menu.current_button.set_fail()
-
-

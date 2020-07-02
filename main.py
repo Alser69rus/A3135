@@ -12,9 +12,7 @@ from ui.main_form import MainForm
 logging.basicConfig(level=logging.DEBUG, format='%(name)s %(asctime)s - %(levelname)s - %(message)s')
 
 
-# logging.basicConfig(level=logging.WARNING)
-# Task_A3139_001 get
-# get2
+# logging.basicConfig(level=logging.WARNING
 
 class Main:
     def __init__(self):
