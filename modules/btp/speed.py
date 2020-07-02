@@ -26,6 +26,13 @@ class Speed(QState):
         self.ku_215 = common.KU215(self)
         self.pim = common.Pim(self)
         self.enter = common.Enter(state='- 0 -', parent=self)
+        self.speed_on = SpeedOn(self)
+        self.measure_fill = MeasureFill(self)
+        self.ok = Ok(self)
+        self.ok_measure = OkMeasure(self)
+        self.speed_off = SpeedOff(self)
+        self.measure_empty = MeasureEmpty(self)
+        self.show_result = ShowResult(self)
 
         self.setInitialState(self.start)
         self.start.addTransition(self.ppm)
@@ -36,7 +43,16 @@ class Speed(QState):
         self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.pim)
         self.pim.addTransition(ctrl.server_updated, self.pim)
         self.pim.addTransition(self.pim.done, self.enter)
-        # self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_neutral, )
+        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_neutral, self.speed_on)
+        self.speed_on.addTransition(ctrl.switch['>60 km/h'].high_value, self.measure_fill)
+        self.measure_fill.addTransition(ctrl.server_updated, self.measure_fill)
+        self.measure_fill.addTransition(self.measure_fill.done, self.ok)
+        self.ok.addTransition(ctrl.switch['ok'].high_value, self.ok_measure)
+        self.ok_measure.addTransition(ctrl.server_updated, self.ok_measure)
+        self.ok_measure.addTransition(ctrl.switch['ok'].low_value, self.speed_off)
+        self.speed_off.addTransition(ctrl.switch['>60 km/h'].low_value, self.measure_empty)
+        self.measure_empty.addTransition(ctrl.server_updated, self.measure_empty)
+        self.measure_empty.addTransition(self.measure_empty.done, self.show_result)
 
 
 class Start(QState):
@@ -72,7 +88,7 @@ class MeasureFill(QState):
             ctrl.btp.speed_fill.stop(0)
         if tc2 >= 0.56:
             ctrl.btp.speed_fill.stop(1)
-        if tc1 >= 0.56 and tc2 >= 0.56 or t >= 8:
+        if tc1 >= 0.56 and tc2 >= 0.56:
             self.done.emit()
 
 
@@ -86,12 +102,12 @@ class OkMeasure(QState):
     def onEntry(self, event: QEvent) -> None:
         tc1 = ctrl.manometer['p tc1'].get_value()
         tc2 = ctrl.manometer['p tc2'].get_value()
-        res1 = 'норма' if tc1 < 0.5 else '(не норма)'
-        res2 = 'норма' if tc2 < 0.5 else '(не норма)'
+        res1 = 'норма' if tc1 < 0.55 else '(не норма)'
+        res2 = 'норма' if tc2 < 0.55 else '(не норма)'
         ctrl.btp.sped_ok = [res1, res2]
         ctrl.setText(f'<p>Давление в ТЦ1  и ТЦ2 должно уменьшаться.</p>'
-                     f'<p>Давление в ТЦ1 {tc1} МПа {res1}</p>'
-                     f'<p>Давление в ТЦ2 {tc2} МПа {res2}</p>'
+                     f'<p>Давление в ТЦ1: {tc1} МПа<br>результат: {res1}</p>'
+                     f'<p>Давление в ТЦ2: {tc2} МПа<br>результат: {res2}</p>'
                      f'<p><br>Для продолжения испытания отпустите кнопку "ОК".</p>')
 
 
@@ -123,21 +139,53 @@ class MeasureEmpty(QState):
 
 
 class ShowResult(QState):
+    text = ''
+
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('текст')
         ctrl.button_enable('back')
-        data = ctrl.btp.fill_time
-        tc1 = data.time_as_text(0)
-        tc2 = data.time_as_text(1)
-        ctrl.setText(f'<p><table border="2" cellpadding="4">'
-                     f'<caption>Проверка времени наполнения ТЦ при управлении'
-                     f' краном вспомогательного тормоза (КВТ)</caption>'
-                     f'<tr><th>Наименование</th><th>Норма, МПа</th><th>ТЦ1 факт, с</th><th>ТЦ2 факт, с</th></tr>'
-                     f'<tr><td>Время наполнения ТЦ при управлении КВТ<br>(с 0 до 0,35 МПа)</td><td>не более 4 с</td>'
-                     f'<td align="center">{tc1}</td><td align="center">{tc2}</td></tr>'
-                     f'</table></p>'
-                     f'<p><br>Для продолжения нажмите "ВОЗВРАТ".</p>')
-        if data.success():
+        data_fill = ctrl.btp.speed_fill
+        data_empty = ctrl.btp.speed_empty
+        data_ok = ctrl.btp.sped_ok
+        self.table_begin()
+        self.caption('Проверка работы БТО при движении на повышенных скоростях')
+        self.header('Наименование', 'Норма', 'ТЦ1 факт, с', 'ТЦ2 факт, с')
+        self.row(f'Время наполнения ТЦ1 и ТЦ2<br>с 0 до 0,56 МПа', 'не более 4 с',
+                 f'{data_fill.time_as_text(0)}', f'{data_fill.time_as_text(1)}')
+        self.row('Время снижения давления в ТЦ1 и ТЦ2<br>с max до 0', 'не более 13 с',
+                 f'{data_empty.time_as_text(0)}', f'{data_empty.time_as_text(1)}')
+        self.row('Проверка проходимости канала к отпускному клапану', '', f'{data_ok[0]}', f'{data_ok[1]}')
+        self.table_end()
+        self.text += '<p><br>Для выхода в меню нажмите "ВОЗВРАТ".</p>'
+        ctrl.setText(self.text)
+
+        res = all(s == 'норма' for s in data_ok)
+        if data_fill.success() and data_empty.success() and res:
             ctrl.menu.current_menu.current_button.set_success()
         else:
             ctrl.menu.current_menu.current_button.set_fail()
+
+    def table_begin(self):
+        self.text += f'<p><table border="2" cellpadding="4">'
+
+    def table_end(self):
+        self.text += f'</table></p>'
+
+    def caption(self, caption: str):
+        self.text += f'<caption>{caption}</caption>'
+
+    def header(self, *args):
+        self.text += '<tr>'
+        for arg in args:
+            self.text += '<th>'
+            self.text += arg
+            self.text += '</th>'
+        self.text += '</tr>'
+
+    def row(self, *args) -> str:
+        self.text += '<tr>'
+        for arg in args:
+            self.text += '<td align="center">'
+            self.text += arg
+            self.text += '</td>'
+        self.text += '</tr>'
