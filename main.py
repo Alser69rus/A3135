@@ -13,7 +13,8 @@ logging.basicConfig(level=logging.DEBUG, format='%(name)s %(asctime)s - %(leveln
 
 
 # logging.basicConfig(level=logging.WARNING)
-
+# Task_A3139_001 get
+# get2
 
 class Main:
     def __init__(self):

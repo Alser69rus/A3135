@@ -149,9 +149,7 @@ class PressureStabilization(QState):
         text = f'■' * num
         color = self.color(value)
         ctrl.form.progress_bar.setValue(value)
-        ctrl.setText(f'<p>Ожидается стабилизация давления в импульсной магистрали.</p>'
-                     f'<p>Завершено на {value}%</p>'
-                     f'<p><font color="{color}">{text:○<25}</font></p>')
+        ctrl.setText(f'<p>Ожидается стабилизация давления в импульсной магистрали.</p>')
         if dp <= EPS and dt >= DELAY:
             self.done.emit()
 
