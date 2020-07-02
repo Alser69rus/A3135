@@ -68,7 +68,7 @@ class MenuButton(QPushButton):
     def __init__(self, text: str, parent=None):
         super().__init__(parent=parent)
         self.setFlat(True)
-        self.setFont(QFont('Segoi Ui', 12))
+        self.setFont(QFont('Segoi Ui', 14))
         self.setMouseTracking(True)
 
         self.setText(text)
