@@ -44,6 +44,9 @@ class Btp(QState):
         self.speed = Speed(controller=ctrl, menu_state=self.menu)
         self.ending = Ending(controller=ctrl, menu_state=self.menu)
 
+        self.ending.report.addTransition(ctrl.report.exit.clicked, self.finish)
+        self.ending.report.addTransition(ctrl.button['back'].clicked, self.finish)
+
 
 class Reset(QState):
     def onEntry(self, event: QEvent) -> None:
