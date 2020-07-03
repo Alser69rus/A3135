@@ -1,9 +1,11 @@
 from PyQt5 import QtWidgets
-from ui.main_menu import MainMenu
-from ui.text_widget import TextWidget
-from ui.img_widget import ImageWidget
-from ui.graph_widget import Plot
+
 from opc.server import Server
+from ui.graph_widget import Plot
+from ui.img_widget import ImageWidget
+from ui.main_menu import MainMenu
+from ui.report_widget import ReportWidget
+from ui.text_widget import TextWidget
 
 
 class Workspace(QtWidgets.QWidget):
@@ -16,7 +18,7 @@ class Workspace(QtWidgets.QWidget):
         self.text = TextWidget()
         self.img = ImageWidget()
         self.graph = Plot(server=server)
-        self.report = QtWidgets.QWidget()
+        self.report = ReportWidget()
 
         self.hbox.addWidget(self.menu)
         self.hbox.addWidget(self.text)

@@ -7,6 +7,7 @@ from ui.workspace import Workspace
 from ui.manometers_panel import ManometersPanel
 from ui.control_window import ControlWindow
 from ui.diagnostic_window import DiagnosticWindow
+from functools import partial
 
 ANIMATE_CLICK_DELAY = 50
 
@@ -34,6 +35,8 @@ class MainForm(QWidget):
         }
 
         self.button_panel = ButtonPanel(server=server)
+        self.workspace.report.up.connect(partial(self.button_panel.button['up'].animateClick, ANIMATE_CLICK_DELAY))
+        self.workspace.report.down.connect(partial(self.button_panel.button['down'].animateClick, ANIMATE_CLICK_DELAY))
 
         self.setLayout(self.vbox)
         self.vbox.addWidget(self.panel['манометры'])
@@ -75,3 +78,8 @@ class MainForm(QWidget):
         self.button_panel.button['up'].clicked.connect(menu.on_up_click)
         self.button_panel.button['down'].clicked.connect(menu.on_down_click)
         self.button_panel.button['yes'].clicked.connect(menu.on_ok_click)
+
+        self.button_panel.button['back'].clicked.connect(self.workspace.report.menu.on_back_click)
+        self.button_panel.button['up'].clicked.connect(self.workspace.report.menu.on_up_click)
+        self.button_panel.button['down'].clicked.connect(self.workspace.report.menu.on_down_click)
+        self.button_panel.button['yes'].clicked.connect(self.workspace.report.menu.on_ok_click)

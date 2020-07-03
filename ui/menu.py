@@ -122,9 +122,10 @@ class MenuButton(QPushButton):
 class Menu(QWidget):
     button_clicked = pyqtSignal()
 
-    def __init__(self, caption: str, parent=None):
+    def __init__(self, caption: str, show_caption: bool = True, parent=None):
         super().__init__(parent=parent)
         self.caption = QLabel()
+        self.caption.setVisible(show_caption)
         self.caption.setFont(QFont('Segoi Ui', 20))
         self.caption.setAlignment(Qt.AlignCenter)
         self.caption.setText(caption)
@@ -205,21 +206,26 @@ class Menu(QWidget):
 
     @pyqtSlot()
     def on_ok_click(self):
+        if not self.isVisible(): return
         if not self.active: return
         if self.current_button is None: return
         self.current_button.animateClick(ANIMATE_CLICK_DELAY)
 
     @pyqtSlot()
     def on_back_click(self):
+        if not self.isVisible(): return
+        if not self.active: return
         pass
 
     @pyqtSlot()
     def on_up_click(self):
+        if not self.isVisible(): return
         if not self.active: return
         self.select(self.previous_element(self.current_button))
 
     @pyqtSlot()
     def on_down_click(self):
+        if not self.isVisible(): return
         if not self.active: return
         self.select(self.next_element(self.current_button))
 
@@ -278,6 +284,6 @@ class MenuWidget(QWidget):
     @pyqtSlot()
     def on_down_click(self):
         if not self.active: return
-        if not self.isVisible():return
+        if not self.isVisible(): return
         if self.current_menu is None: return
         self.current_menu.on_down_click()

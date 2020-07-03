@@ -27,7 +27,7 @@ class Main:
                                      form=self.form,
                                      stm=self.stm)
 
-        self.controller.show_panel('меню')
+        self.controller.show_panel('отчет')
         self.controller.text.setText('Hello')
         self.controller.show_menu('Главное меню')
         self.form.show()

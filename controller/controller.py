@@ -31,6 +31,7 @@ class Controller(QObject):
         self.images: Dict[str, QPixmap] = form.workspace.img.images
         self.ctrl_win: QWidget = form.ctrl_win
         self.diag_win: QWidget = form.diag_win
+        self.report = form.workspace.report
 
         self.show_panel = form.show_panel
         self.show_menu = self.menu.show_menu
