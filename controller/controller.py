@@ -1,17 +1,31 @@
-from PyQt5.QtCore import QObject, pyqtSignal, QTimer
-from PyQt5.QtCore import QStateMachine
-from PyQt5.QtWidgets import QPushButton, QLabel, QWidget
-from PyQt5.QtGui import QPixmap
+from dataclasses import dataclass
+from datetime import datetime
 from typing import Dict, Union
 
-from ui.main_form import MainForm
-from opc.server import Server
-from ui.main_menu import MainMenu
-from opc.opc import TwoStateDiscreteType
+from PyQt5.QtCore import QObject, pyqtSignal, QTimer
+from PyQt5.QtCore import QStateMachine
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QPushButton, QLabel, QWidget
+
 from modules.btp.data import BtpData
+from opc.opc import TwoStateDiscreteType
+from opc.server import Server
 from ui.graph_widget import Plot
+from ui.main_form import MainForm
+from ui.main_menu import MainMenu
 
 ANIMATE_CLICK_DELAY = 50
+
+
+@dataclass()
+class ReportHeader:
+    dev_num = ''
+    date = ''
+    locomotive = ''
+    section = ''
+    name_1 = ''
+    name_2 = ''
+    today = datetime.today()
 
 
 class Controller(QObject):
@@ -57,6 +71,7 @@ class Controller(QObject):
         self.switch = server.switch
         self.switch_with_neutral = server.switch_with_neutral
 
+        self.report_header = ReportHeader()
         self.btp = BtpData()
 
     def closeEvent(self, QCloseEvent):
@@ -69,3 +84,13 @@ class Controller(QObject):
             QCloseEvent.ignore()
         else:
             QCloseEvent.accept()
+
+    def update_report_header(self):
+        field = self.menu.prepare_menu.get_data_fields()
+        self.report_header = ReportHeader()
+        self.report_header.dev_num = field[0]
+        self.report_header.date = field[1]
+        self.report_header.locomotive = field[2]
+        self.report_header.section = field[3]
+        self.report_header.name_1 = field[4]
+        self.report_header.name_2 = field[5]

@@ -34,7 +34,7 @@ class ReportWidget(QWidget):
         self.passport.clicked.connect(self.connect_passport)
         self.print.clicked.connect(self.preview.print)
         self.on_preview = None
-        self.preview.paintRequested.connect(self.report)
+        self.preview.paintRequested.connect(self.on_paint_request)
 
     def event(self, event):
         if not self.isVisible(): return QWidget.event(self, event)
@@ -86,8 +86,9 @@ class ReportWidget(QWidget):
 
     def save_pdf(self, file):
         wr = QPdfWriter(str(file))
+        wr.setResolution(300)
         wr.newPage()
-        self.report(wr)
+        self.on_paint_request(wr)
 
     def save_new_report_num(self, settings: QSettings, num: int):
         settings.setValue('protocol/num', num)
@@ -95,6 +96,6 @@ class ReportWidget(QWidget):
     def save_new_report_date(self, settings: QSettings, date):
         settings.setValue('protocol/date', date.strftime('%d-%m-%Y'))
 
-    def report(self, printer):
+    def on_paint_request(self, printer):
         if not (self.on_preview is None):
             self.on_preview(printer)
