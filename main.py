@@ -30,7 +30,7 @@ class Main:
         self.controller.show_panel('меню')
         self.controller.text.setText('Hello')
         self.controller.show_menu('Главное меню')
-        self.form.show()
+        self.form.showMaximized()
 
         self.menu_state = MenuState(self.controller)
         self.stm.setInitialState(self.menu_state)
@@ -40,7 +40,5 @@ class Main:
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     main = Main()
-    if main.form.width() > 1024 or main.form.height() > 768:
-        logging.debug(f'window size: {main.form.width()}x{main.form.height()}')
 
     sys.exit(app.exec_())
