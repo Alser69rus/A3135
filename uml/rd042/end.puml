@@ -1,0 +1,9 @@
+@startuml
+[*]-->upr_rd
+upr_rd-->ptc:False
+ptc-->ptc:upd
+ptc-->rd:ptc<=0.005
+rd-->air:False
+air-->report:yes
+report-->[*]
+@enduml

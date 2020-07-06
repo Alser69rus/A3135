@@ -1,0 +1,10 @@
+@startuml
+[*]-->upr_rd
+upr_rd-->measure:False
+measure->measure:upd
+measure-->show_result:Ptc2<0.005
+show_result-->[*]
+note:Время снижения давления
+note:с 0,35 до 0 МПа
+
+@enduml

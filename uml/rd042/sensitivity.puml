@@ -1,0 +1,10 @@
+@startuml
+[*]->leak_1_on
+leak_1_on-->measure:True
+measure->measure:upd
+measure-->leak_1_off:t>15
+leak_1_off-->show_result:False
+show_result-->[*]
+note:dP не более 0,015
+note:за 15 сек
+@enduml

@@ -21,9 +21,11 @@ class MainForm(QWidget):
         self.vbox = QVBoxLayout()
         self.vbox.setContentsMargins(4, 4, 4, 4)
         self.workspace = Workspace(server=server)
+
         self.progress_bar = QProgressBar()
         self.progress_bar.setMaximum(100)
         self.progress_bar.setTextVisible(True)
+
         self.panel: Dict[str, QWidget] = {
             'манометры': ManometersPanel(server=server),
             'меню': self.workspace.menu,
@@ -47,6 +49,7 @@ class MainForm(QWidget):
         self.ctrl_win = ControlWindow(server=server)
         self.diag_win = DiagnosticWindow(server=server)
         self.connect_menu()
+
 
     @pyqtSlot(str)
     def show_panel(self, value: str):

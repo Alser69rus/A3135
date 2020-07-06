@@ -1,0 +1,52 @@
+@startuml
+
+class Data
+Data*--Fill
+Data*--Sensitivity
+Data*--Empty
+Data*--Valve
+Data*--Junctions
+
+class Fill{
+    t1:time
+    t2:time
+    time()->float
+    text()->str
+    result()->bool
+    start()
+    stop()
+
+}
+class Sensitivity{
+    ptc:list[float]
+    t1:time
+    t2:time
+    time()->float
+    start()
+    stop()
+    text()->str
+    result()->bool
+}
+
+class Empty{
+    t1:time
+    t2:time
+    time()->float
+    text()->str
+    result()->bool
+    start()
+    stop()
+}
+class Tightness{
+    value:int=0
+    text()->str
+    result()->bool
+    reset()
+    success()
+    fail()
+}
+Valve--|>Tightness
+Junctions--|>Tightness
+
+
+@enduml

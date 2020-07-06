@@ -19,11 +19,14 @@ class ReportWidget(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+
         self.vbox = QVBoxLayout()
         self.setLayout(self.vbox)
+
         self.preview = QPrintPreviewWidget()
         self.preview.fitToWidth()
         self.vbox.addWidget(self.preview)
+
         self.menu = Menu('', show_caption=False)
         self.print = self.menu.add_button('Печать')
         self.passport = self.menu.add_button('Передать даннные в электронный паспорт локомотива')

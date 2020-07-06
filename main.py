@@ -22,7 +22,6 @@ class Main:
         self.server = Server()
         self.form = MainForm(self.server)
         self.stm = QStateMachine()
-
         self.controller = Controller(server=self.server,
                                      form=self.form,
                                      stm=self.stm)
@@ -40,5 +39,4 @@ class Main:
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     main = Main()
-
     sys.exit(app.exec_())

@@ -11,13 +11,16 @@ from ui.text_widget import TextWidget
 class Workspace(QtWidgets.QWidget):
     def __init__(self, server: Server, parent=None):
         super().__init__(parent=parent)
+
         self.hbox = QtWidgets.QHBoxLayout()
         self.setLayout(self.hbox)
         self.hbox.setContentsMargins(4, 4, 4, 4)
         self.menu = MainMenu()
         self.text = TextWidget()
         self.img = ImageWidget()
+
         self.graph = Plot(server=server)
+
         self.report = ReportWidget()
 
         self.hbox.addWidget(self.menu)
