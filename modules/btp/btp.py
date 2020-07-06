@@ -69,7 +69,7 @@ class DisableMenu(QState):
             'Завершение',
         ]
         for name in buttons:
-            menu.button[name].setEnabled(True)
+            menu.button[name].setEnabled(False)
 
 
 class ReportData(QState):

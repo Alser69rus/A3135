@@ -2,7 +2,6 @@ from PyQt5.QtCore import QState, QEvent, QFinalState
 from controller.controller import Controller
 from modules.btp.data import BtpData
 
-
 ctrl: Controller
 
 
@@ -43,25 +42,21 @@ class Rd(QState):
 class Reset(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.menu.reset_prepare()
-        ctrl.menu.menu['БТП 020'].reset()
+        ctrl.menu.menu['РД 042'].reset()
         ctrl.btp = BtpData()
 
 
 class DisableMenu(QState):
     def onEntry(self, event: QEvent) -> None:
-        menu = ctrl.menu.menu['БТП 020']
+        menu = ctrl.menu.menu['РД 042']
         buttons = [
-            'торможение автоматическое',
-            'торможение КВТ',
-            'Время наполненя ТЦ',
-            'Герметичность',
-            'Время снижения',
-            'Замещение торможения',
-            'Повышенная скорость',
+            'Время наполнения',
+            'Поддержание давления',
+            'Время отпуска',
+            'Герметичность соединений',
+            'Герметичность клапана',
             'Завершение',
         ]
-        for name in buttons:
-            menu.button[name].setEnabled(True)
 
 
 class ReportData(QState):
@@ -71,7 +66,7 @@ class ReportData(QState):
 
 class Menu(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.show_menu('БТП 020')
+        ctrl.show_menu('РД 042')
         ctrl.show_panel('меню')
         ctrl.button_enable('back up down yes')
         ctrl.menu.active = True
