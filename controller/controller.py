@@ -8,6 +8,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QPushButton, QLabel, QWidget
 
 from modules.btp.data import BtpData
+from modules.rd.data import RdData
 from opc.opc import TwoStateDiscreteType
 from opc.server import Server
 from ui.graph_widget import Plot
@@ -73,6 +74,7 @@ class Controller(QObject):
 
         self.report_header = ReportHeader()
         self.btp = BtpData()
+        self.rd = RdData()
 
     def closeEvent(self, QCloseEvent):
         running_states = [self.server.th.isRunning(), self.stm.isRunning()]

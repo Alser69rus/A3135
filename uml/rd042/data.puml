@@ -1,11 +1,13 @@
 @startuml
 
-class Data
+class Data{
+valve:str
+junctions:str
+}
+
 Data*--Fill
 Data*--Sensitivity
 Data*--Empty
-Data*--Valve
-Data*--Junctions
 
 class Fill{
     t1:time
@@ -14,7 +16,7 @@ class Fill{
     text()->str
     result()->bool
     start()
-    stop()
+    update()
 
 }
 class Sensitivity{
@@ -23,7 +25,8 @@ class Sensitivity{
     t2:time
     time()->float
     start()
-    stop()
+    update()
+    delta_p()
     text()->str
     result()->bool
 }
@@ -35,18 +38,9 @@ class Empty{
     text()->str
     result()->bool
     start()
-    stop()
+    update()
 }
-class Tightness{
-    value:int=0
-    text()->str
-    result()->bool
-    reset()
-    success()
-    fail()
-}
-Valve--|>Tightness
-Junctions--|>Tightness
+
 
 
 @enduml

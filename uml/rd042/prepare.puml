@@ -1,18 +1,23 @@
 @startuml
 [*]-->set_rd
 set_rd-->rdkp_0:yes
-rdkp_0-->tank:state_neutral
-tank-->check_ptm:True
-check_ptm-->rd042:success
-check_ptm-->set_ptm:fail
-set_ptm->set_ptm:upd
-note top of set_ptm:0.49-0.51
-set_ptm-->rd042:yes
-rd042-->upr_rd042:True
-upr_rd042-->check_prdsd:True
-check_prdsd-->[*]:success
-check_prdsd-->set_prdsd:fail
-note top of set_prdsd:0.38-0.40
-set_prdsd-->set_prdsd:upd
-set_prdsd-->[*]:yes
+rdkp_0-->check_pressure:state_neutral
+
+state check_pressure{
+    [*]-->tank
+    tank-->check_ptm:True
+    check_ptm-->rd042:success
+    check_ptm-->set_ptm:fail
+    set_ptm->set_ptm:upd
+    note top of set_ptm:0.49-0.51
+    set_ptm-->rd042:yes
+    rd042-->upr_rd042:True
+    upr_rd042-->check_prdsd:True
+    check_prdsd-->[*]:success
+    check_prdsd-->set_prdsd:fail
+    note top of set_prdsd:0.38-0.40
+    set_prdsd-->set_prdsd:upd
+    set_prdsd-->[*]:yes
+}
+check_pressure-->[*]
 @enduml
