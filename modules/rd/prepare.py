@@ -6,17 +6,17 @@ ctrl: Controller
 
 
 class Prepare(QState):
-    def __init__(self, controller: Controller, menu_state: QState):
-        super().__init__(parent=controller.stm)
+    def __init__(self, parent):
+        super().__init__(parent=parent.controller.stm)
         global ctrl
-        ctrl = controller
+        ctrl = parent.controller
         self.controller = ctrl
         common: Common = Common(self)
         self.finish = QFinalState(self)
-        self.addTransition(self.finished, menu_state)
+        self.addTransition(self.finished, parent.menu)
         menu = ctrl.menu.menu['РД 042']
         self.addTransition(ctrl.button['back'].clicked, self.finish)
-        menu_state.addTransition(menu.button['Подготовка'].clicked, self)
+        parent.menu.addTransition(menu.button['Подготовка'].clicked, self)
 
         self.start = Start(self)
         self.set_rd = SetRd(self)

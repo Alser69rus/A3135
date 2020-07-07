@@ -11,6 +11,7 @@ class Rd(QState):
         super().__init__(parent=controller.stm)
         global ctrl
         ctrl = controller
+        self.controller=controller
         self.finish = QFinalState(self)
         self.addTransition(self.finished, menu)
         self.reset = Reset(self)
@@ -26,15 +27,8 @@ class Rd(QState):
         self.report_data.addTransition(ctrl.menu.prepare_menu.done.clicked, self.menu)
         self.menu.addTransition(ctrl.button['back'].clicked, self.finish)
 
-        self.prepare = Prepare(controller=ctrl, menu_state=self.menu)
-        # self.auto_breaking = AutoBreaking(controller=ctrl, menu_state=self.menu)
-        # self.kvt_breaking = KvtBreaking(controller=ctrl, menu_state=self.menu)
-        # self.filling = Filling(controller=ctrl, menu_state=self.menu)
-        # self.tightness = Tightness(controller=ctrl, menu_state=self.menu)
-        # self.emptying = Emptying(controller=ctrl, menu_state=self.menu)
-        # self.substitution = Substitution(controller=ctrl, menu_state=self.menu)
-        # self.speed = Speed(controller=ctrl, menu_state=self.menu)
-        # self.ending = Ending(controller=ctrl, menu_state=self.menu)
+        self.prepare = Prepare(self)
+
         #
         # self.ending.report.addTransition(ctrl.report.exit.clicked, self.finish)
         # self.ending.report.addTransition(ctrl.button['back'].clicked, self.finish)
