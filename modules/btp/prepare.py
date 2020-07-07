@@ -48,12 +48,12 @@ class Prepare(QState):
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст')
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
 
 
 class InstallKU(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back yes')
+        ctrl.show_button('back yes')
         text = f'<p><font color="red">ВНИМАНИЕ! БТО испытывается с исправным КУ 215.</font></p>' \
                f'<p>Установите КУ 215 на прижим, включите пневмотумблер "ПРИЖИМ КУ 215".</p>' \
                f'<p><br>Для продолжения нажмите "ДА"</p>'
@@ -62,7 +62,7 @@ class InstallKU(QState):
 
 class SetBTO(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back yes')
+        ctrl.show_button('back yes')
         text = f'<p>Установите БТО на стойку.</p>' \
                f'<p>Установите тумблером "50 В - 100 В" напряжение, соответствующее рабочему напряжению БТО.</p>' \
                f'<p>Подключите электрические шлейфы от стенда к БТО.</p><p>Подключите пневматические рукава к БТО.</p>' \
@@ -72,7 +72,7 @@ class SetBTO(QState):
 
 class ConnectBTP(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back yes')
+        ctrl.show_button('back yes')
         text = f'<p>Включите пневмотумблер "БТП К СТЕНДУ".</p>' \
                f'<p><br>Для продолжения нажмите "ДА".</p>'
         ctrl.setText(text)

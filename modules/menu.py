@@ -18,5 +18,5 @@ class MenuState(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('меню')
         ctrl.show_menu('Главное меню')
-        ctrl.button_enable('back up down yes')
+        ctrl.show_button('back up down yes')
         ctrl.menu.active = True

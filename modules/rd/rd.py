@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QState, QEvent, QFinalState
 from controller.controller import Controller
-from modules.btp.data import BtpData
+from modules.rd.data import RdData
+from modules.rd.prepare import Prepare
 
 ctrl: Controller
 
@@ -25,7 +26,7 @@ class Rd(QState):
         self.report_data.addTransition(ctrl.menu.prepare_menu.done.clicked, self.menu)
         self.menu.addTransition(ctrl.button['back'].clicked, self.finish)
 
-        # self.prepare = Prepare(controller=ctrl, menu_state=self.menu)
+        self.prepare = Prepare(controller=ctrl, menu_state=self.menu)
         # self.auto_breaking = AutoBreaking(controller=ctrl, menu_state=self.menu)
         # self.kvt_breaking = KvtBreaking(controller=ctrl, menu_state=self.menu)
         # self.filling = Filling(controller=ctrl, menu_state=self.menu)
@@ -43,7 +44,7 @@ class Reset(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.menu.reset_prepare()
         ctrl.menu.menu['РД 042'].reset()
-        ctrl.btp = BtpData()
+        ctrl.rd = RdData()
 
 
 class DisableMenu(QState):
@@ -57,6 +58,8 @@ class DisableMenu(QState):
             'Герметичность клапана',
             'Завершение',
         ]
+        for name in buttons:
+            menu.button[name].setEnabled(False)
 
 
 class ReportData(QState):
@@ -68,7 +71,7 @@ class Menu(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_menu('РД 042')
         ctrl.show_panel('меню')
-        ctrl.button_enable('back up down yes')
+        ctrl.show_button('back up down yes')
         ctrl.menu.active = True
 
     def onExit(self, event: QEvent) -> None:

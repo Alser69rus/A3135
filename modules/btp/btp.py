@@ -81,7 +81,7 @@ class Menu(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_menu('БТП 020')
         ctrl.show_panel('меню')
-        ctrl.button_enable('back up down yes')
+        ctrl.show_button('back up down yes')
         ctrl.menu.active = True
 
     def onExit(self, event: QEvent) -> None:

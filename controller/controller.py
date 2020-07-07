@@ -51,7 +51,7 @@ class Controller(QObject):
         self.show_panel = form.show_panel
         self.show_menu = self.menu.show_menu
         self.reset_prepare = self.menu.reset_prepare
-        self.button_enable = self.form.button_panel.button_enable
+        self.show_button = self.form.button_panel.show_button
         self.setText = self.text.setText
 
         self.form.closeEvent = self.closeEvent
@@ -96,3 +96,12 @@ class Controller(QObject):
         self.report_header.section = field[3]
         self.report_header.name_1 = field[4]
         self.report_header.name_2 = field[5]
+
+    def normal(self):
+        self.menu.current_menu.current_button.set_normal()
+
+    def success(self):
+        self.menu.current_menu.current_button.set_success()
+
+    def fail(self):
+        self.menu.current_menu.current_button.set_fail()

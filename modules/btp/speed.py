@@ -58,7 +58,7 @@ class Start(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст график')
         ctrl.graph.show_graph('p im p tc1 p tc2')
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         ctrl.btp.speed_fill.tc = [0.0, 0.0]
         ctrl.btp.speed_empty.tc = [0.0, 0.0]
         ctrl.btp.sped_ok = ['-', '-']
@@ -142,7 +142,7 @@ class ShowResult(QState):
 
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('текст')
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         data_fill = ctrl.btp.speed_fill
         data_empty = ctrl.btp.speed_empty
         data_ok = ctrl.btp.sped_ok

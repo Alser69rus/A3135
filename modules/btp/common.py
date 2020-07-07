@@ -32,7 +32,7 @@ class Ppm(QState):
     done = pyqtSignal()
 
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         ctrl.setText(f'<p>Установите давление в питательной магистрали в пределах 0,75...1,0 МПа.</p>')
         if 0.75 <= ctrl.manometer['p pm'].get_value() <= 1.0:
             self.done.emit()
@@ -42,7 +42,7 @@ class Pim(QState):
     done = pyqtSignal()
 
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         ctrl.setText(f'<p>Переведите ручку крана в отпускное положение и сбросьте давление в '
                      f'импульсной магистрали, ТЦ1 и ТЦ2 до нуля.</p>')
         p = [
@@ -56,13 +56,13 @@ class Pim(QState):
 
 class ElBreaking(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         ctrl.setText(f'<p>Выключите тумблер "ЗАМ. ЭЛ. ТОРМ."</p>')
 
 
 class Speed60(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         ctrl.setText(f'<p>Выключите тумблер ">60 км/ч".</p>')
 
 
@@ -72,13 +72,13 @@ class Enter(QState):
         self.state = state
 
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         ctrl.setText(f'<p>Включите тумблер "ВХОД" в положение "{self.state}".</p>')
 
 
 class KU215(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         ctrl.setText(f'<p>Включите тумблер "КУ 215".</p>')
 
 
@@ -88,7 +88,7 @@ class Tank(QState):
         self.state = state
 
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         ctrl.setText(f'<p>Включите тумблер "НАКОП. РЕЗ." в положение "СБРОС".</p>')
 
 
@@ -184,7 +184,7 @@ class CheckKuPressure(QState):
         self.stage = stage
 
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
 
         low, high = ctrl.btp.ku_215.range[self.stage]
         p = ctrl.manometer['p im'].get_value()

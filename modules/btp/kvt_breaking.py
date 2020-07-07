@@ -50,7 +50,7 @@ class Start(QState):
         ctrl.show_panel('манометры текст график прогресс')
         ctrl.graph.show_graph('p im p tc1 p tc2')
         ctrl.graph.reset()
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
 
         ctrl.btp.kvt_breaking.tc = [[-1.0] * 8, [-1.0] * 8]
         ctrl.menu.current_menu.current_button.set_normal()
@@ -99,7 +99,7 @@ class Check(QState):
 
 class ShowResult(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         ctrl.show_panel('текст')
         text = f'<p><table border="2" cellpadding="4" >' \
                f'<caption>Проверка ступеней торможения и отпуска при управлении ' \

@@ -39,7 +39,7 @@ class Ending(QState):
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('текст манометры')
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
 
 
 class Air(QState):
@@ -55,7 +55,7 @@ class KU215On(QState):
 
 class Breaking(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back yes')
+        ctrl.show_button('back yes')
         ctrl.setText(f'<p>Выполните несколько торможений и отпусков краном 215 до '
                      f'состояния когда ТЦ перестанут наполняться.</p>'
                      f'<p><br>Для продолжения нажмите "ДА".</p>')
@@ -63,7 +63,7 @@ class Breaking(QState):
 
 class KU215Off(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         ctrl.setText(f'<p>Выключите тумблер "КУ 215".</p>')
 
 
@@ -74,7 +74,7 @@ class Enter(QState):
 
 class DisconnectBTO(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back yes')
+        ctrl.show_button('back yes')
         ctrl.setText(f'<p>Отсоедините пневматические рукова и электрические шлейфы от БТО.</p>'
                      f'<p>Снимите КУ 215 с прижима.</p>'
                      f'<p><br>Для продолжения нажмите "ДА".</p>')

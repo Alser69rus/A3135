@@ -27,7 +27,7 @@ class Report(QState):
 
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('отчет')
-        ctrl.button_enable('back up down yes')
+        ctrl.show_button('back up down yes')
         ctrl.report.on_preview = self.preview
         ctrl.update_report_header()
         ctrl.report.create_report(ctrl.report_header.dev_num, ctrl.report_header.date)

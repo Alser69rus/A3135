@@ -32,7 +32,7 @@ class ButtonPanel(QWidget):
             self.button[key] = button
             self.hbox.addWidget(button)
 
-    def button_enable(self, buttons: str):
+    def show_button(self, buttons: str):
         for key in self.button.keys():
             self.button[key].setEnabled(key in buttons)
 

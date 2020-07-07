@@ -50,7 +50,7 @@ class Start(QState):
         ctrl.show_panel('манометры текст график')
         ctrl.graph.show_graph('p im p tc1 p tc2')
         ctrl.graph.reset()
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         ctrl.menu.current_menu.current_button.set_normal()
 
 
@@ -89,7 +89,7 @@ class Measure(QState):
 class ShowResult(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('текст')
-        ctrl.button_enable('back')
+        ctrl.show_button('back')
         data = ctrl.btp.empty_time
         tc1 = data.time_as_text(0)
         tc2 = data.time_as_text(1)

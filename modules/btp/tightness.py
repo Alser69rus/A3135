@@ -48,14 +48,14 @@ class Tightness(QState):
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст')
-        ctrl.button_enable('back yes no')
+        ctrl.show_button('back yes no')
         ctrl.menu.current_menu.current_button.set_normal()
         ctrl.btp.tightness = '-'
 
 
 class Check(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.button_enable('back yes no')
+        ctrl.show_button('back yes no')
         ctrl.setText(f'<p>Обмылить мыльным раствором места соединений сборочных удиниц и деталей БТО.</p>'
                      f'<p>Норма: пропуск воздуха не допускается.</p>'
                      f'<p><br>Если это обеспечивается нажмите "ДА" (норма),<br>'
