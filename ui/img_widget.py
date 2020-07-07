@@ -8,5 +8,5 @@ class ImageWidget(QLabel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setAlignment(Qt.AlignCenter)
-        self.setMinimumWidth(200)
+        self.setMinimumWidth(300)
         self.images: List[QPixmap] = {}

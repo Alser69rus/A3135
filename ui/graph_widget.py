@@ -12,6 +12,7 @@ from PyQt5.QtCore import pyqtSlot
 class Plot(pg.PlotWidget):
     def __init__(self, server: Server, parent=None):
         super().__init__(parent=parent)
+        self.setMinimumWidth(300)
         self.manometer = server.manometer
         self.graph: Dict = {}
         self.data: Dict[str, List[float]] = {}
@@ -42,6 +43,7 @@ class Plot(pg.PlotWidget):
         self.dt: float = 0
         self.auto_update: bool = False
         server.worker.updated.connect(self.on_server_update)
+
 
     def show_graph(self, keys):
         legend = self.plotItem.legend

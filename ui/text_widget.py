@@ -9,4 +9,4 @@ class TextWidget(QLabel):
         self.setFont(QFont('Segoi ui', 14))
         self.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.setWordWrap(True)
-        self.setMinimumWidth(400)
+        self.setMinimumWidth(300)
