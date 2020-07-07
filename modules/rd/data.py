@@ -47,6 +47,7 @@ class Sensitivity:
         self.t1 = datetime.now()
         self.t2 = datetime.now()
         self.ptc = []
+        self.empty_value = False
 
     def update(self, value: float):
         self.t2 = datetime.now()

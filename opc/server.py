@@ -100,8 +100,8 @@ class Server(QObject):
             ('upr rd 042', 'УПР. РД 042', self.worker.di.pin[12]),
             ('keb 208', 'КЭБ 208', self.worker.di.pin[13]),
             ('red 211', 'РЕД 211.020', self.worker.di.pin[14]),
-            ('leak 0,5', 'УТЕЧКА d 1', self.worker.di.pin[15]),
-            ('leak 1', 'УТЕЧКА d 0.5', self.worker.di.pin[16]),
+            ('leak 1', 'УТЕЧКА d 1', self.worker.di.pin[15]),
+            ('leak 0,5', 'УТЕЧКА d 0.5', self.worker.di.pin[16]),
             ('ok', 'ОК', self.worker.di.pin[6]),
         ]
         for key, name, switch in switches:
