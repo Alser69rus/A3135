@@ -6,10 +6,15 @@ from datetime import datetime
 class Fill:
     t1 = datetime.now()
     t2 = datetime.now()
+    empty_value = True
+
+    def reset(self):
+        self.empty_value = True
 
     def start(self):
         self.t1 = datetime.now()
         self.t2 = datetime.now()
+        self.empty_value = False
 
     def update(self):
         self.t2 = datetime.now()
@@ -18,12 +23,14 @@ class Fill:
         return (self.t2 - self.t1).total_seconds()
 
     def text(self) -> str:
+        if self.empty_value:
+            return '-'
         if self.result():
             return f'{self.time():.1f}'
         return f'{self.time():.1f} (не норма)'
 
     def result(self) -> bool:
-        return self.time() <= 4
+        return 0 < self.time() <= 4
 
 
 @dataclass()
@@ -31,6 +38,10 @@ class Sensitivity:
     ptc = []
     t1 = datetime.now()
     t2 = datetime.now()
+    empty_value = True
+
+    def reset(self):
+        self.empty_value = True
 
     def start(self):
         self.t1 = datetime.now()
@@ -51,6 +62,8 @@ class Sensitivity:
         return self.delta_p() <= 0.015
 
     def text(self) -> str:
+        if self.empty_value:
+            return '-'
         if self.result():
             return f'{self.delta_p():.3f}'
         return f'{self.delta_p():.3f} (не норма)'
@@ -60,10 +73,15 @@ class Sensitivity:
 class Empty:
     t1 = datetime.now()
     t2 = datetime.now()
+    empty_value = True
+
+    def reset(self):
+        self.empty_value = True
 
     def start(self):
         self.t1 = datetime.now()
         self.t2 = datetime.now()
+        self.empty_value = False
 
     def update(self):
         self.t2 = datetime.now()
@@ -72,12 +90,14 @@ class Empty:
         return (self.t2 - self.t1).total_seconds()
 
     def text(self) -> str:
+        if self.empty_value:
+            return '-'
         if self.result():
             return f'{self.time():.1f}'
         return f'{self.time():.1f} (не норма)'
 
     def result(self) -> bool:
-        return self.time() <= 10
+        return 0 < self.time() <= 10
 
 
 @dataclass()

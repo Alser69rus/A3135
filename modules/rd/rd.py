@@ -2,6 +2,7 @@ from PyQt5.QtCore import QState, QEvent, QFinalState
 from controller.controller import Controller
 from modules.rd.data import RdData
 from modules.rd.prepare import Prepare
+from modules.rd.fill import Fill
 
 ctrl: Controller
 
@@ -11,7 +12,7 @@ class Rd(QState):
         super().__init__(parent=controller.stm)
         global ctrl
         ctrl = controller
-        self.controller=controller
+        self.controller = controller
         self.finish = QFinalState(self)
         self.addTransition(self.finished, menu)
         self.reset = Reset(self)
@@ -28,6 +29,7 @@ class Rd(QState):
         self.menu.addTransition(ctrl.button['back'].clicked, self.finish)
 
         self.prepare = Prepare(self)
+        self.fill = Fill(self)
 
         #
         # self.ending.report.addTransition(ctrl.report.exit.clicked, self.finish)
