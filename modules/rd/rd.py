@@ -4,6 +4,7 @@ from modules.rd.data import RdData
 from modules.rd.prepare import Prepare
 from modules.rd.fill import Fill
 from modules.rd.sensitivity import Sensitivity
+from modules.rd.empty import Empty
 
 ctrl: Controller
 
@@ -32,6 +33,7 @@ class Rd(QState):
         self.prepare = Prepare(self)
         self.fill = Fill(self)
         self.sensitivity = Sensitivity(self)
+        self.empty = Empty(self)
 
         #
         # self.ending.report.addTransition(ctrl.report.exit.clicked, self.finish)

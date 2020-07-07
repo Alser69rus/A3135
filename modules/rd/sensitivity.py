@@ -76,7 +76,7 @@ class LeakOff(QState):
 
 class ShowResult(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.show_panel('текст')
+        ctrl.show_panel('текст график')
         ctrl.show_button('back')
         if ctrl.rd.sensitivity.result():
             ctrl.success()

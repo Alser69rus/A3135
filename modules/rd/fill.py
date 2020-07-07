@@ -68,7 +68,7 @@ class Measure(QState):
 
 class ShowResult(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.show_panel('текст')
+        ctrl.show_panel('текст график')
         ctrl.show_button('back')
         if ctrl.rd.fill.result():
             ctrl.success()

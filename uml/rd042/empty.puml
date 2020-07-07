@@ -1,6 +1,12 @@
 @startuml
-[*]-->upr_rd
-upr_rd-->measure:False
+[*]-->pressure_check
+pressure_check-->ptc:finished
+ptc-->upr_rd:success
+ptc-->set_ptc:fail
+set_ptc-->upr_rd:yes
+upr_rd-->wait_p035:False
+wait_p035-->measure:p<=0.35
+wait_p035->wait_p035:upd
 measure->measure:upd
 measure-->show_result:Ptc2<0.005
 show_result-->[*]
