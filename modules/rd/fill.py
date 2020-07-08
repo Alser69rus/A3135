@@ -4,7 +4,6 @@ from controller.controller import Controller
 from modules.rd.common import Common
 
 ctrl: Controller
-p = None
 
 
 class Fill(QState):

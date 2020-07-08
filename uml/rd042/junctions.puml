@@ -1,0 +1,12 @@
+
+@startuml
+[*]-->upr_rd
+upr_rd-->ptc2:True
+ptc2-->ptc2:upd
+ptc2-->junctions:yes
+junctions-->junctions_ok:yes
+junctions-->junctions_fail:no
+junctions_ok-->[*]
+junctions_fail-->[*]
+note:проверка герметичности соединений
+@enduml

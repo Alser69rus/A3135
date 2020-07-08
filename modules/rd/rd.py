@@ -5,6 +5,8 @@ from modules.rd.prepare import Prepare
 from modules.rd.fill import Fill
 from modules.rd.sensitivity import Sensitivity
 from modules.rd.empty import Empty
+from modules.rd.valve import Valve
+from modules.rd.junctions import Junctions
 
 ctrl: Controller
 
@@ -34,6 +36,8 @@ class Rd(QState):
         self.fill = Fill(self)
         self.sensitivity = Sensitivity(self)
         self.empty = Empty(self)
+        self.valve = Valve(self)
+        self.junctions = Junctions(self)
 
         #
         # self.ending.report.addTransition(ctrl.report.exit.clicked, self.finish)

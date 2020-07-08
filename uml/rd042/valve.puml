@@ -1,0 +1,12 @@
+
+@startuml
+[*]-->upr_rd
+upr_rd-->ptc2:True
+ptc2-->ptc2:upd
+ptc2-->valve:yes
+valve-->valve_ok:yes
+valve-->valve_fail:no
+valve_ok-->[*]
+valve_fail-->[*]
+note:проверка герметичности клапана
+@enduml
