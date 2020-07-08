@@ -11,8 +11,8 @@ class Fill(QState):
     def __init__(self, parent):
         super().__init__(parent=parent.controller.stm)
         global ctrl
-        ctrl = parent.controller
-        self.controller = ctrl
+        self.controller: Controller = parent.controller
+        ctrl = self.controller
         common = Common(self)
         self.finish = QFinalState(self)
         self.addTransition(self.finished, parent.menu)
@@ -21,6 +21,9 @@ class Fill(QState):
         parent.menu.addTransition(menu.button['Время наполнения'].clicked, self)
 
         self.start = Start(self)
+        self.rdkp_0 = Rdkp0(self)
+        self.ptc = Ptc(self)
+        self.set_ptc = SetPtc(self)
         self.pressure_check = common.PressureCheck(self)
         self.rdkp_rd = RdkpRd(self)
         self.measure = Measure(self)
@@ -28,7 +31,12 @@ class Fill(QState):
 
         self.setInitialState(self.start)
         self.start.addTransition(self.pressure_check)
-        self.pressure_check.addTransition(self.pressure_check.finished, self.rdkp_rd)
+        self.pressure_check.addTransition(self.pressure_check.finished, self.rdkp_0)
+        self.rdkp_0.addTransition(ctrl.switch_with_neutral['rd-0-keb'].state_neutral, self.ptc)
+        self.ptc.addTransition(self.ptc.success, self.rdkp_rd)
+        self.ptc.addTransition(self.ptc.fail, self.set_ptc)
+        self.set_ptc.addTransition(ctrl.server_updated, self.set_ptc)
+        self.set_ptc.addTransition(ctrl.button['yes'].clicked, self.rdkp_rd)
         self.rdkp_rd.addTransition(ctrl.switch_with_neutral['rd-0-keb'].state_one, self.measure)
         self.measure.addTransition(ctrl.server_updated, self.measure)
         self.measure.addTransition(self.measure.done, self.show_result)
@@ -41,6 +49,35 @@ class Start(QState):
         ctrl.show_button('back')
         ctrl.normal()
         ctrl.rd.fill.reset()
+
+
+class Rdkp0(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText('Включите тумблер "РД 042 - 0 - КП 106 (КЭБ 208)" в положение "- 0 -".')
+
+
+class Ptc(QState):
+    success = pyqtSignal()
+    fail = pyqtSignal()
+
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.show_panel('манометры текст график')
+        ctrl.show_button('back')
+        ctrl.setText('Проверка давления в магистрали ТЦ2, норма 0 МПа.')
+        if ctrl.manometer['p tc2'].get_value() <= 0.005:
+            self.success.emit()
+        else:
+            self.fail.emit()
+
+
+class SetPtc(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText('<p>Сбросьте давление в магистрали ТЦ2 до 0 МПа.</p>'
+                     '<p><br>Для продолжения нажмите "ДА".</p>')
+        if ctrl.manometer['p tc2'].get_value() <= 0.005:
+            ctrl.show_button('back yes')
+        else:
+            ctrl.show_button('back')
 
 
 class RdkpRd(QState):

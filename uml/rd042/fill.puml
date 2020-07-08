@@ -1,6 +1,11 @@
 @startuml
 
-[*]-->rdkp_rd
+[*]-->pressure_check
+pressure_check-->rdkp_0
+rdkp_0-->ptc
+ptc-->rdkp_rd:success (p=0)
+ptc-->set_ptc:fail (p>0.005)
+set_ptc-->rdkp_rd:yes
 rdkp_rd-->measure:state_one
 measure->measure:upd
 measure-->show_result:Ptc2=>0.35
