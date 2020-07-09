@@ -7,6 +7,7 @@ from modules.rd.sensitivity import Sensitivity
 from modules.rd.empty import Empty
 from modules.rd.valve import Valve
 from modules.rd.junctions import Junctions
+from modules.rd.end import End
 
 ctrl: Controller
 
@@ -38,10 +39,10 @@ class Rd(QState):
         self.empty = Empty(self)
         self.valve = Valve(self)
         self.junctions = Junctions(self)
+        self.end = End(self)
 
-        #
-        # self.ending.report.addTransition(ctrl.report.exit.clicked, self.finish)
-        # self.ending.report.addTransition(ctrl.button['back'].clicked, self.finish)
+        self.end.report.addTransition(ctrl.report.exit.clicked, self.finish)
+        self.end.report.addTransition(ctrl.button['back'].clicked, self.finish)
 
 
 class Reset(QState):

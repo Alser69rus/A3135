@@ -9,10 +9,11 @@ ctrl: Controller
 
 
 class Report(QState):
-    def __init__(self, controller: Controller, parent=None):
+    def __init__(self, parent):
         super().__init__(parent=parent)
         global ctrl
-        ctrl = controller
+        self.controller: Controller = parent.controller
+        ctrl = self.controller
         self.black = QColor(Qt.black)
         self.red = QColor(Qt.red)
         self.brush = QBrush(self.black)

@@ -71,6 +71,9 @@ class Controller(QObject):
         self.manometer = server.manometer
         self.switch = server.switch
         self.switch_with_neutral = server.switch_with_neutral
+        # self.manom = server.manom
+        # self.switc = server.switc
+        # self.multi_switch = server.multi_switch
 
         self.report_header = ReportHeader()
         self.btp = BtpData()

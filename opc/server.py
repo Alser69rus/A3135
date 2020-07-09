@@ -2,8 +2,9 @@ from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, QThread, Qt, QSettings
 from datetime import datetime
 from pymodbus.client.sync import ModbusSerialClient as Client
 from opc.owen import MV110_16D, MV110_8AC, MV110_32DN, MV_DI
-from typing import Dict
+from typing import Dict, List
 from opc.opc import AnalogItemType, TwoStateDiscreteType, TwoStateWithNeutralType
+from collections import namedtuple
 
 UPDATE_DELAY = 50
 
@@ -56,6 +57,50 @@ class Server(QObject):
         self.button: Dict[str, TwoStateDiscreteType] = self.get_button()
         self.switch: Dict[str, TwoStateDiscreteType] = self.get_switch()
         self.switch_with_neutral: Dict[str, TwoStateWithNeutralType] = self.get_switch_with_neutral()
+
+        # Manometer = namedtuple('Manometer', 'pm im tc1 tc2 upr')
+        # self.manom = Manometer(
+        #     pm=manometer_builder('Р пм', 1.6, self.worker.ai.pin[0]),
+        #     im=manometer_builder('Р им', 1.0, self.worker.ai.pin[1]),
+        #     tc1=manometer_builder('Р тц1', 1.0, self.worker.ai.pin[2]),
+        #     tc2=manometer_builder('Р тц2', 1.0, self.worker.ai.pin[3]),
+        #     upr=manometer_builder('Р упр рд/сд', 1.0, self.worker.ai.pin[4]),
+        # )
+        # Button = namedtuple('Button', 'back up down yes no examination auto')
+        # self.btn = Button(
+        #     back=button_builder('ВОЗВРАТ', self.worker.di.pin[0]),
+        #     up=button_builder('ВВЕРХ', self.worker.di.pin[1]),
+        #     down=button_builder('ВНИЗ', self.worker.di.pin[2]),
+        #     yes=button_builder('ДА', self.worker.di.pin[3]),
+        #     no=button_builder('НЕТ', self.worker.di.pin[4]),
+        #     examination=button_builder('ИСПЫТАНИЕ', self.worker.di.pin[5]),
+        #     auto=button_builder('АВТ ОТПУСК', self.worker.di.pin[7]),
+        # )
+        # Switch = namedtuple('Switch', 'ku_215 breaking speed rd_042 upr_rd keb_208 red_211 leak_1 leak_05 ok')
+        # self.switc = Switch(
+        #     ku_215=switch_builder('КУ 215', self.worker.di.pin[8]),
+        #     breaking=switch_builder('ЗАМ. ЭЛ. ТОРМ.', self.worker.di.pin[9]),
+        #     speed=switch_builder('> 60 км/ч', self.worker.di.pin[10]),
+        #     rd_042=switch_builder('РД 042', self.worker.di.pin[11]),
+        #     upr_rd=switch_builder('УПР. РД 042', self.worker.di.pin[12]),
+        #     keb_208=switch_builder('КЭБ 208', self.worker.di.pin[13]),
+        #     red_211=switch_builder('РЕД 211.020', self.worker.di.pin[14]),
+        #     leak_1=switch_builder('УТЕЧКА d 1', self.worker.di.pin[15]),
+        #     leak_05=switch_builder('УТЕЧКА d 0.5', self.worker.di.pin[16]),
+        #     ok=switch_builder('ОК', self.worker.di.pin[6]),
+        # )
+        # MultiSwitch = namedtuple('MultiSwitch', 'enter rd_kp tank')
+        # self.multi_switch = MultiSwitch(
+        #     enter=multi_switch_builder('ВХОД',
+        #                                ['- 0 -', 'ВР', 'КУ'],
+        #                                [self.worker.di.pin[17], self.worker.di.pin[18]]),
+        #     rd_kp=multi_switch_builder('РД 042 - 0 - КЭБ 208',
+        #                                ['- 0 -', 'РД 042', 'КЭБ 208'],
+        #                                [self.worker.di.pin[19], self.worker.di.pin[20]]),
+        #     tank=multi_switch_builder('НАКОП. РЕЗ.',
+        #                               ['- 0 -', 'ЗАР.', 'СБРОС'],
+        #                               [self.worker.di.pin[21], self.worker.di.pin[22]]),
+        # )
 
         self.th.start()
 
@@ -123,3 +168,26 @@ class Server(QObject):
             di[0].value_changed.connect(radio_switch.set_state1)
             di[1].value_changed.connect(radio_switch.set_state2)
         return result
+
+
+def manometer_builder(name: str, limit: float, pin: AnalogItemType) -> AnalogItemType:
+    pin.name = name
+    pin.eu_range.high = limit
+    return pin
+
+
+def button_builder(name: str, pin: TwoStateDiscreteType) -> TwoStateDiscreteType:
+    pin.name = name
+    return pin
+
+
+def switch_builder(name: str, pin: TwoStateDiscreteType) -> TwoStateDiscreteType:
+    pin.name = name
+    return pin
+
+
+def multi_switch_builder(name: str, state: List[str], pin: List[TwoStateDiscreteType]) -> TwoStateWithNeutralType:
+    switch = TwoStateWithNeutralType(name=name, enum_values=state)
+    pin[0].value_changed.connect(switch.set_state1)
+    pin[1].value_changed.connect(switch.set_state2)
+    return switch

@@ -1,80 +1,67 @@
-from PyQt5.QtCore import QState, QFinalState, QEvent
+from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal
 
 from controller.controller import Controller
-from modules.btp.report import Report
+
+from modules.rd.report import Report
 
 ctrl: Controller
 
 
-class Ending(QState):
-    def __init__(self, controller: Controller, menu_state: QState):
-        super().__init__(parent=controller.stm)
+class End(QState):
+    def __init__(self, parent):
+        super().__init__(parent=parent.controller.stm)
         global ctrl
-        ctrl = controller
+        self.controller: Controller = parent.controller
+        ctrl = self.controller
         self.finish = QFinalState(self)
-        self.addTransition(self.finished, menu_state)
+        self.addTransition(self.finished, parent.menu)
         self.addTransition(ctrl.button['back'].clicked, self.finish)
-        menu = ctrl.menu.menu['БТП 020']
-        menu_state.addTransition(menu.button['Завершение'].clicked, self)
+        menu = ctrl.menu.menu['РД 042']
+        parent.menu.addTransition(menu.button['Завершение'].clicked, self)
 
         self.start = Start(self)
-        self.air = Air(self)
-        self.ku_215_on = KU215On(self)
-        self.breaking = Breaking(self)
-        self.ku_215_off = KU215Off(self)
-        self.enter = Enter(self)
-        self.disconnect_bto = DisconnectBTO(self)
-        self.report = Report(parent=self, controller=controller)
+        self.upr_rd = UprRd(self)
+        self.ptc = Ptc(self)
+        self.rd = Rd(self)
+        self.uninstall = Uninstall(self)
+        self.report = Report(self)
 
         self.setInitialState(self.start)
-        self.start.addTransition(self.air)
-        self.air.addTransition(ctrl.switch_with_neutral['enter'].state_two, self.ku_215_on)
-        self.ku_215_on.addTransition(ctrl.switch['ku 215'].high_value, self.breaking)
-        self.breaking.addTransition(ctrl.button['yes'].clicked, self.ku_215_off)
-        self.ku_215_off.addTransition(ctrl.switch['ku 215'].low_value, self.enter)
-        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_neutral, self.disconnect_bto)
-        self.disconnect_bto.addTransition(ctrl.button['yes'].clicked, self.report)
+        self.start.addTransition(self.upr_rd)
+        self.upr_rd.addTransition(ctrl.switch['upr rd 042'].low_value, self.ptc)
+        self.ptc.addTransition(ctrl.server_updated, self.ptc)
+        self.ptc.addTransition(self.ptc.done, self.rd)
+        self.rd.addTransition(ctrl.switch['rd 042'].low_value, self.uninstall)
+        self.uninstall.addTransition(ctrl.button['yes'].clicked, self.report)
 
 
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.show_panel('текст манометры')
+        ctrl.show_panel('манометры текст')
         ctrl.show_button('back')
 
 
-class Air(QState):
+class UprRd(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Выключить пневмотумблер "БТП К СТЕНДУ".</p>'
-                     f'<p>Включить тумблер "ВХОД" в положение "КУ"</p>')
+        ctrl.setText('Выключите тумблер "УПР РД 042".')
 
 
-class KU215On(QState):
+class Ptc(QState):
+    done = pyqtSignal()
+
     def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Включите тумблер "КУ215".</p>')
+        ctrl.setText('Ожидается сброс давления в ТЦ2 до 0 МПа.')
+        if ctrl.manometer['p tc2'].get_value() < 0.005:
+            self.done.emit()
 
 
-class Breaking(QState):
+class Rd(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.show_button('back yes')
-        ctrl.setText(f'<p>Выполните несколько торможений и отпусков краном 215 до '
-                     f'состояния когда ТЦ перестанут наполняться.</p>'
-                     f'<p><br>Для продолжения нажмите "ДА".</p>')
+        ctrl.setText('Выключите тумблер "РД 042".')
 
 
-class KU215Off(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.show_button('back')
-        ctrl.setText(f'<p>Выключите тумблер "КУ 215".</p>')
-
-
-class Enter(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Переключите тумблер "ВХОД" в положение "- 0 -".</p>')
-
-
-class DisconnectBTO(QState):
+class Uninstall(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_button('back yes')
-        ctrl.setText(f'<p>Отсоедините пневматические рукова и электрические шлейфы от БТО.</p>'
-                     f'<p>Снимите КУ 215 с прижима.</p>'
-                     f'<p><br>Для продолжения нажмите "ДА".</p>')
+        ctrl.setText('<p>Снимите РД 042 с прижима.</p>'
+                     '<p><br>Для продолжения нажмите "ДА".</p>')

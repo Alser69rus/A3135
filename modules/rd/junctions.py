@@ -96,3 +96,4 @@ class JunctionsFail(QFinalState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.fail()
         ctrl.rd.junctions = 'не норма'
+
