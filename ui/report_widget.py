@@ -55,36 +55,36 @@ class ReportWidget(QWidget):
         dialog.setFont(QFont('Segoi ui', 14))
         dialog.exec()
 
-    def create_report(self, dev_num, date):
+    def create_report(self, dev_type: str, dev_num, date):
         settings = QSettings('settings.ini', QSettings.IniFormat)
         settings.setIniCodec('UTF-8')
         today = datetime.today()
         num = self.get_num(settings, today)
-        path = self.get_path(settings, today)
+        path = self.get_path(settings, dev_type, today)
         if not path.exists():
             path.mkdir(parents=True, exist_ok=True)
         self.save_new_report_date(settings, today)
         self.save_new_report_num(settings, num)
-        file = self.get_file_name(num, today, dev_num, date)
+        file = self.get_file_name(dev_type, num, today, dev_num, date)
         self.save_pdf(path / file)
         self.preview.updatePreview()
 
     def get_num(self, settings: QSettings, today) -> int:
-        last_date = settings.value('protocol/date', '01-01-2019')
+        last_date = settings.value('protocol/date', '01.01.2019')
         num = settings.value('protocol/num', 0, int)
-        month = int(str(last_date).split('-')[1])
+        month = int(str(last_date).split('.')[1])
         if month != today.month:
             num = 0
         num += 1
         return num
 
-    def get_path(self, settings: QSettings, today):
+    def get_path(self, settings: QSettings, dev_type: str, today):
         protocol_path = Path(settings.value('protocol/path', 'c:\\протоколы\\'))
-        protocol_path = protocol_path / f'{today.year:0>4}-{today.month:0>2}' / 'БТП 020'
+        protocol_path = protocol_path / f'{today.strftime("%Y-%m")}' / f'{dev_type}'
         return protocol_path
 
-    def get_file_name(self, report_num, today, dev_num, date) -> str:
-        return f'N {report_num} от {today.day:0>2}-{today.month:0>2}-{today.year:0>4} БТП 020 завN' \
+    def get_file_name(self, dev_type, report_num, today, dev_num, date) -> str:
+        return f'N {report_num} от {today.strftime("%d-%m-%Y")} {dev_type} завN' \
                f' {dev_num} дата изг. {date}.pdf'
 
     def save_pdf(self, file):
@@ -97,7 +97,7 @@ class ReportWidget(QWidget):
         settings.setValue('protocol/num', num)
 
     def save_new_report_date(self, settings: QSettings, date):
-        settings.setValue('protocol/date', date.strftime('%d-%m-%Y'))
+        settings.setValue('protocol/date', date.strftime('%d.%m.%Y'))
 
     def on_paint_request(self, printer):
         if not (self.on_preview is None):

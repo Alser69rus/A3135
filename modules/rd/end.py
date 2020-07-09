@@ -9,7 +9,7 @@ ctrl: Controller
 
 class End(QState):
     def __init__(self, parent):
-        super().__init__(parent=parent.controller.stm)
+        super().__init__(parent=parent)
         global ctrl
         self.controller: Controller = parent.controller
         ctrl = self.controller

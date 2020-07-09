@@ -63,7 +63,7 @@ class PrepareMenu(QObject):
         if button in [self.menu.button['Испытание провел: '],
                       self.menu.button['Испытание проверил: ']]:
             dialog.setComboBoxItems(employees)
-            dialog.setComboBoxEditable(False)
+            dialog.setComboBoxEditable(True)
 
         dialog.setLabelText(button.name)
         result = dialog.exec()

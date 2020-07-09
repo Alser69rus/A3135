@@ -30,7 +30,7 @@ class Report(QState):
         ctrl.show_button('back up down yes')
         ctrl.report.on_preview = self.preview
         ctrl.update_report_header()
-        ctrl.report.create_report(ctrl.report_header.dev_num, ctrl.report_header.date)
+        ctrl.report.create_report('БТП 020', ctrl.report_header.dev_num, ctrl.report_header.date)
 
     def onExit(self, event: QEvent) -> None:
         ctrl.report.on_preview = None

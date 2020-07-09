@@ -26,12 +26,15 @@ class Report(QState):
         self.painter = None
         self.pos = (0, 0)
 
+        self.addTransition(ctrl.report.exit.clicked, parent.parent().finish)
+        self.addTransition(ctrl.button['back'].clicked, parent.parent().finish)
+
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('отчет')
         ctrl.show_button('back up down yes')
         ctrl.report.on_preview = self.preview
         ctrl.update_report_header()
-        ctrl.report.create_report(ctrl.report_header.dev_num, ctrl.report_header.date)
+        ctrl.report.create_report('РД 042', ctrl.report_header.dev_num, ctrl.report_header.date)
 
     def onExit(self, event: QEvent) -> None:
         ctrl.report.on_preview = None
@@ -73,7 +76,7 @@ class Report(QState):
         self.draw_text(f'Протокол № {num} от {date}')
         self.painter.setFont(self.font_h)
         self.pos = (35, 15)
-        self.draw_text(f'испытания блока тормозных приборов 020 для тепловозов ТЭП70')
+        self.draw_text(f'испытания реле давления РД 042 для тепловозов ТЭП70')
         self.draw_text(f'Заводской № {ctrl.report_header.dev_num}             '
                        f'Дата изготовления: {ctrl.report_header.date}')
         self.draw_text(f'Локомотив: {ctrl.report_header.locomotive}                '

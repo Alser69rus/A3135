@@ -13,18 +13,18 @@ ctrl: Controller
 
 
 class Rd(QState):
-    def __init__(self, controller: Controller, menu: QState):
-        super().__init__(parent=controller.stm)
+    def __init__(self, parent):
+        super().__init__(parent=parent.controller.stm)
         global ctrl
-        ctrl = controller
-        self.controller = controller
+        self.controller: Controller = parent.controller
+        ctrl = self.controller
         self.finish = QFinalState(self)
-        self.addTransition(self.finished, menu)
+        self.addTransition(self.finished, parent)
         self.reset = Reset(self)
         self.disable_menu = DisableMenu(self)
         self.report_data = ReportData(self)
         self.menu = Menu(self)
-        menu.addTransition(ctrl.menu.menu['Главное меню'].button['РД 042'].clicked, self)
+        parent.addTransition(ctrl.menu.menu['Главное меню'].button['РД 042'].clicked, self)
 
         self.setInitialState(self.reset)
         self.reset.addTransition(self.disable_menu)
@@ -41,8 +41,7 @@ class Rd(QState):
         self.junctions = Junctions(self)
         self.end = End(self)
 
-        self.end.report.addTransition(ctrl.report.exit.clicked, self.finish)
-        self.end.report.addTransition(ctrl.button['back'].clicked, self.finish)
+
 
 
 class Reset(QState):

@@ -10,10 +10,11 @@ class MenuState(QState):
     def __init__(self, controller: Controller):
         super().__init__(parent=controller.stm)
         global ctrl
-        ctrl = controller
+        self.controller:Controller=controller
+        ctrl = self.controller
         ctrl.menu.menu['Главное меню'].button['Выход'].clicked.connect(ctrl.form.close)
         self.btp = Btp(controller=ctrl, menu=self)
-        self.rd = Rd(controller=ctrl, menu=self)
+        self.rd = Rd(self)
 
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('меню')
