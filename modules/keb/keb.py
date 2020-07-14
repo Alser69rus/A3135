@@ -2,14 +2,7 @@ from PyQt5.QtCore import QState, QEvent, QFinalState
 from controller.controller import Controller
 from modules.keb.data import KebData
 
-
-# from modules.rd.prepare import Prepare
-# from modules.rd.fill import Fill
-# from modules.rd.sensitivity import Sensitivity
-# from modules.rd.empty import Empty
-# from modules.rd.valve import Valve
-# from modules.rd.junctions import Junctions
-# from modules.rd.end import End
+from modules.keb.prepare import Prepare
 
 
 class Keb(QState):
@@ -32,7 +25,7 @@ class Keb(QState):
         self.report_data.addTransition(ctrl.menu.prepare_menu.done.clicked, self.menu)
         self.menu.addTransition(ctrl.button['back'].clicked, self.finish)
 
-        # self.prepare = Prepare(self)
+        self.prepare = Prepare(self)
         # self.fill = Fill(self)
         # self.sensitivity = Sensitivity(self)
         # self.empty = Empty(self)
