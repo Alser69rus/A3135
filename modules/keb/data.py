@@ -93,7 +93,7 @@ class Junctions:
 
 
 @dataclass()
-class RdData:
+class KebData:
     fill = Fill()
     empty = Empty()
     junctions = Junctions()
