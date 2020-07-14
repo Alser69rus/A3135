@@ -3,6 +3,7 @@ from controller.controller import Controller
 from modules.keb.data import KebData
 
 from modules.keb.prepare import Prepare
+from modules.keb.fill import Fill
 
 
 class Keb(QState):
@@ -26,7 +27,7 @@ class Keb(QState):
         self.menu.addTransition(ctrl.button['back'].clicked, self.finish)
 
         self.prepare = Prepare(self)
-        # self.fill = Fill(self)
+        self.fill = Fill(self)
         # self.sensitivity = Sensitivity(self)
         # self.empty = Empty(self)
         # self.valve = Valve(self)

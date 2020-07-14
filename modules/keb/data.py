@@ -16,7 +16,7 @@ class Fill:
         self.t2 = datetime.now()
         self.empty = False
 
-    def update(self):
+    def stop(self):
         self.t2 = datetime.now()
 
     def time(self) -> float:
@@ -47,7 +47,7 @@ class Empty:
         self.t2 = datetime.now()
         self.empty = False
 
-    def update(self):
+    def stop(self):
         self.t2 = datetime.now()
 
     def time(self) -> float:

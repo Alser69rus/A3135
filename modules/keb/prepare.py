@@ -1,4 +1,5 @@
-from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal, pyqtBoundSignal
+from PyQt5.QtCore import QState, QFinalState, QEvent
+
 from controller.controller import Controller
 from modules.keb.common import ResetPtc, PreparePressure
 
@@ -70,13 +71,11 @@ class EnableMenu(QFinalState):
     def onEntry(self, event: QEvent) -> None:
         ctrl: Controller = self.parent().controller
         ctrl.success()
-        menu = ctrl.menu.menu['РД 042']
+        menu = ctrl.menu.menu['КЭБ 208']
         buttons = [
-            'Время наполнения',
-            'Поддержание давления',
-            'Время отпуска',
+            'Время торможения',
             'Герметичность соединений',
-            'Герметичность клапана',
+            'Время отпуска',
             'Завершение',
         ]
         for name in buttons:
