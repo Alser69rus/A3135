@@ -1,0 +1,11 @@
+@startuml
+[*]-->prepare_pressure
+prepare_pressure-->set_ptc
+set_ptc-->auto
+auto-->measure:True
+measure->measure:upd
+measure-->show_result:done\n(ptc2<0.005)
+show_result-->[*]:back
+note right of set_ptc:rdkp.state_two
+note right of show_result:t<=4
+@enduml

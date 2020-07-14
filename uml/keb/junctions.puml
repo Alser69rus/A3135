@@ -1,0 +1,9 @@
+@startuml
+[*]-->prepare_pressure
+prepare_pressure-->set_ptc
+set_ptc-->check_junctions
+check_junctions-->junctions_fail:no
+check_junctions-->junctions_success:yes
+junctions_fail-->[*]
+junctions_success-->[*]
+@enduml

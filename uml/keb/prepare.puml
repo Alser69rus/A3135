@@ -1,0 +1,9 @@
+@startuml
+[*]-->install_rd
+install_rd-->reset_ptc:yes
+reset_ptc-->voltage
+voltage-->install_keb:yes
+install_keb-->prepare_pressure:yes
+prepare_pressure-->[*]
+
+@enduml

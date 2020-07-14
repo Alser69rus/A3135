@@ -1,0 +1,43 @@
+@startuml
+
+state set_pim{
+    [*]-->tank
+        tank-->pim:state_one
+        pim-->[*]:success\n(0.49<=pim<=0.51)
+        pim-->check_pim:fail
+        check_pim->check_pim:upd
+        check_pim-->[*]:yes
+}
+state set_pupr{
+    [*]-->upr_rd
+    upr_rd-->pupr:True
+    pupr-->[*]:success\n(0.38<=p upr<=0.40)
+    pupr-->check_pupr:fail
+    check_pupr->check_pupr:upd
+    check_pupr-->[*]:yes
+}
+state set_ptc{
+    [*]-->rdkp_2
+    rdkp_2-->pim_035:state_two
+    pim_035-->[*]:success\n(pim>=0.35)
+    pim_035-->check_pim_035:fail
+    check_pim_035->check_pim_035:upd
+    check_pim_035-->[*]:yes
+}
+state reset_ptc{
+    [*]-->rdkp_0
+    rdkp_0-->pim_0:state_neutral
+    pim_0-->[*]:success\n(pim<=0.005)
+    pim_0-->check_pim_0:fail
+    check_pim_0->check_pim_0:upd
+    check_pim_0-->[*]:done
+}
+
+state prepare_pressure{
+    [*]-->set_pim2
+    set_pim2-->keb
+    keb-->rd:True
+    rd-->set_pupr2:True
+    set_pupr2-->[*]
+}
+@enduml

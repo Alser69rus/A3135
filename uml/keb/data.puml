@@ -1,0 +1,43 @@
+@startuml
+
+class Fill{
+t1:datetime
+t2:datetime
+empty:bool=True
+time()
+text()
+result()
+start()
+stop()
+reset()
+}
+
+class Junctions{
+empty:bool=True
+success()
+fail()
+reset()
+text()
+result()
+}
+
+class Empty{
+t1:datetime
+t2:datetime
+empty:bool=True
+time()
+text()
+result()
+start()
+stop()
+reset()
+}
+
+class Keb{
+}
+
+Keb *-- Fill
+Keb *-- Junctions
+Keb *-- Empty
+
+@enduml

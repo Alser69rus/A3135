@@ -1,0 +1,11 @@
+@startuml
+[*]-->keb
+keb-->ptc:False
+ptc->ptc:upd
+ptc-->upr_rd:done\n(ptc<=0.005)
+upr_rd-->pupr:False
+pupr->pupr:upd
+pupr-->rd:done\n(pupr<=0.005)
+rd-->uninstall:False
+uninstall-->report:Yes
+@enduml
