@@ -1,4 +1,5 @@
-from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal, pyqtBoundSignal
+from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal
+
 from controller.controller import Controller
 from modules.keb.common import ResetPtc, PreparePressure
 

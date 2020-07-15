@@ -3,6 +3,7 @@ from PyQt5.QtCore import QState, QEvent, QFinalState
 from controller.controller import Controller
 from modules.keb.data import KebData
 from modules.keb.empty import Empty
+from modules.keb.end import End
 from modules.keb.fill import Fill
 from modules.keb.junctions import Junctions
 from modules.keb.prepare import Prepare
@@ -32,7 +33,7 @@ class Keb(QState):
         self.fill = Fill(self)
         self.junctions = Junctions(self)
         self.empty = Empty(self)
-        # self.end = End(self)
+        self.end = End(self)
 
 
 class Reset(QState):

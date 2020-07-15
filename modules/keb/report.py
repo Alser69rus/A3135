@@ -34,7 +34,7 @@ class Report(QState):
         ctrl.show_button('back up down yes')
         ctrl.report.on_preview = self.preview
         ctrl.update_report_header()
-        ctrl.report.create_report('РД 042', ctrl.report_header.dev_num, ctrl.report_header.date)
+        ctrl.report.create_report('КЭБ 208', ctrl.report_header.dev_num, ctrl.report_header.date)
 
     def onExit(self, event: QEvent) -> None:
         ctrl.report.on_preview = None
@@ -52,7 +52,7 @@ class Report(QState):
     def get_report_num_and_date(self) -> Tuple[int, str]:
         settings = QSettings('settings.ini', QSettings.IniFormat)
         settings.setIniCodec('UTF-8')
-        date = settings.value('protocol/date', '01-01-2019')
+        date = settings.value('protocol/date', '01.01.2019')
         num = settings.value('protocol/num', 0, int)
         return num, date
 
@@ -104,8 +104,8 @@ class Report(QState):
         self.pos = (80, 10)
         self.draw_text(f'Протокол № {num} от {date}')
         self.painter.setFont(self.font_h)
-        self.pos = (55, 15)
-        self.draw_text(f'испытания реле давления РД 042 для тепловозов ТЭП70')
+        self.pos = (35, 15)
+        self.draw_text(f'испытания клапана электроблокировочного 208 для тепловозов ТЭП70')
         self.draw_text(f'Заводской № {ctrl.report_header.dev_num}             '
                        f'Дата изготовления: {ctrl.report_header.date}')
         self.draw_text(f'Локомотив: {ctrl.report_header.locomotive}                '
@@ -124,34 +124,19 @@ class Report(QState):
     def table(self):
 
         self.fill()
-        self.sensitivity()
-        self.empty()
-        self.valve()
         self.junctions()
+        self.empty()
 
     def fill(self):
-        self.cell('Время наполнения ТЦ, с', 'не более 4', f'{ctrl.rd.fill.text()}')
-
-    def sensitivity(self):
-        self.cell('Автоматическое поддержание зарядного\n'
-                  'давления при утечке (чувствительность), МПа',
-                  'не более 0,015',
-                  f'{ctrl.rd.sensitivity.text()}',
-                  height=2
-                  )
+        self.cell('Время наполнения ТЦ (торможение), с', 'не более 4', f'{ctrl.keb.fill.text()}')
 
     def empty(self):
-        self.cell('Время снижения давления в ТЦ, с',
-                  'не более 10',
-                  f'{ctrl.rd.empty.text()}'
+        self.cell('Время снижения давления в ТЦ (отпуск), с',
+                  'не более 4',
+                  f'{ctrl.keb.empty.text()}'
                   )
 
     def junctions(self):
-        self.cell('Плотность мест соединений',
+        self.cell('Герметичность мест соединений',
                   '',
-                  f'{ctrl.rd.junctions}')
-
-    def valve(self):
-        self.cell('Герметичность атмосферного клапана',
-                  '',
-                  f'{ctrl.rd.valve}')
+                  f'{ctrl.keb.junctions.text()}')

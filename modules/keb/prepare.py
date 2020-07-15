@@ -64,6 +64,7 @@ class InstallKeb(QState):
         ctrl: Controller = self.parent().controller
         ctrl.show_button('back yes')
         ctrl.setText('<p>Установите КЭБ 208 на прижим, включите пневмотумблер "ПРИЖИМ КЭБ 208".</p>'
+                     '<p>Подключите кабель к разъему КЭБ 208.</p>'
                      '<p><br>Для продолжения нажмите "ДА".</p>')
 
 
