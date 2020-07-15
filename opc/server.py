@@ -1,10 +1,11 @@
-from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, QThread, Qt, QSettings
 from datetime import datetime
-from pymodbus.client.sync import ModbusSerialClient as Client
-from opc.owen import MV110_16D, MV110_8AC, MV110_32DN, MV_DI
 from typing import Dict, List
+
+from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, QThread, Qt
+from pymodbus.client.sync import ModbusSerialClient as Client
+
 from opc.opc import AnalogItemType, TwoStateDiscreteType, TwoStateWithNeutralType
-from collections import namedtuple
+from opc.owen import MV110_8AC, MV110_32DN, MV_DI
 
 UPDATE_DELAY = 50
 
@@ -128,7 +129,7 @@ class Server(QObject):
             ('yes', 'ДА', self.worker.di.pin[3]),
             ('no', 'НЕТ', self.worker.di.pin[4]),
             ('examination', 'ИСПЫТАНИЕ', self.worker.di.pin[5]),
-            ('auto release', 'АВТ ОТПУСК', self.worker.di.pin[7]),
+            ('auto', 'АВТ. ОТПУСК', self.worker.di.pin[7]),
         ]
         for key, name, button in buttons:
             result[key] = button

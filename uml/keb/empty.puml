@@ -2,7 +2,9 @@
 [*]-->prepare_pressure
 prepare_pressure-->set_ptc
 set_ptc-->auto
-auto-->measure:True
+auto-->wait035:True
+wait035->wait035:upd
+wait035-->measure:done (ptc2<=0.35)
 measure->measure:upd
 measure-->show_result:done\n(ptc2<0.005)
 show_result-->[*]:back
