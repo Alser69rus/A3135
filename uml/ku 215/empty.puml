@@ -1,0 +1,11 @@
+@startuml
+[*]-->handle_4
+handle_4-->check_pim_4:yes
+check_pim_4->check_pim_4:upd
+check_pim_4-->handle_0:yes (0.37<pim<0.40)
+handle_0-->wait_pim_035
+wait_pim_035->wait_pim_035:upd
+wait_pim_035-->measure:done (pim<=0.35)
+measure->measure:upd
+measure-->show_res:done (pim<0.005)
+@enduml
