@@ -4,6 +4,7 @@ from modules.keb.data import KebData
 
 from modules.keb.prepare import Prepare
 from modules.keb.fill import Fill
+from modules.keb.junctions import Junctions
 
 
 class Keb(QState):
@@ -28,10 +29,8 @@ class Keb(QState):
 
         self.prepare = Prepare(self)
         self.fill = Fill(self)
-        # self.sensitivity = Sensitivity(self)
+        self.junctions = Junctions(self)
         # self.empty = Empty(self)
-        # self.valve = Valve(self)
-        # self.junctions = Junctions(self)
         # self.end = End(self)
 
 

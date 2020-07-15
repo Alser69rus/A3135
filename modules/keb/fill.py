@@ -22,7 +22,6 @@ class Fill(QState):
         self.rdkp = Rdkp(self)
         self.measure = Measure(self)
         self.show_result = ShowResult(self)
-        self.finish = QFinalState(self)
 
         self.setInitialState(self.start)
         self.start.addTransition(self.prepare_pressure)
