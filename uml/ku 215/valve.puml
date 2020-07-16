@@ -1,0 +1,9 @@
+@startuml
+[*]-->handle_4
+handle_4->handle_4:upd
+handle_4-->check_valve:yes(0.37<=pim<=0.40)
+check_valve-->valve_fail:no
+check_valve-->valve_success:yes
+valve_fail-->[*]
+valve_success-->[*]
+@enduml

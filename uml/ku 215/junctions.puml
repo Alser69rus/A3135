@@ -1,0 +1,9 @@
+@startuml
+[*]-->handle_4
+handle_4->handle_4:upd
+handle_4-->check_junctions:yes(0.37<=pim<=0.40)
+check_junctions-->junctions_fail:no
+check_junctions-->junctions_success:yes
+junctions_fail-->[*]
+junctions_success-->[*]
+@enduml

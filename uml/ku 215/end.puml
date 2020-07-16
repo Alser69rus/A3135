@@ -1,0 +1,7 @@
+@startuml
+[*]-->handle_0
+handle_0-->ku:yes (pim<0.005)
+ku-->uninstall:False
+uninstall-->report:yes
+report-->[*]
+@enduml
