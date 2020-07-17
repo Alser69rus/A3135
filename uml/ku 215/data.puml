@@ -1,0 +1,72 @@
+@startuml
+
+class KuData
+KuData*--Fill
+KuData*--Empty
+KuData*--BreakingStage
+KuData*--Sensitivity
+KuData*--Junctions
+KuData*--Valve
+
+class Fill{
+t1:datetime
+t2:datetime
+empty:bool
+time()
+result()
+text()
+reset()
+start()
+stop()
+}
+
+class Empty{
+t1:datetime
+t2:datetime
+empty:bool
+time()
+result()
+text()
+reset()
+start()
+stop()
+}
+
+class BreakingStage{
+p=[]
+result()
+text(i)
+reset()
+set_value(i,value)
+}
+
+class Sensitivity{
+p=[]
+result()
+text()
+reset()
+update(value:float)
+dp()->float
+}
+
+class Junctions{
+value:bool
+empty:bool
+result()
+text()
+reset()
+success()
+fail()
+}
+
+class Valve{
+value:bool
+empty:bool
+result()
+text()
+reset()
+success()
+fail()
+}
+
+@enduml
