@@ -1,6 +1,6 @@
 @startuml
-[*]-->handle_0
-handle_0-->ku:yes (pim<0.005)
+[*]-->pressure_0
+pressure_0-->ku
 ku-->uninstall:False
 uninstall-->report:yes
 report-->[*]

@@ -1,0 +1,28 @@
+@startuml
+state prepare_pressure{
+[*] -->enter
+enter-->ku215:state_0
+ku215-->[*]:True
+}
+
+state pressure_0{
+[*]-->set_handle_0
+set_handle_0->set_handle_0:upd
+set_handle_0-->[*]:yes\npim<0.005
+}
+
+state pressure_04{
+[*]-->set_handle_4
+set_handle_4->set_handle_4:upd
+set_handle_4-->[*]:yes\n0.37<=pim<=0.4
+}
+
+state breaking_stage{
+[*]-->handle_stage
+handle_stage->handle_stage:upd
+handle_stage-->stabilaze:pim>=p(stage)
+stabilaze->stabilaze:upd
+stabilaze-->save_stage:done
+save_stage-->[*]
+}
+@enduml

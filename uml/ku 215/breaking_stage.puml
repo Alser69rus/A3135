@@ -1,0 +1,12 @@
+@startuml
+[*]-->prepare_pressure
+prepare_pressure-->pressure_0
+pressure_0-->breaking_stage_1
+breaking_stage_1-->breaking_stage_2
+breaking_stage_2-->breaking_stage_3
+breaking_stage_3-->breaking_stage_4
+breaking_stage_4-->show_result
+show_result-->[*]
+
+
+@enduml

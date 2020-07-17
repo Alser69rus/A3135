@@ -1,7 +1,7 @@
 @startuml
-[*]-->handle_4
-handle_4-->leak_05:yes(0.37<=pim<=0.4)
-handle_4->handle_4:upd
+[*]-->prepare_pressure
+prepare_pressure-->pressure_04
+pressure_04-->leak_05
 leak_05-->measure:True
 measure->measure:upd
 measure-->show_result:t>60 c

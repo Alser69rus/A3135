@@ -1,0 +1,5 @@
+@startuml
+[*] --> install
+install-->prepare_pressure:yes
+prepare_pressure-->[*]
+@enduml

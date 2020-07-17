@@ -1,12 +1,10 @@
 @startuml
-[*]-->install_ku
-install_ku-->enter_0:yes
-enter_0-->ku:state_neutral
-ku-->handle_0:True
-handle_0->handle_0:upd
-handle_0-->handle_4:yes(pim<0.005)
+[*]-->prepare_pressure
+
+prepare_pressure-->pressure_0
+pressure_0-->handle_4:yes
 handle_4->handle_4:upd
-handle_4-->measure:done(pim>=0.005)
+handle_4-->measure:pim>=0.005
 measure->measure:upd
 measure-->show_result:done(pim>=0,35)
 show_result-->[*]
