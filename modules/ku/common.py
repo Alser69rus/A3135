@@ -18,6 +18,9 @@ class Common(QObject):
     def pressure_0(self, parent):
         return Pressure0(parent=parent)
 
+    def pressure_4(self, parent):
+        return Pressure4(parent=parent)
+
 
 class PreparePressure(QState):
     def __init__(self, parent):
@@ -47,7 +50,18 @@ class Pressure0(QState):
         ctrl.setText(f'<p>Переведите ручку КУ 215 в отпускное положение, чтобы сбросить давление в импульсной '
                      f'магистрали до 0 МПа.</p>'
                      f'<p><br>Для продолжения нажмите "ДА".</p>')
-        if ctrl.manometer['p tc2'].get_value() < 0.005:
+        if ctrl.manometer['p im'].get_value() < 0.005:
+            ctrl.show_button('back yes')
+        else:
+            ctrl.show_button('back')
+
+
+class Pressure4(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText(f'<p>Переведите ручку КУ 215 в четвертое положение и установите давление в импульсной магистрали '
+                     f'в  пределах 0,37-0,40 МПа.</p>'
+                     f'<p><br>Для продолжения нажмите "ДА".</p>')
+        if 0.37 <= ctrl.manometer['p im'].get_value() < 0.40:
             ctrl.show_button('back yes')
         else:
             ctrl.show_button('back')
