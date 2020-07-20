@@ -2,6 +2,7 @@ from PyQt5.QtCore import QState, QEvent, QFinalState
 
 from controller.controller import Controller
 from modules.ku.data import KuData
+from modules.ku.fill import Fill
 from modules.ku.prepare import Prepare
 
 
@@ -26,7 +27,7 @@ class Ku(QState):
         self.menu.addTransition(ctrl.button['back'].clicked, self.finish)
 
         self.prepare = Prepare(self)
-        # self.fill = Fill(self)
+        self.fill = Fill(self)
         # self.junctions = Junctions(self)
         # self.empty = Empty(self)
         # self.end = End(self)
