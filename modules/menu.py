@@ -1,8 +1,10 @@
 from PyQt5.QtCore import QState, QEvent
+
 from controller.controller import Controller
 from modules.btp.btp import Btp
-from modules.rd.rd import Rd
 from modules.keb.keb import Keb
+from modules.ku.ku import Ku
+from modules.rd.rd import Rd
 
 ctrl: Controller
 
@@ -17,6 +19,7 @@ class MenuState(QState):
         self.btp = Btp(controller=ctrl, menu=self)
         self.rd = Rd(self)
         self.keb = Keb(self)
+        self.ku = Ku(self)
 
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('меню')
