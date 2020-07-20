@@ -2,6 +2,7 @@ from PyQt5.QtCore import QState, QEvent, QFinalState
 
 from controller.controller import Controller
 from modules.ku.data import KuData
+from modules.ku.prepare import Prepare
 
 
 class Ku(QState):
@@ -24,7 +25,7 @@ class Ku(QState):
         self.report_data.addTransition(ctrl.menu.prepare_menu.done.clicked, self.menu)
         self.menu.addTransition(ctrl.button['back'].clicked, self.finish)
 
-        # self.prepare = Prepare(self)
+        self.prepare = Prepare(self)
         # self.fill = Fill(self)
         # self.junctions = Junctions(self)
         # self.empty = Empty(self)
