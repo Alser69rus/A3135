@@ -4,6 +4,7 @@ from controller.controller import Controller
 from modules.ku.breaking import Breaking
 from modules.ku.data import KuData
 from modules.ku.empty import Empty
+from modules.ku.end import End
 from modules.ku.fill import Fill
 from modules.ku.junctions import Junctions
 from modules.ku.prepare import Prepare
@@ -38,8 +39,7 @@ class Ku(QState):
         self.sensitivity = Sensitivity(self)
         self.junctions = Junctions(self)
         self.valve = Valve(self)
-
-        # self.end = End(self)
+        self.end = End(self)
 
 
 class Reset(QState):
