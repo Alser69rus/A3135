@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QState, QEvent, QFinalState
 
 from controller.controller import Controller
+from modules.ku.breaking import Breaking
 from modules.ku.data import KuData
 from modules.ku.empty import Empty
 from modules.ku.fill import Fill
@@ -30,6 +31,7 @@ class Ku(QState):
         self.prepare = Prepare(self)
         self.fill = Fill(self)
         self.empty = Empty(self)
+        self.breaking = Breaking(self)
         # self.junctions = Junctions(self)
 
         # self.end = End(self)
