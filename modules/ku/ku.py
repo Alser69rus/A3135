@@ -8,6 +8,7 @@ from modules.ku.fill import Fill
 from modules.ku.junctions import Junctions
 from modules.ku.prepare import Prepare
 from modules.ku.sensitivity import Sensitivity
+from modules.ku.valve import Valve
 
 
 class Ku(QState):
@@ -36,6 +37,7 @@ class Ku(QState):
         self.breaking = Breaking(self)
         self.sensitivity = Sensitivity(self)
         self.junctions = Junctions(self)
+        self.valve = Valve(self)
 
         # self.end = End(self)
 
