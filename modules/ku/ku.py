@@ -6,6 +6,7 @@ from modules.ku.data import KuData
 from modules.ku.empty import Empty
 from modules.ku.fill import Fill
 from modules.ku.prepare import Prepare
+from modules.ku.sensitivity import Sensitivity
 
 
 class Ku(QState):
@@ -32,6 +33,7 @@ class Ku(QState):
         self.fill = Fill(self)
         self.empty = Empty(self)
         self.breaking = Breaking(self)
+        self.sensitivity = Sensitivity(self)
         # self.junctions = Junctions(self)
 
         # self.end = End(self)

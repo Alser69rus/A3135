@@ -120,9 +120,9 @@ class Sensitivity:
     def text(self) -> str:
         if not self.p: return '-'
         if self.result():
-            return f'{self.dp:.3f}'
+            return f'{self.dp():.3f}'
         else:
-            return f'{self.dp:.3f} (не норма)'
+            return f'{self.dp():.3f} (не норма)'
 
 
 @dataclass()
