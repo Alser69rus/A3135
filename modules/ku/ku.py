@@ -5,6 +5,7 @@ from modules.ku.breaking import Breaking
 from modules.ku.data import KuData
 from modules.ku.empty import Empty
 from modules.ku.fill import Fill
+from modules.ku.junctions import Junctions
 from modules.ku.prepare import Prepare
 from modules.ku.sensitivity import Sensitivity
 
@@ -34,7 +35,7 @@ class Ku(QState):
         self.empty = Empty(self)
         self.breaking = Breaking(self)
         self.sensitivity = Sensitivity(self)
-        # self.junctions = Junctions(self)
+        self.junctions = Junctions(self)
 
         # self.end = End(self)
 

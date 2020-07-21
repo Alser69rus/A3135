@@ -144,6 +144,14 @@ class Junctions:
         else:
             return f'не норма'
 
+    def fail(self):
+        self.value = False
+        self.empty = False
+
+    def success(self):
+        self.value = True
+        self.empty = False
+
 
 @dataclass()
 class Valve:
@@ -163,6 +171,14 @@ class Valve:
             return f'норма'
         else:
             return f'не норма'
+
+    def fail(self):
+        self.value = False
+        self.empty = False
+
+    def success(self):
+        self.value = True
+        self.empty = False
 
 
 @dataclass()
