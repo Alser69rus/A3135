@@ -7,6 +7,4 @@ breaking_stage_2-->breaking_stage_3
 breaking_stage_3-->breaking_stage_4
 breaking_stage_4-->show_result
 show_result-->[*]
-
-
 @enduml

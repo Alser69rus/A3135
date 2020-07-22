@@ -60,6 +60,9 @@ class Measure(QState):
 
     def onEntry(self, event: QEvent) -> None:
         ctrl.graph.update()
+        ctrl.setText(f'<p>Измеряется давление в магистрали ТЦ2 при создании утечки. Норма: '
+                     f'колебания давления не более 0,015 МПа.</p>'
+                     f'<p>До завершения осталось {15-ctrl.graph.dt:.1f} с</p>')
         p = ctrl.manometer['p tc2'].get_value()
         t = ctrl.graph.dt
         if t > 0:
