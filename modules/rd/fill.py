@@ -21,22 +21,24 @@ class Fill(QState):
 
         self.start = Start(self)
         self.rdkp_0 = Rdkp0(self)
+        self.upr_rd_off = UprRdOff(self)
         self.ptc = Ptc(self)
         self.set_ptc = SetPtc(self)
         self.pressure_check = common.PressureCheck(self)
         self.rdkp_rd = RdkpRd(self)
+        self.upr_rd_on = UprRdOn(self)
         self.measure = Measure(self)
         self.show_result = ShowResult(self)
 
         self.setInitialState(self.start)
         self.start.addTransition(self.pressure_check)
-        self.pressure_check.addTransition(self.pressure_check.finished, self.rdkp_0)
-        self.rdkp_0.addTransition(ctrl.switch_with_neutral['rd-0-keb'].state_neutral, self.ptc)
-        self.ptc.addTransition(self.ptc.success, self.rdkp_rd)
+        self.pressure_check.addTransition(self.pressure_check.finished, self.upr_rd_off)
+        self.upr_rd_off.addTransition(ctrl.switch['upr rd 042'].low_value, self.ptc)
+        self.ptc.addTransition(self.ptc.success, self.upr_rd_on)
         self.ptc.addTransition(self.ptc.fail, self.set_ptc)
         self.set_ptc.addTransition(ctrl.server_updated, self.set_ptc)
-        self.set_ptc.addTransition(ctrl.button['yes'].clicked, self.rdkp_rd)
-        self.rdkp_rd.addTransition(ctrl.switch_with_neutral['rd-0-keb'].state_one, self.measure)
+        self.set_ptc.addTransition(ctrl.button['yes'].clicked, self.upr_rd_on)
+        self.upr_rd_on.addTransition(ctrl.switch['upr rd 042'].high_value, self.measure)
         self.measure.addTransition(ctrl.server_updated, self.measure)
         self.measure.addTransition(self.measure.done, self.show_result)
 
@@ -53,6 +55,11 @@ class Start(QState):
 class Rdkp0(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.setText('Включите тумблер "РД 042 - 0 - КП 106 (КЭБ 208)" в положение "- 0 -".')
+
+
+class UprRdOff(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText('Выключите тумблер "УПР. РД 042".')
 
 
 class Ptc(QState):
@@ -90,10 +97,22 @@ class RdkpRd(QState):
         ctrl.rd.fill.start()
 
 
+class UprRdOn(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.show_panel('манометры текст график')
+        ctrl.show_button('back')
+        ctrl.setText('Включите тумблер "УПР. РД 042".')
+
+    def onExit(self, event: QEvent) -> None:
+        ctrl.graph.start()
+        ctrl.rd.fill.start()
+
+
 class Measure(QState):
     done = pyqtSignal()
 
     def onEntry(self, event: QEvent) -> None:
+        ctrl.setText('Производится измерение времени наполнения ТЦ2 с 0 до 0,35 МПа.')
         ctrl.graph.update()
         ctrl.rd.fill.update()
         p = ctrl.manometer['p tc2'].get_value()
