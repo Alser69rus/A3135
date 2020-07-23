@@ -69,6 +69,27 @@ class DisableMenu(QState):
 class ReportData(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_menu('Подготовка к испытанию')
+        buttons = (
+            'Дата изготовления: ',
+            'Номер тепловоза: ',
+            'Номер секции: ',
+        )
+        for name in buttons:
+            button = ctrl.menu.prepare_menu.menu.button[name]
+            button.data = ' '
+            button.setVisible(False)
+        ctrl.menu.prepare_menu.update_fields()
+
+    def onExit(self, event: QEvent) -> None:
+        ctrl: Controller = self.parent().controller
+        buttons = (
+            'Дата изготовления: ',
+            'Номер тепловоза: ',
+            'Номер секции: ',
+        )
+        for name in buttons:
+            button = ctrl.menu.prepare_menu.menu.button[name]
+            button.setVisible(True)
 
 
 class Menu(QState):
