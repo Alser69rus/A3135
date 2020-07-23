@@ -22,6 +22,7 @@ class Junctions(QState):
         self.start = Start(self)
         self.pressure_check = common.PressureCheck(self)
         self.upr_rd = UprRd(self)
+        self.rdkp_rd = RdkpRd(self)
         self.ptc = Ptc(self)
         self.set_ptc = SetPtc(self)
         self.junctions_check = JunctionsCheck(self)
@@ -31,7 +32,8 @@ class Junctions(QState):
         self.setInitialState(self.start)
         self.start.addTransition(self.pressure_check)
         self.pressure_check.addTransition(self.pressure_check.finished, self.upr_rd)
-        self.upr_rd.addTransition(ctrl.switch['upr rd 042'].high_value, self.ptc)
+        self.upr_rd.addTransition(ctrl.switch['upr rd 042'].high_value, self.rdkp_rd)
+        self.rdkp_rd.addTransition(ctrl.switch_with_neutral['rd-0-keb'].state_one, self.ptc)
         self.ptc.addTransition(self.ptc.success, self.junctions_check)
         self.ptc.addTransition(self.ptc.fail, self.set_ptc)
         self.set_ptc.addTransition(ctrl.server_updated, self.set_ptc)
@@ -53,6 +55,13 @@ class UprRd(QState):
         ctrl.show_panel('манометры текст')
         ctrl.show_button('back')
         ctrl.setText('Включите тумблер "УПР. РД 042".')
+
+
+class RdkpRd(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.show_panel('манометры текст')
+        ctrl.show_button('back')
+        ctrl.setText('Включите тумблер "РД 042 - 0 - КЭБ 208" в положение "РД 042".')
 
 
 class Ptc(QState):
@@ -96,4 +105,3 @@ class JunctionsFail(QFinalState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.fail()
         ctrl.rd.junctions = 'не норма'
-

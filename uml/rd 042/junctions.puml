@@ -1,7 +1,8 @@
 
 @startuml
 [*]-->upr_rd
-upr_rd-->ptc2:True
+upr_rd-->rdkp_1:True
+rdkp_1-->ptc2:state_one
 ptc2-->ptc2:upd
 ptc2-->junctions:yes
 junctions-->junctions_ok:yes
