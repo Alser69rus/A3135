@@ -105,13 +105,9 @@ class Report(QState):
         self.draw_text(f'Протокол № {num} от {date}')
         self.painter.setFont(self.font_h)
         self.pos = (35, 15)
-        self.draw_text(f'испытания клапана электроблокировочного 208 для тепловозов ТЭП70')
-        self.draw_text(f'Заводской № {ctrl.report_header.dev_num}             '
-                       f'Дата изготовления: {ctrl.report_header.date}')
-        self.draw_text(f'Локомотив: {ctrl.report_header.locomotive}                '
-                       f'Секция: {ctrl.report_header.section}')
-        self.pos = (25, 30)
-        self.cell('Наименование', 'Норма', 'Факт ТЦ2', font=self.font_b)
+        self.draw_text(f'испытания клапана электроблокировочного 208 заводской № {ctrl.report_header.dev_num}')
+        self.pos = (25, 25)
+        self.cell('Параметр', 'Норма', 'Факт ТЦ2', font=self.font_b)
 
     def bottom(self):
         self.painter.setFont(self.font_h)

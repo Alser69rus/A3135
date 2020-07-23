@@ -81,7 +81,6 @@ class ReportData(QState):
         ctrl.menu.prepare_menu.update_fields()
 
     def onExit(self, event: QEvent) -> None:
-        ctrl: Controller = self.parent().controller
         buttons = (
             'Дата изготовления: ',
             'Номер тепловоза: ',
