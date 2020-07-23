@@ -87,7 +87,7 @@ class Wait035(QState):
 
     def onEntry(self, event: QEvent) -> None:
         p = ctrl.manometer['p tc2'].get_value()
-        ctrl.setText(f'<p>Ожидается снижение давления до 0,35 МПа.</p>'
+        ctrl.setText(f'<p>Ожидается снижение давления в ТЦ2 до 0,35 МПа.</p>'
                      f'<p>Давление в ТЦ2: {p:.3f} МПа.</p>')
         if p <= 0.35:
             self.done.emit()
@@ -101,6 +101,7 @@ class Measure(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.graph.update()
         ctrl.rd.empty.update()
+        ctrl.setText(f'<p>Производится измерение времени снижения давления в ТЦ2 с 0,35 до 0 МПа</p>')
         p = ctrl.manometer['p tc2'].get_value()
         if p < 0.005:
             self.done.emit()
