@@ -1,9 +1,10 @@
 -i https://pypi.org/simple
-numpy==1.18.4 ; python_version >= '3.5'
+numpy==1.19.1
+psutil==5.7.2
 pymodbus==2.3.0
-pyqt5-sip==12.7.2
+pyqt5-sip==12.8.0
 pyqt5-stubs==5.14.2.2
 pyqt5==5.14.2
-pyqtgraph==0.10.0
+pyqtgraph==0.11.0
 pyserial==3.4
-six==1.15.0 ; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+six==1.15.0

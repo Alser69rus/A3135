@@ -132,7 +132,7 @@ class Report(QState):
     def empty(self):
         self.cell('Время снижения давления в импульсной магистрали, с',
                   'не более 10',
-                  f'{ctrl.keb.empty.text()}'
+                  f'{ctrl.ku.empty.text()}'
                   )
 
     def breaking(self):

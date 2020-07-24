@@ -37,6 +37,20 @@ class Main:
 
 
 if __name__ == '__main__':
+    import psutil
+    import os
+
+    running_programm = 0
+    cwd = os.getcwd()
+
+    pids = psutil.pids()
+    for pid in pids:
+        try:
+            proc = psutil.Process(pid).as_dict(['name', 'cwd', 'exe'])
+            if proc['cwd'] == cwd: print('0', proc['name'], proc['exe'])
+        except Exception:
+            pass
+
     app = QtWidgets.QApplication(sys.argv)
     main = Main()
     sys.exit(app.exec_())
