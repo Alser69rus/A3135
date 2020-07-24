@@ -1,5 +1,7 @@
 @startuml
 [*] --> install
 install-->prepare_pressure:yes
-prepare_pressure-->[*]
+prepare_pressure-->leak_05
+leak_05-->tank:False
+tank-->[*]:state_2
 @enduml
