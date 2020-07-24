@@ -47,7 +47,7 @@ class Reset(QState):
         ctrl: Controller = self.parent().controller
         ctrl.menu.reset_prepare()
         ctrl.menu.menu['КУ 215'].reset()
-        ctrl.keb = KuData()
+        ctrl.ku = KuData()
 
 
 class DisableMenu(QState):
