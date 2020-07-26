@@ -20,15 +20,15 @@ from ui.main_menu import MainMenu
 ANIMATE_CLICK_DELAY = 50
 
 
-@dataclass()
 class ReportHeader:
-    dev_num = ''
-    date = ''
-    locomotive = ''
-    section = ''
-    name_1 = ''
-    name_2 = ''
-    today = datetime.today()
+    def __init__(self):
+        self.dev_num = ''
+        self.date = ''
+        self.locomotive = ''
+        self.section = ''
+        self.name_1 = ''
+        self.name_2 = ''
+        self.today = datetime.today()
 
 
 class Controller(QObject):

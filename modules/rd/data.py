@@ -1,12 +1,11 @@
-from dataclasses import dataclass, field
 from datetime import datetime
 
 
-@dataclass()
 class Fill:
-    t1 = datetime.now()
-    t2 = datetime.now()
-    empty_value = True
+    def __init__(self):
+        self.t1 = datetime.now()
+        self.t2 = datetime.now()
+        self.empty_value = True
 
     def reset(self):
         self.empty_value = True
@@ -33,12 +32,12 @@ class Fill:
         return 0 < self.time() <= 4
 
 
-@dataclass()
 class Sensitivity:
-    ptc = []
-    t1 = datetime.now()
-    t2 = datetime.now()
-    empty_value = True
+    def __init__(self):
+        self.ptc = []
+        self.t1 = datetime.now()
+        self.t2 = datetime.now()
+        self.empty_value = True
 
     def reset(self):
         self.empty_value = True
@@ -70,11 +69,11 @@ class Sensitivity:
         return f'{self.delta_p():.3f} (не норма)'
 
 
-@dataclass()
 class Empty:
-    t1 = datetime.now()
-    t2 = datetime.now()
-    empty_value = True
+    def __init__(self):
+        self.t1 = datetime.now()
+        self.t2 = datetime.now()
+        self.empty_value = True
 
     def reset(self):
         self.empty_value = True
@@ -101,10 +100,10 @@ class Empty:
         return 0 < self.time() <= 10
 
 
-@dataclass()
 class RdData:
-    fill = Fill()
-    sensitivity = Sensitivity()
-    empty = Empty()
-    valve = '-'
-    junctions = '-'
+    def __init__(self):
+        self.fill = Fill()
+        self.sensitivity = Sensitivity()
+        self.empty = Empty()
+        self.valve = '-'
+        self.junctions = '-'

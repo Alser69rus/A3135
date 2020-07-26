@@ -1,12 +1,12 @@
-from dataclasses import dataclass
 from datetime import datetime
 
 
-@dataclass()
 class Fill:
-    t1 = datetime.now()
-    t2 = datetime.now()
-    empty_value = True
+
+    def __init__(self):
+        self.t1 = datetime.now()
+        self.t2 = datetime.now()
+        self.empty_value = True
 
     def reset(self):
         self.empty_value = True
@@ -33,11 +33,11 @@ class Fill:
         return 0 < self.time() <= 3
 
 
-@dataclass()
 class Empty:
-    t1 = datetime.now()
-    t2 = datetime.now()
-    empty_value = True
+    def __init__(self):
+        self.t1 = datetime.now()
+        self.t2 = datetime.now()
+        self.empty_value = True
 
     def reset(self):
         self.empty_value = True
@@ -64,15 +64,15 @@ class Empty:
         return 0 < self.time() <= 10
 
 
-@dataclass()
 class BreakingStage:
-    p = []
-    conditions = (
-        (0.1, 0.13),
-        (0.17, 0.20),
-        (0.27, 0.30),
-        (0.37, 0.40),
-    )
+    def __init__(self):
+        self.p = []
+        self.conditions = (
+            (0.1, 0.13),
+            (0.17, 0.20),
+            (0.27, 0.30),
+            (0.37, 0.40),
+        )
 
     def reset(self):
         self.p = []
@@ -100,9 +100,9 @@ class BreakingStage:
             return f'{self.p[stage]:.3f} (не норма)'
 
 
-@dataclass()
 class Sensitivity:
-    p = []
+    def __init__(self):
+        self.p = []
 
     def reset(self):
         self.p = []
@@ -125,10 +125,11 @@ class Sensitivity:
             return f'{self.dp():.3f} (не норма)'
 
 
-@dataclass()
 class Junctions:
-    value = False
-    empty = True
+    def __init__(self):
+
+        self.value = False
+        self.empty = True
 
     def reset(self):
         self.empty = True
@@ -153,10 +154,10 @@ class Junctions:
         self.empty = False
 
 
-@dataclass()
 class Valve:
-    value = False
-    empty = True
+    def __init__(self):
+        self.value = False
+        self.empty = True
 
     def reset(self):
         self.empty = True
@@ -181,11 +182,11 @@ class Valve:
         self.empty = False
 
 
-@dataclass()
 class KuData:
-    fill = Fill()
-    empty = Empty()
-    breaking_stage = BreakingStage()
-    sensitivity = Sensitivity()
-    valve = Valve()
-    junctions = Junctions()
+    def __init__(self):
+        self.fill = Fill()
+        self.empty = Empty()
+        self.breaking_stage = BreakingStage()
+        self.sensitivity = Sensitivity()
+        self.valve = Valve()
+        self.junctions = Junctions()

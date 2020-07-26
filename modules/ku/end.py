@@ -42,10 +42,12 @@ class Start(QState):
 
 class Ku(QState):
     def onEntry(self, event: QEvent) -> None:
+        ctrl.show_button('back')
         ctrl.setText('Выключите тумблер "КУ 215".')
 
 
 class Uninstall(QState):
     def onEntry(self, event: QEvent) -> None:
+        ctrl.show_button('back yes')
         ctrl.setText('<p>Снимите КУ 215 с прижима.</p>'
                      '<p><br>Для продолжения нажмите "ДА".</p>')

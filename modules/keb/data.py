@@ -1,12 +1,11 @@
-from dataclasses import dataclass
 from datetime import datetime
 
 
-@dataclass()
 class Fill:
-    t1 = datetime.now()
-    t2 = datetime.now()
-    empty = True
+    def __init__(self):
+        self.t1 = datetime.now()
+        self.t2 = datetime.now()
+        self.empty = True
 
     def reset(self):
         self.empty = True
@@ -33,11 +32,11 @@ class Fill:
         return 0 < self.time() <= 4
 
 
-@dataclass()
 class Empty:
-    t1 = datetime.now()
-    t2 = datetime.now()
-    empty = True
+    def __init__(self):
+        self.t1 = datetime.now()
+        self.t2 = datetime.now()
+        self.empty = True
 
     def reset(self):
         self.empty = True
@@ -64,10 +63,10 @@ class Empty:
         return 0 < self.time() <= 4
 
 
-@dataclass()
 class Junctions:
-    empty = True
-    condition = False
+    def __init__(self):
+        self.empty = True
+        self.condition = False
 
     def reset(self):
         self.empty = True
@@ -92,8 +91,8 @@ class Junctions:
             return f'не норма'
 
 
-@dataclass()
 class KebData:
-    fill = Fill()
-    empty = Empty()
-    junctions = Junctions()
+    def __init__(self):
+        self.fill = Fill()
+        self.empty = Empty()
+        self.junctions = Junctions()

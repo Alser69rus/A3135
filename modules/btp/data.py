@@ -1,35 +1,34 @@
-from dataclasses import dataclass, field
 from datetime import datetime
 
 
-@dataclass()
 class KU215:
-    handle = (
-        '1 ступень',
-        '2 ступень',
-        '3 ступень',
-        '4 ступень',
-        '3 ступень',
-        '2 ступень',
-        '1 ступень',
-        'отпуск',
-    )
-    range = (
-        (0.10, 0.13),
-        (0.17, 0.20),
-        (0.27, 0.30),
-        (0.37, 0.40),
-        (0.27, 0.30),
-        (0.17, 0.20),
-        (0.10, 0.13),
-        (0.0, 0.005),
-    )
+    def __init__(self):
+        self.handle = (
+            '1 ступень',
+            '2 ступень',
+            '3 ступень',
+            '4 ступень',
+            '3 ступень',
+            '2 ступень',
+            '1 ступень',
+            'отпуск',
+        )
+        self.range = (
+            (0.10, 0.13),
+            (0.17, 0.20),
+            (0.27, 0.30),
+            (0.37, 0.40),
+            (0.27, 0.30),
+            (0.17, 0.20),
+            (0.10, 0.13),
+            (0.0, 0.005),
+        )
 
 
-@dataclass()
 class Breaking:
-    tc = [[-1.0] * 8, [-1.0] * 8]
-    ku_215: KU215 = field(default_factory=KU215)
+    def __init__(self):
+        self.tc = [[-1.0] * 8, [-1.0] * 8]
+        self.ku_215: KU215 = KU215()
 
     def position_as_text(self, position: int):
         return self.ku_215.handle[position]
@@ -57,11 +56,11 @@ class Breaking:
         return all(res)
 
 
-@dataclass()
 class FillTime:
-    tc = [0.0, 0.0]
-    t = [datetime.now(), datetime.now()]
-    running = [False, False]
+    def __init__(self):
+        self.tc = [0.0, 0.0]
+        self.t = [datetime.now(), datetime.now()]
+        self.running = [False, False]
 
     def start(self):
         self.tc = [0.0, 0.0]
@@ -86,11 +85,11 @@ class FillTime:
             return f'{value:.1f} (не норма)'
 
 
-@dataclass()
 class EmptyTime:
-    tc = [0.0, 0.0]
-    t = [datetime.now(), datetime.now()]
-    running = [False, False]
+    def __init__(self):
+        self.tc = [0.0, 0.0]
+        self.t = [datetime.now(), datetime.now()]
+        self.running = [False, False]
 
     def start(self, tc: int):
         self.tc[tc] = 0.0
@@ -115,15 +114,15 @@ class EmptyTime:
             return f'{t:.1f} (не норма)'
 
 
-@dataclass()
 class BtpData:
-    ku_215: KU215 = field(default_factory=KU215)
-    auto_breaking: Breaking = field(default_factory=Breaking)
-    kvt_breaking: Breaking = field(default_factory=Breaking)
-    fill_time: FillTime = field(default_factory=FillTime)
-    empty_time: EmptyTime = field(default_factory=EmptyTime)
-    tightness: str = '-'
-    substitution: FillTime = field(default_factory=FillTime)
-    speed_fill: FillTime = field(default_factory=FillTime)
-    speed_empty: EmptyTime = field(default_factory=EmptyTime)
-    sped_ok = ['-', '-']
+    def __init__(self):
+        self.ku_215: KU215 = KU215()
+        self.auto_breaking: Breaking = Breaking()
+        self.kvt_breaking: Breaking = Breaking()
+        self.fill_time: FillTime = FillTime()
+        self.empty_time: EmptyTime = EmptyTime()
+        self.tightness: str = '-'
+        self.substitution: FillTime = FillTime()
+        self.speed_fill: FillTime = FillTime()
+        self.speed_empty: EmptyTime = EmptyTime()
+        self.sped_ok = ['-', '-']
