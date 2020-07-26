@@ -36,7 +36,28 @@ class Main:
         self.stm.start()
 
 
+def already_run() -> bool:
+    import psutil
+    import os
+    from collections import Counter
+
+    cwd = os.getcwd()
+    exe = Counter()
+
+    pids = psutil.pids()
+    for pid in pids:
+        try:
+            proc = psutil.Process(pid).as_dict(['cwd', 'exe'])
+            if proc['cwd'] == cwd: exe[proc['exe']] += 1
+        except Exception:
+            pass
+    return exe.most_common(1)[0][1] > 1
+
+
 if __name__ == '__main__':
+
+    if already_run(): sys.exit('Программа уже запущена')
+
     app = QtWidgets.QApplication(sys.argv)
     main = Main()
     sys.exit(app.exec_())
