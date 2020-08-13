@@ -108,6 +108,7 @@ class HandlePosition(QState):
         self.position: str = step[stage]
 
     def onEntry(self, event: QEvent) -> None:
+        ctrl.show_panel('текст манометры график прогресс')
         ctrl.setText(f'Переведите рукоятку в {self.position}.')
 
 
@@ -185,14 +186,14 @@ class CheckKuPressure(QState):
 
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_button('back')
-
+        ctrl.show_panel('текст манометры график прогресс')
         low, high = ctrl.btp.ku_215.range[self.stage]
         p = ctrl.manometer['p im'].get_value()
         if low <= p <= high:
             self.done.emit()
         else:
             ctrl.menu.current_menu.current_button.set_fail()
-            ctrl.show_panel('текст манометры')
+
             ctrl.setText(f'<p>Давление в импульсной магистрали  должно находится в пределах '
                          f'от {low:.3f} до {high:.3f} МПа.</p>'
                          f'<p>Текущее значение давления Рим: {p:.3f} МПа</p>'

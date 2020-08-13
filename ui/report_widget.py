@@ -5,7 +5,7 @@ from PyQt5.QtCore import QSettings
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QKeyEvent, QFont
-from PyQt5.QtGui import QPdfWriter
+from PyQt5.QtGui import QPdfWriter, QPagedPaintDevice
 from PyQt5.QtPrintSupport import QPrintPreviewWidget
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
@@ -91,6 +91,7 @@ class ReportWidget(QWidget):
         wr = QPdfWriter(str(file))
         wr.setResolution(300)
         wr.newPage()
+        wr.setPageSize(QPagedPaintDevice.A4)
         self.on_paint_request(wr)
 
     def save_new_report_num(self, settings: QSettings, num: int):

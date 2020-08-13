@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal
+﻿from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal
 
 from controller.controller import Controller
 from modules.btp.common import Common
@@ -27,6 +27,8 @@ class Substitution(QState):
         self.enter = common.Enter(state='- 0 -', parent=self)
         self.el_breaking_on = ElBreakingOn(self)
         self.measure = Measure(self)
+        self.ok = Ok(self)
+        self.ok_measure = OkMeasure(self)
         self.el_breaking_off = ElBreakingOff(self)
         self.show_result = ShowResult(self)
 
@@ -40,10 +42,15 @@ class Substitution(QState):
         self.pim.addTransition(ctrl.server_updated, self.pim)
         self.pim.addTransition(self.pim.done, self.enter)
         self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_neutral, self.el_breaking_on)
-        self.el_breaking_on.addTransition(ctrl.switch['el. braking'].high_value, self.measure)
+        self.el_breaking_on.addTransition(ctrl.server_updated, self.el_breaking_on)
+        self.el_breaking_on.addTransition(self.el_breaking_on.done, self.measure)
         self.measure.addTransition(ctrl.server_updated, self.measure)
-        self.measure.addTransition(self.measure.done, self.el_breaking_off)
-        self.el_breaking_off.addTransition(ctrl.switch['el. braking'].low_value, self.show_result)
+        self.measure.addTransition(self.measure.done, self.ok)
+        self.ok.addTransition(ctrl.switch['ok'].high_value, self.ok_measure)
+        self.ok_measure.addTransition(ctrl.server_updated, self.ok_measure)
+        self.ok_measure.addTransition(ctrl.switch['ok'].low_value, self.el_breaking_off)
+        self.el_breaking_off.addTransition(ctrl.server_updated, self.el_breaking_off)
+        self.el_breaking_off.addTransition(self.el_breaking_off.done, self.show_result)
 
 
 class Start(QState):
@@ -51,17 +58,22 @@ class Start(QState):
         ctrl.show_panel('манометры текст график')
         ctrl.graph.show_graph('p im p tc1 p tc2')
         ctrl.graph.reset()
+        ctrl.btp.sped_ok = ['-', '-']
         ctrl.show_button('back')
         ctrl.menu.current_menu.current_button.set_normal()
 
 
 class ElBreakingOn(QState):
+    done = pyqtSignal()
+
     def onEntry(self, event: QEvent) -> None:
         ctrl.setText(f'Включите тумблер "ЗАМ. ЭЛ. ТОРМ."')
-
-    def onExit(self, event: QEvent) -> None:
-        ctrl.graph.start()
-        ctrl.btp.substitution.start()
+        tc1 = ctrl.manometer['p tc1'].get_value()
+        tc2 = ctrl.manometer['p tc2'].get_value()
+        if tc1 >= 0.005 or tc2 >= 0.005:
+            ctrl.graph.start()
+            ctrl.btp.substitution.start()
+            self.done.emit()
 
 
 class Measure(QState):
@@ -83,8 +95,35 @@ class Measure(QState):
 
 
 class ElBreakingOff(QState):
+    done = pyqtSignal()
+
     def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'Выключите тумблер "ЗАМ. ЭЛ. ТОРМ."')
+        ctrl.setText(f'<p>Выключите тумблер "ЗАМ. ЭЛ. ТОРМ."</p>')
+        ctrl.show_button('back')
+        tc1 = ctrl.manometer['p tc1'].get_value()
+        tc2 = ctrl.manometer['p tc2'].get_value()
+        if tc1 <= 0.005 and tc2 <= 0.005:
+            self.done.emit()
+
+
+class Ok(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText(f'<p>Нажмите и удерживайте кнопку "ОК".</p>'
+                     f'<p>Давление в ТЦ1  и ТЦ2 должно уменьшаться.</p>')
+
+
+class OkMeasure(QState):
+    def onEntry(self, event: QEvent) -> None:
+        #ctrl.graph.update()
+        tc1 = ctrl.manometer['p tc1'].get_value()
+        tc2 = ctrl.manometer['p tc2'].get_value()
+        res1 = '<font color="green">норма</font>' if tc1 < 0.16 else '<font color="red">(не норма)</font>'
+        res2 = '<font color="green">норма</font>' if tc2 < 0.16 else '<font color="red">(не норма)</font>'
+        ctrl.btp.sped_ok = [res1, res2]
+        ctrl.setText(f'<p>Давление в ТЦ1  и ТЦ2 должно уменьшаться.</p>'
+                     f'<p>Давление в ТЦ1: {tc1} МПа<br>результат: {res1}</p>'
+                     f'<p>Давление в ТЦ2: {tc2} МПа<br>результат: {res2}</p>'
+                     f'<p><br>Для продолжения испытания отпустите кнопку "ОК".</p>')
 
 
 class ShowResult(QState):
@@ -101,9 +140,12 @@ class ShowResult(QState):
                      f'<tr><td>Время наполнения ТЦ при замещении<br>электрического торможения'
                      f'<br>(с 0 до 0,16 МПа)</td><td>не более 4 с</td>'
                      f'<td align="center">{tc1}</td><td align="center">{tc2}</td></tr>'
+                     f'<tr><td>Проверка проходимости канала к отпускному клапану</td>'
+                     f'<td></td><td>{ctrl.btp.sped_ok[0]}</td><td>{ctrl.btp.sped_ok[1]}</td>'
                      f'</table></p>'
                      f'<p><br>Для продолжения нажмите "ВОЗВРАТ".</p>')
-        if data.success():
+        res = all(s == 'норма' for s in ctrl.btp.sped_ok)
+        if data.success() and res:
             ctrl.menu.current_menu.current_button.set_success()
         else:
             ctrl.menu.current_menu.current_button.set_fail()

@@ -60,6 +60,7 @@ class SaveResult(QFinalState):
         self.stage = stage
 
     def onEntry(self, event: QEvent) -> None:
+        ctrl.btp.auto_breaking.pim[self.stage] = ctrl.manometer['p im'].get_value()
         ctrl.btp.auto_breaking.tc[0][self.stage] = ctrl.manometer['p tc1'].get_value()
         ctrl.btp.auto_breaking.tc[1][self.stage] = ctrl.manometer['p tc2'].get_value()
 
@@ -91,7 +92,7 @@ class Check(QState):
         self.check_handle_position.addTransition(self.check_handle_position.done, self.pressure_stabilization)
         self.pressure_stabilization.addTransition(ctrl.server_updated, self.pressure_stabilization)
         self.pressure_stabilization.addTransition(self.pressure_stabilization.done, self.check_ku_pressure)
-        self.check_ku_pressure.addTransition(self.check_ku_pressure.done, self.save_result)
+        self.check_ku_pressure.addTransition(self.save_result)
 
 
 class ShowResult(QState):
@@ -100,7 +101,7 @@ class ShowResult(QState):
         ctrl.show_panel('текст')
         text = f'<p><table border="2" cellpadding="4" >' \
                f'<caption>Проверка ступеней торможения и отпуска при действии автоматического томоза</caption>' \
-               f'<tr><th>Ступень</th><th>Норма, МПа</th><th>ТЦ1 факт, МПа</th><th>ТЦ2 факт, МПа</th></tr>' \
+               f'<tr><th>Ступень</th><th>Р им, МПа</th><th>ТЦ1 факт, МПа</th><th>ТЦ2 факт, МПа</th></tr>' \
                f'<tr><th colspan="4">Торможение</th></tr>'
 
         for i in range(4):
@@ -121,8 +122,8 @@ class ShowResult(QState):
     def get_row(self, row: int):
         data = ctrl.btp.auto_breaking
         stage = data.position_as_text(row)
-        rang = data.range_as_text(row)
+        pim = data.pim_as_text(row)
         tc1 = data.tc_as_text(0, row)
         tc2 = data.tc_as_text(1, row)
-        return f'<tr><td>   {stage}  </td><td>   {rang}   </td>' \
+        return f'<tr><td>   {stage}  </td><td>   {pim}   </td>' \
                f'<td align="center">   {tc1}   </td><td align="center">   {tc2}   </td></tr>'

@@ -25,6 +25,8 @@ class End(QState):
         self.upr_rd = UprRd(self)
         self.pupr = Pupr(self)
         self.rd = Rd(self)
+        self.tank_2 = Tank2(self)
+        self.voltage = Voltage(self)
         self.uninstall = Uninstall(self)
         self.report = Report(self)
 
@@ -36,7 +38,10 @@ class End(QState):
         self.upr_rd.addTransition(ctrl.switch['upr rd 042'].low_value, self.pupr)
         self.pupr.addTransition(ctrl.server_updated, self.pupr)
         self.pupr.addTransition(self.pupr.done, self.rd)
-        self.rd.addTransition(ctrl.switch['rd 042'].low_value, self.uninstall)
+        self.rd.addTransition(ctrl.switch['rd 042'].low_value, self.tank_2)
+        self.tank_2.addTransition(ctrl.server_updated, self.tank_2)
+        self.tank_2.addTransition(self.tank_2.done, self.voltage)
+        self.voltage.addTransition(ctrl.button['yes'].clicked, self.uninstall)
         self.uninstall.addTransition(ctrl.button['yes'].clicked, self.report)
 
 
@@ -79,8 +84,28 @@ class Rd(QState):
         ctrl.setText('Выключите тумблер "РД 042".')
 
 
+class Tank2(QState):
+    done = pyqtSignal()
+
+    def onEntry(self, event: QEvent) -> None:
+        p = ctrl.manometer["p im"].get_value()
+        ctrl.setText(f'<p>Включите тумблер "НАКОП. РЕЗ." в положение "СБРОС", '
+                     f'и установите давление в накопительном резервуаре равным 0 МПа. </p>'
+                     f'<p>Давление в накопительном резервуаре: '
+                     f'{p:.3f} МПа.</p>')
+        if p < 0.005:
+            self.done.emit()
+
+
+class Voltage(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.show_button('back yes')
+        ctrl.setText('<p>Установите переключатель "50 В - 110 В" в нейтральное положение.</p>'
+                     '<p><br>Для продолжения нажмите "ДА".</p>')
+
+
 class Uninstall(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_button('back yes')
-        ctrl.setText('<p>Снимите РД 042 и КЭБ 208 с прижимов.</p>'
+        ctrl.setText('<p>Отключите кабель от КЭБ 208. Снимите РД 042 и КЭБ 208 с прижимов.</p>'
                      '<p><br>Для продолжения нажмите "ДА".</p>')

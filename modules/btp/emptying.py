@@ -77,12 +77,12 @@ class Measure(QState):
             ctrl.btp.empty_time.start(0)
         if tc2 > 0.35:
             ctrl.btp.empty_time.start(1)
-        if tc1 < 0.005:
+        if tc1 < 0.05:
             ctrl.btp.empty_time.stop(0)
-        if tc2 < 0.005:
+        if tc2 < 0.05:
             ctrl.btp.empty_time.stop(1)
 
-        if tc1 < 0.005 and tc2 < 0.005:
+        if tc1 < 0.05 and tc2 < 0.05:
             self.done.emit()
 
 
@@ -97,7 +97,7 @@ class ShowResult(QState):
                      f'<caption>Проверка времени снижения давления ТЦ при управлении'
                      f' краном вспомогательного тормоза (КВТ)</caption>'
                      f'<tr><th>Наименование</th><th>Норма, МПа</th><th>ТЦ1 факт, с</th><th>ТЦ2 факт, с</th></tr>'
-                     f'<tr><td>Время снижения давления ТЦ <br>при управлении КВТ<br>(с 0,35 до 0 МПа)</td>'
+                     f'<tr><td>Время снижения давления ТЦ <br>при управлении КВТ<br>(с 0,35 до 0,05 МПа)</td>'
                      f'<td>не более 13 с</td>'
                      f'<td align="center">{tc1}</td><td align="center">{tc2}</td></tr>'
                      f'</table></p>'

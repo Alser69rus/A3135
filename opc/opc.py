@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
+﻿from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 import logging
 from datetime import datetime
 from dataclasses import dataclass
@@ -52,6 +52,7 @@ class TwoStateDiscreteType(QObject):
     clicked = pyqtSignal()
     high_value = pyqtSignal()
     low_value = pyqtSignal()
+    updated = pyqtSignal(bool)
 
     def __init__(self, name: str = 'Дискретный вход', parent=None):
         super().__init__(parent=parent)
@@ -72,11 +73,12 @@ class TwoStateDiscreteType(QObject):
             self.high_value.emit()
         else:
             self.low_value.emit()
-        if self._value == value: return
-        self._value = value
-        if value:
-            self.clicked.emit()
-        self.value_changed.emit(value)
+        if self._value != value:
+            self._value = value
+            if value:
+                self.clicked.emit()
+            self.value_changed.emit(value)
+        self.updated.emit(self._value)
 
 
 class MultiStateDiscreteType(QObject):

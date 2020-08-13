@@ -19,20 +19,14 @@ class Ending(QState):
 
         self.start = Start(self)
         self.air = Air(self)
-        self.ku_215_on = KU215On(self)
-        self.breaking = Breaking(self)
         self.ku_215_off = KU215Off(self)
-        self.enter = Enter(self)
         self.disconnect_bto = DisconnectBTO(self)
         self.report = Report(parent=self, controller=controller)
 
         self.setInitialState(self.start)
         self.start.addTransition(self.air)
-        self.air.addTransition(ctrl.switch_with_neutral['enter'].state_two, self.ku_215_on)
-        self.ku_215_on.addTransition(ctrl.switch['ku 215'].high_value, self.breaking)
-        self.breaking.addTransition(ctrl.button['yes'].clicked, self.ku_215_off)
-        self.ku_215_off.addTransition(ctrl.switch['ku 215'].low_value, self.enter)
-        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_neutral, self.disconnect_bto)
+        self.air.addTransition(ctrl.button['yes'].clicked, self.ku_215_off)
+        self.ku_215_off.addTransition(ctrl.switch['ku 215'].low_value, self.disconnect_bto)
         self.disconnect_bto.addTransition(ctrl.button['yes'].clicked, self.report)
 
 
@@ -44,32 +38,16 @@ class Start(QState):
 
 class Air(QState):
     def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Выключить пневмотумблер "БТП К СТЕНДУ".</p>'
-                     f'<p>Включить тумблер "ВХОД" в положение "КУ"</p>')
-
-
-class KU215On(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Включите тумблер "КУ215".</p>')
-
-
-class Breaking(QState):
-    def onEntry(self, event: QEvent) -> None:
         ctrl.show_button('back yes')
-        ctrl.setText(f'<p>Выполните несколько торможений и отпусков краном 215 до '
-                     f'состояния когда ТЦ перестанут наполняться.</p>'
-                     f'<p><br>Для продолжения нажмите "ДА".</p>')
+        ctrl.setText(f'<p>Выключите пневмотумблер "БТП К СТЕНДУ" '
+                     f'и дождитесь разрядки питательного резервуара.</p>'
+                     f'<p>Для продолжение нажмите кнопку "ДА".</p>')
 
 
 class KU215Off(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_button('back')
         ctrl.setText(f'<p>Выключите тумблер "КУ 215".</p>')
-
-
-class Enter(QState):
-    def onEntry(self, event: QEvent) -> None:
-        ctrl.setText(f'<p>Переключите тумблер "ВХОД" в положение "- 0 -".</p>')
 
 
 class DisconnectBTO(QState):

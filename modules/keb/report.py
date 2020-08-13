@@ -68,7 +68,7 @@ class Report(QState):
         x1, y1 = self.mm_to_pixel(*self.pos)
         row = kwargs.get('height', 1)
         y = self.pos[1] + 5 * row
-        x2, y2 = self.mm_to_pixel(200, y)
+        x2, y2 = self.mm_to_pixel(190, y)
         w = x2 - x1
         h = y2 - y1
         painter.setPen(QPen(self.black, 3.0, Qt.SolidLine))
@@ -77,7 +77,7 @@ class Report(QState):
         if col == 1:
             painter.drawText(x1, y1, w, h, Qt.AlignCenter, args[0])
         else:
-            tab = (120, 160, 200)
+            tab = (110, 150, 190)
             for i, text in enumerate(args):
                 x2, y2 = self.mm_to_pixel(tab[i], y)
                 w, h = x2 - x1, y2 - y1
@@ -101,12 +101,12 @@ class Report(QState):
     def header(self):
         self.painter.setFont(self.font_hb)
         num, date = self.get_report_num_and_date()
-        self.pos = (80, 10)
+        self.pos = (70, 10)
         self.draw_text(f'Протокол № {num} от {date}')
         self.painter.setFont(self.font_h)
-        self.pos = (35, 15)
+        self.pos = (25, 15)
         self.draw_text(f'испытания клапана электроблокировочного 208 заводской № {ctrl.report_header.dev_num}')
-        self.pos = (25, 25)
+        self.pos = (15, 25)
         self.cell('Параметр', 'Норма', 'Факт ТЦ2', font=self.font_b)
 
     def bottom(self):

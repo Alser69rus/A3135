@@ -18,6 +18,7 @@ class Prepare(QState):
 
         self.start = Start(self)
         self.install_rd = InstallRd(self)
+        self.rd = Rd(self)
         self.reset_ptc = ResetPtc(self)
         self.voltage = Voltage(self)
         self.install_keb = InstallKeb(self)
@@ -26,7 +27,8 @@ class Prepare(QState):
 
         self.setInitialState(self.start)
         self.start.addTransition(self.install_rd)
-        self.install_rd.addTransition(ctrl.button['yes'].clicked, self.reset_ptc)
+        self.install_rd.addTransition(ctrl.button['yes'].clicked, self.rd)
+        self.rd.addTransition(ctrl.switch['rd 042'].high_value, self.reset_ptc)
         self.reset_ptc.addTransition(self.reset_ptc.finished, self.voltage)
         self.voltage.addTransition(ctrl.button['yes'].clicked, self.install_keb)
         self.install_keb.addTransition(ctrl.button['yes'].clicked, self.prepare_pressure)
@@ -50,12 +52,18 @@ class InstallRd(QState):
                      '<p><br>Для продолжения нажмите "ДА".</p>')
 
 
+class Rd(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl: Controller = self.parent().controller
+        ctrl.setText('<p>Включите тумблер "РД 042".</p>')
+
+
 class Voltage(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl: Controller = self.parent().controller
         ctrl.show_button('back yes')
-        ctrl.setText('<p>Установите тумблером "50 В - 110 В" напряжение, соответствующее '
-                     'рабочему напряжению КЭБ 208.</p>'
+        ctrl.setText('<p>Установите переключателем "50 В - 110 В" и переменным резистором напряжение, '
+                     'соответствующее рабочему напряжению КЭБ 208.</p>'
                      '<p><br>Для продолжения нажмите "ДА".</p>')
 
 

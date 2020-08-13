@@ -101,6 +101,8 @@ class Menu(QState):
         ctrl.show_panel('меню')
         ctrl.show_button('back up down yes')
         ctrl.menu.active = True
+        if ctrl.menu.current_menu.current_button.is_success():
+            ctrl.menu.on_down_click()
 
     def onExit(self, event: QEvent) -> None:
         ctrl: Controller = self.parent().controller

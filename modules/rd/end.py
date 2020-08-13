@@ -23,6 +23,8 @@ class End(QState):
         self.upr_rd = UprRd(self)
         self.ptc = Ptc(self)
         self.rd = Rd(self)
+        self.rdkp_0 = RdKp0(self)
+        self.tank_2 = Tank2(self)
         self.uninstall = Uninstall(self)
         self.report = Report(self)
 
@@ -31,7 +33,10 @@ class End(QState):
         self.upr_rd.addTransition(ctrl.switch['upr rd 042'].low_value, self.ptc)
         self.ptc.addTransition(ctrl.server_updated, self.ptc)
         self.ptc.addTransition(self.ptc.done, self.rd)
-        self.rd.addTransition(ctrl.switch['rd 042'].low_value, self.uninstall)
+        self.rd.addTransition(ctrl.switch['rd 042'].low_value, self.rdkp_0)
+        self.rdkp_0.addTransition(ctrl.switch_with_neutral['rd-0-keb'].state_neutral, self.tank_2)
+        self.tank_2.addTransition(ctrl.server_updated, self.tank_2)
+        self.tank_2.addTransition(self.tank_2.done, self.uninstall)
         self.uninstall.addTransition(ctrl.button['yes'].clicked, self.report)
 
 
@@ -58,6 +63,24 @@ class Ptc(QState):
 class Rd(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.setText('Выключите тумблер "РД 042".')
+
+
+class RdKp0(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl.setText('Включите тумблер "РД 042 - 0 - КЭБ 208" в положение "- 0 -".')
+
+
+class Tank2(QState):
+    done = pyqtSignal()
+
+    def onEntry(self, event: QEvent) -> None:
+        p = ctrl.manometer["p im"].get_value()
+        ctrl.setText(f'<p>Включите тумблер "НАКОП. РЕЗ." в положение "СБРОС", '
+                     f'и установите давление в накопительном резервуаре равным 0 МПа. </p>'
+                     f'<p>Давление в накопительном резервуаре: '
+                     f'{p:.3f} МПа.</p>')
+        if p < 0.005:
+            self.done.emit()
 
 
 class Uninstall(QState):

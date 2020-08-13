@@ -107,6 +107,9 @@ class MenuButton(QPushButton):
     def set_success(self):
         self.state = ButtonState.SUCCESS
 
+    def is_success(self):
+        return self.state == ButtonState.SUCCESS
+
     def set_fail(self):
         self.state = ButtonState.FAIL
 

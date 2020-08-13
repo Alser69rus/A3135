@@ -1,10 +1,10 @@
-from datetime import datetime
+﻿from datetime import datetime
 from typing import Dict, List
 
-from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, QThread, Qt
+from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal, QThread, Qt, QSettings
 from pymodbus.client.sync import ModbusSerialClient as Client
 
-from opc.opc import AnalogItemType, TwoStateDiscreteType, TwoStateWithNeutralType
+from opc.opc import AnalogItemType, TwoStateDiscreteType, TwoStateWithNeutralType, Range
 from opc.owen import MV110_8AC, MV110_32DN, MV_DI
 
 UPDATE_DELAY = 50
@@ -18,8 +18,20 @@ class Worker(QObject):
         super().__init__(parent=parent)
         self.running: bool = True
         self.skip_update: bool = False
-        self.client = Client(method='rtu', port='COM9', timeout=0.05, baudrate=115200, retry_on_empty=True)
-        self.ai: MV110_8AC = MV110_8AC(client=self.client, unit=16)
+        self.client = Client(method='rtu', port='COM8', timeout=0.05, baudrate=115200, retry_on_empty=True)
+        self.ai: MV110_8AC = MV110_8AC(client=self.client, unit=1)
+        settings = QSettings('manometers.ini', QSettings.IniFormat)
+        settings.setIniCodec('UTF-8')
+        manometers = [
+            settings.value('ppm', (0, 1.6)),
+            settings.value('pim', (0, 1.0)),
+            settings.value('ptc1', (0, 1.0)),
+            settings.value('ptc2', (0, 1.0)),
+            settings.value('pupr', (0, 1.0)),
+        ]
+        for i, v in enumerate(manometers):
+            self.ai.pin[i].eu_range = Range(float(manometers[i][0]), float(manometers[i][1]))
+
         self.di: MV_DI = MV110_32DN(client=self.client, unit=2)
 
     @pyqtSlot()
@@ -28,8 +40,8 @@ class Worker(QObject):
             t = datetime.now()
             if not self.skip_update:
                 t = t
-                # self.ai.update()
-                # self.di.update()
+                self.ai.update()
+                self.di.update()
             t = (datetime.now() - t).total_seconds()
             t = round(UPDATE_DELAY - t * 1000)
             if t > 0:
@@ -123,13 +135,13 @@ class Server(QObject):
     def get_button(self) -> Dict[str, TwoStateDiscreteType]:
         result: Dict[str, TwoStateDiscreteType] = {}
         buttons = [
-            ('back', 'ВОЗВРАТ', self.worker.di.pin[0]),
-            ('up', 'ВВЕРХ', self.worker.di.pin[1]),
-            ('down', 'ВНИЗ', self.worker.di.pin[2]),
-            ('yes', 'ДА', self.worker.di.pin[3]),
-            ('no', 'НЕТ', self.worker.di.pin[4]),
-            ('examination', 'ИСПЫТАНИЕ', self.worker.di.pin[5]),
-            ('auto', 'АВТ. ОТПУСК', self.worker.di.pin[7]),
+            ('back', 'ВОЗВРАТ', self.worker.di.pin[15]),
+            ('up', 'ВВЕРХ', self.worker.di.pin[17]),
+            ('down', 'ВНИЗ', self.worker.di.pin[16]),
+            ('yes', 'ДА', self.worker.di.pin[18]),
+            ('no', 'НЕТ', self.worker.di.pin[19]),
+            ('examination', 'ИСПЫТАНИЕ', self.worker.di.pin[20]),
+            ('auto', 'АВТ. ОТПУСК', self.worker.di.pin[22]),
         ]
         for key, name, button in buttons:
             result[key] = button
@@ -139,16 +151,16 @@ class Server(QObject):
     def get_switch(self) -> Dict[str, TwoStateDiscreteType]:
         result: Dict[str, TwoStateDiscreteType] = {}
         switches = [
-            ('ku 215', 'КУ 215', self.worker.di.pin[8]),
-            ('el. braking', 'ЗАМ. ЭЛ. ТОРМ.', self.worker.di.pin[9]),
-            ('>60 km/h', '> 60 км/ч', self.worker.di.pin[10]),
-            ('rd 042', 'РД 042', self.worker.di.pin[11]),
-            ('upr rd 042', 'УПР. РД 042', self.worker.di.pin[12]),
-            ('keb 208', 'КЭБ 208', self.worker.di.pin[13]),
-            ('red 211', 'РЕД 211.020', self.worker.di.pin[14]),
-            ('leak 1', 'УТЕЧКА d 1', self.worker.di.pin[15]),
-            ('leak 0,5', 'УТЕЧКА d 0.5', self.worker.di.pin[16]),
-            ('ok', 'ОК', self.worker.di.pin[6]),
+            ('ku 215', 'КУ 215', self.worker.di.pin[9]),
+            ('el. braking', 'ЗАМ. ЭЛ. ТОРМ.', self.worker.di.pin[21]),
+            ('>60 km/h', '> 60 км/ч', self.worker.di.pin[4]),
+            ('rd 042', 'РД 042', self.worker.di.pin[2]),
+            ('upr rd 042', 'УПР. РД 042', self.worker.di.pin[3]),
+            ('keb 208', 'КЭБ 208', self.worker.di.pin[5]),
+            ('red 211', 'РЕД 211.020', self.worker.di.pin[6]),
+            ('leak 1', 'УТЕЧКА d 1', self.worker.di.pin[13]),
+            ('leak 0,5', 'УТЕЧКА d 0.5', self.worker.di.pin[12]),
+            ('ok', 'ОК', self.worker.di.pin[14]),
         ]
         for key, name, switch in switches:
             result[key] = switch
@@ -158,16 +170,16 @@ class Server(QObject):
     def get_switch_with_neutral(self) -> Dict[str, TwoStateWithNeutralType]:
         result: Dict[str, TwoStateWithNeutralType] = {}
         radio_switch = [
-            ('enter', 'ВХОД', ['- 0 -', 'ВР', 'КУ'], [self.worker.di.pin[17], self.worker.di.pin[18]]),
+            ('enter', 'ВХОД', ['- 0 -', 'ВР', 'КУ'], [self.worker.di.pin[10], self.worker.di.pin[11]]),
             ('rd-0-keb', 'РД 042 - 0 - КЭБ 208', ['- 0 -', 'РД 042', 'КЭБ 208'],
-             [self.worker.di.pin[19], self.worker.di.pin[20]]),
-            ('tank', 'НАКОП. РЕЗ.', ['- 0 -', 'ЗАР.', 'СБРОС'], [self.worker.di.pin[21], self.worker.di.pin[22]]),
+             [self.worker.di.pin[7], self.worker.di.pin[8]]),
+            ('tank', 'НАКОП. РЕЗ.', ['- 0 -', 'ЗАР.', 'СБРОС'], [self.worker.di.pin[0], self.worker.di.pin[1]]),
         ]
         for key, name, enum, di in radio_switch:
             radio_switch = TwoStateWithNeutralType(name=name, enum_values=enum)
             result[key] = radio_switch
-            di[0].value_changed.connect(radio_switch.set_state1)
-            di[1].value_changed.connect(radio_switch.set_state2)
+            di[0].updated.connect(radio_switch.set_state1)
+            di[1].updated.connect(radio_switch.set_state2)
         return result
 
 
@@ -189,6 +201,6 @@ def switch_builder(name: str, pin: TwoStateDiscreteType) -> TwoStateDiscreteType
 
 def multi_switch_builder(name: str, state: List[str], pin: List[TwoStateDiscreteType]) -> TwoStateWithNeutralType:
     switch = TwoStateWithNeutralType(name=name, enum_values=state)
-    pin[0].value_changed.connect(switch.set_state1)
-    pin[1].value_changed.connect(switch.set_state2)
+    pin[0].updated.connect(switch.set_state1)
+    pin[1].updated.connect(switch.set_state2)
     return switch

@@ -66,7 +66,7 @@ class Measure(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.graph.update()
         ctrl.setText('Измеряется время снижения давления Р им до 0 МПа. Норма: не более 10 с.')
-        if ctrl.manometer['p im'].get_value() <= 0.005:
+        if ctrl.manometer['p im'].get_value() <= 0.01:
             ctrl.ku.empty.stop()
             self.done.emit()
 

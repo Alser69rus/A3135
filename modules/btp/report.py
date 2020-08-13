@@ -1,4 +1,4 @@
-from typing import Tuple
+﻿from typing import Tuple
 
 from PyQt5.QtCore import QState, QEvent, QSettings, Qt
 from PyQt5.QtGui import QPageLayout, QPageSize, QPainter, QColor, QFont, QPen, QBrush
@@ -68,10 +68,10 @@ class Report(QState):
     def header(self):
         self.painter.setFont(self.font_hb)
         num, date = self.get_report_num_and_date()
-        self.pos = (80, 10)
+        self.pos = (70, 10)
         self.draw_text(f'Протокол № {num} от {date}')
         self.painter.setFont(self.font_h)
-        self.pos = (35, 15)
+        self.pos = (25, 15)
         self.draw_text(f'испытания блока тормозных приборов 020 для тепловозов ТЭП70')
         self.draw_text(f'Заводской № {ctrl.report_header.dev_num}             '
                        f'Дата изготовления: {ctrl.report_header.date}')
@@ -87,7 +87,7 @@ class Report(QState):
         self.draw_text(f'Испытание проверил:__________________ {ctrl.report_header.name_2}')
 
     def table(self):
-        self.pos = (25, 30)
+        self.pos = (15, 30)
         self.auto_break()
         self.kvt_break()
         self.fill()
@@ -116,7 +116,7 @@ class Report(QState):
                   f'{ctrl.btp.speed_empty.time_as_text(0)}',
                   f'{ctrl.btp.speed_empty.time_as_text(1)}',
                   height=2)
-        self.cell('Проверка проходимости канала к\n отпускному клапвну',
+        self.cell('Проверка проходимости канала к\n отпускному клапану',
                   '',
                   f'{ctrl.btp.sped_ok[0]}',
                   f'{ctrl.btp.sped_ok[1]}',
@@ -133,7 +133,7 @@ class Report(QState):
         self.cell('Герметичность мест соединений', '', f'{ctrl.btp.tightness}')
 
     def empty(self):
-        self.cell('Время снижения давления в ТЦ\nпри управлении КВТ, с\n(с 0,35 до 0,005 МПа)',
+        self.cell('Время снижения давления в ТЦ\nпри управлении КВТ, с\n(с 0,35 до 0,05 МПа)',
                   'не более 13 с',
                   f'{ctrl.btp.empty_time.time_as_text(0)}',
                   f'{ctrl.btp.empty_time.time_as_text(1)}',
@@ -141,34 +141,34 @@ class Report(QState):
 
     def auto_break(self):
         self.cell(f'Проверка ступенчатого торможения и отпуска при действии автоматического тормоза', font=self.font_b)
-        self.cell('Ступень ВР', 'Норма, МПа', 'ТЦ1, МПа', 'ТЦ2, МПа')
+        self.cell('Ступень ВР', 'Р им, МПа', 'ТЦ1, МПа', 'ТЦ2, МПа')
         self.cell('Торможение')
         for i in range(4):
             self.cell(f'{ctrl.btp.auto_breaking.position_as_text(i)}',
-                      f'{ctrl.btp.auto_breaking.range_as_text(i)}',
+                      f'{ctrl.btp.auto_breaking.pim_as_text(i)}',
                       f'{ctrl.btp.auto_breaking.tc_as_text(0, i)}',
                       f'{ctrl.btp.auto_breaking.tc_as_text(1, i)}')
         self.cell('Отпуск')
         for i in range(4, 8):
             self.cell(f'{ctrl.btp.auto_breaking.position_as_text(i)}',
-                      f'{ctrl.btp.auto_breaking.range_as_text(i)}',
+                      f'{ctrl.btp.auto_breaking.pim_as_text(i)}',
                       f'{ctrl.btp.auto_breaking.tc_as_text(0, i)}',
                       f'{ctrl.btp.auto_breaking.tc_as_text(1, i)}')
 
     def kvt_break(self):
         self.cell(f'Проверка ступенчатого торможения и отпуска при управлении краном\nвспомогательного тормоза',
                   font=self.font_b, height=2)
-        self.cell('Ступень ВР', 'Норма, МПа', 'ТЦ1, МПа', 'ТЦ2, МПа')
+        self.cell('Ступень ВТ', 'Р им, МПа', 'ТЦ1, МПа', 'ТЦ2, МПа')
         self.cell('Торможение')
         for i in range(4):
             self.cell(f'{ctrl.btp.kvt_breaking.position_as_text(i)}',
-                      f'{ctrl.btp.kvt_breaking.range_as_text(i)}',
+                      f'{ctrl.btp.kvt_breaking.pim_as_text(i)}',
                       f'{ctrl.btp.kvt_breaking.tc_as_text(0, i)}',
                       f'{ctrl.btp.kvt_breaking.tc_as_text(1, i)}')
         self.cell('Отпуск')
         for i in range(4, 8):
             self.cell(f'{ctrl.btp.kvt_breaking.position_as_text(i)}',
-                      f'{ctrl.btp.kvt_breaking.range_as_text(i)}',
+                      f'{ctrl.btp.kvt_breaking.pim_as_text(i)}',
                       f'{ctrl.btp.kvt_breaking.tc_as_text(0, i)}',
                       f'{ctrl.btp.kvt_breaking.tc_as_text(1, i)}')
 
@@ -184,7 +184,7 @@ class Report(QState):
         x1, y1 = self.mm_to_pixel(*self.pos)
         row = kwargs.get('height', 1)
         y = self.pos[1] + 5 * row
-        x2, y2 = self.mm_to_pixel(200, y)
+        x2, y2 = self.mm_to_pixel(190, y)
         w = x2 - x1
         h = y2 - y1
         painter.setPen(QPen(self.black, 3.0, Qt.SolidLine))
@@ -193,7 +193,7 @@ class Report(QState):
         if col == 1:
             painter.drawText(x1, y1, w, h, Qt.AlignCenter, args[0])
         else:
-            tab = (90, 120, 160, 200)
+            tab = (80, 110, 150, 190)
             for i, text in enumerate(args):
                 x2, y2 = self.mm_to_pixel(tab[i], y)
                 w, h = x2 - x1, y2 - y1

@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets, QtCore
+﻿from PyQt5 import QtWidgets, QtCore
 from dataclasses import dataclass, field
 from PyQt5.QtCore import QPointF, QRectF, QLineF, pyqtSlot
 from PyQt5.QtGui import QPen, QBrush, QColor, QPainter, QFont
@@ -19,6 +19,8 @@ class Caption(QtWidgets.QLabel):
 class Value(QtWidgets.QLabel):
     def __init__(self, value: float = 0, parent=None):
         super().__init__(parent=parent)
+        self.value: float = 0
+        self.esp: float = 0.1
         self.setAlignment(QtCore.Qt.AlignCenter)
         self.setFont(QFont('Segoi UI', 14))
         self.format: str = '{:5.3f} МПа'
@@ -60,6 +62,10 @@ class Manometer(QtWidgets.QWidget):
 
     @pyqtSlot(float)
     def set_value(self, value: float):
+        v = self.value.value
+        e = self.value.esp
+        v = v * (1 - e) + value * e
+        self.value.value = v
         self.value.setText(self.value.format.format(value))
         angle_range = self.scale.angle.max - self.scale.angle.min
         value_range = self.scale.label.max - self.scale.label.min

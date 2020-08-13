@@ -1,4 +1,4 @@
-import logging
+﻿import logging
 import sys
 
 from PyQt5 import QtWidgets
@@ -9,7 +9,7 @@ from modules.menu import MenuState
 from opc.server import Server
 from ui.main_form import MainForm
 
-logging.basicConfig(level=logging.DEBUG, format='%(name)s %(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.WARNING, format='%(name)s %(asctime)s - %(levelname)s - %(message)s')
 
 
 # logging.basicConfig(level=logging.WARNING

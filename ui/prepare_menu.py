@@ -71,6 +71,7 @@ class PrepareMenu(QObject):
         if result == QDialog.Accepted:
             button.data = dialog.textValue()
             self.update_fields()
+            self.menu.on_down_click()
 
     def get_data_fields(self):
         return list(self.menu.button[name].data for name in self.button_names)

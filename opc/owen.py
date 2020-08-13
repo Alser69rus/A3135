@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal
+﻿from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal
 import logging
 from typing import List
 from datetime import datetime
@@ -81,8 +81,8 @@ class MV110_32DN(MV_DI):
         if rr.isError():
             logging.warning(f'не удалось прочитать {self.name} ошибка {rr}')
             return
-        pin1 = [(rr.registers[0] >> i) & 1 for i in range(16)]
-        pin2 = [(rr.registers[1] >> i) & 1 for i in range(16)]
+        pin1 = [(rr.registers[1] >> i) & 1 for i in range(16)]
+        pin2 = [(rr.registers[0] >> i) & 1 for i in range(16)]
         pin = pin1 + pin2
         for i in range(32):
             self.pin[i].set_value(pin[i])
