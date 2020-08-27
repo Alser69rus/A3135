@@ -18,7 +18,7 @@ class Worker(QObject):
         super().__init__(parent=parent)
         self.running: bool = True
         self.skip_update: bool = False
-        self.client = Client(method='rtu', port='COM8', timeout=0.05, baudrate=115200, retry_on_empty=True)
+        self.client = Client(method='rtu', port='COM3', timeout=0.05, baudrate=115200, retry_on_empty=True, retries=5, strict=False)
         self.ai: MV110_8AC = MV110_8AC(client=self.client, unit=1)
         settings = QSettings('manometers.ini', QSettings.IniFormat)
         settings.setIniCodec('UTF-8')
@@ -40,8 +40,8 @@ class Worker(QObject):
             t = datetime.now()
             if not self.skip_update:
                 t = t
-                self.ai.update()
-                self.di.update()
+                #self.ai.update()
+                #self.di.update()
             t = (datetime.now() - t).total_seconds()
             t = round(UPDATE_DELAY - t * 1000)
             if t > 0:
