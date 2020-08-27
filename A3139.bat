@@ -1,1 +1,1 @@
-pipenv run A3139.py
+A3139.pyw
