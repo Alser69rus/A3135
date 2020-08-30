@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QState, QEvent, QFinalState
 
 from controller.controller import Controller
+from modules.kp.check import Check
 from modules.kp.data import KpData
 from modules.kp.prepare import Prepare
 
@@ -26,6 +27,7 @@ class Kp(QState):
         self.menu.addTransition(ctrl.button['back'].clicked, self.finish)
 
         self.prepare = Prepare(self)
+        self.check = Check(self)
         # self.fill = Fill(self)
         # self.empty = Empty(self)
         # self.breaking = Breaking(self)
