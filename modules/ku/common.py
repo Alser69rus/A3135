@@ -35,7 +35,7 @@ class PreparePressure(QState):
         self.finish = QFinalState(self)
 
         self.setInitialState(self.enter)
-        self.enter.addTransition(ctrl.switch_with_neutral['enter'].state_neutral, self.ku_215)
+        self.enter.addTransition(ctrl.switch_with_neutral['o-p-t'].state_neutral, self.ku_215)
         self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.finish)
 
 

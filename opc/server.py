@@ -40,8 +40,8 @@ class Worker(QObject):
             t = datetime.now()
             if not self.skip_update:
                 t = t
-                #self.ai.update()
-                #self.di.update()
+                # self.ai.update()
+                # self.di.update()
             t = (datetime.now() - t).total_seconds()
             t = round(UPDATE_DELAY - t * 1000)
             if t > 0:
@@ -71,50 +71,6 @@ class Server(QObject):
         self.switch: Dict[str, TwoStateDiscreteType] = self.get_switch()
         self.switch_with_neutral: Dict[str, TwoStateWithNeutralType] = self.get_switch_with_neutral()
 
-        # Manometer = namedtuple('Manometer', 'pm im tc1 tc2 upr')
-        # self.manom = Manometer(
-        #     pm=manometer_builder('Р пм', 1.6, self.worker.ai.pin[0]),
-        #     im=manometer_builder('Р им', 1.0, self.worker.ai.pin[1]),
-        #     tc1=manometer_builder('Р тц1', 1.0, self.worker.ai.pin[2]),
-        #     tc2=manometer_builder('Р тц2', 1.0, self.worker.ai.pin[3]),
-        #     upr=manometer_builder('Р упр рд/сд', 1.0, self.worker.ai.pin[4]),
-        # )
-        # Button = namedtuple('Button', 'back up down yes no examination auto')
-        # self.btn = Button(
-        #     back=button_builder('ВОЗВРАТ', self.worker.di.pin[0]),
-        #     up=button_builder('ВВЕРХ', self.worker.di.pin[1]),
-        #     down=button_builder('ВНИЗ', self.worker.di.pin[2]),
-        #     yes=button_builder('ДА', self.worker.di.pin[3]),
-        #     no=button_builder('НЕТ', self.worker.di.pin[4]),
-        #     examination=button_builder('ИСПЫТАНИЕ', self.worker.di.pin[5]),
-        #     auto=button_builder('АВТ ОТПУСК', self.worker.di.pin[7]),
-        # )
-        # Switch = namedtuple('Switch', 'ku_215 breaking speed rd_042 upr_rd keb_208 red_211 leak_1 leak_05 ok')
-        # self.switc = Switch(
-        #     ku_215=switch_builder('КУ 215', self.worker.di.pin[8]),
-        #     breaking=switch_builder('ЗАМ. ЭЛ. ТОРМ.', self.worker.di.pin[9]),
-        #     speed=switch_builder('> 60 км/ч', self.worker.di.pin[10]),
-        #     rd_042=switch_builder('РД 042', self.worker.di.pin[11]),
-        #     upr_rd=switch_builder('УПР. РД 042', self.worker.di.pin[12]),
-        #     keb_208=switch_builder('КЭБ 208', self.worker.di.pin[13]),
-        #     red_211=switch_builder('РЕД 211.020', self.worker.di.pin[14]),
-        #     leak_1=switch_builder('УТЕЧКА d 1', self.worker.di.pin[15]),
-        #     leak_05=switch_builder('УТЕЧКА d 0.5', self.worker.di.pin[16]),
-        #     ok=switch_builder('ОК', self.worker.di.pin[6]),
-        # )
-        # MultiSwitch = namedtuple('MultiSwitch', 'enter rd_kp tank')
-        # self.multi_switch = MultiSwitch(
-        #     enter=multi_switch_builder('ВХОД',
-        #                                ['- 0 -', 'ВР', 'КУ'],
-        #                                [self.worker.di.pin[17], self.worker.di.pin[18]]),
-        #     rd_kp=multi_switch_builder('РД 042 - 0 - КЭБ 208',
-        #                                ['- 0 -', 'РД 042', 'КЭБ 208'],
-        #                                [self.worker.di.pin[19], self.worker.di.pin[20]]),
-        #     tank=multi_switch_builder('НАКОП. РЕЗ.',
-        #                               ['- 0 -', 'ЗАР.', 'СБРОС'],
-        #                               [self.worker.di.pin[21], self.worker.di.pin[22]]),
-        # )
-
         self.th.start()
 
     def get_manometer(self) -> Dict[str, AnalogItemType]:
@@ -136,12 +92,10 @@ class Server(QObject):
         result: Dict[str, TwoStateDiscreteType] = {}
         buttons = [
             ('back', 'ВОЗВРАТ', self.worker.di.pin[15]),
-            ('up', 'ВВЕРХ', self.worker.di.pin[17]),
-            ('down', 'ВНИЗ', self.worker.di.pin[16]),
+            ('up', 'ВВЕРХ', self.worker.di.pin[16]),
+            ('down', 'ВНИЗ', self.worker.di.pin[17]),
             ('yes', 'ДА', self.worker.di.pin[18]),
             ('no', 'НЕТ', self.worker.di.pin[19]),
-            ('examination', 'ИСПЫТАНИЕ', self.worker.di.pin[20]),
-            ('auto', 'АВТ. ОТПУСК', self.worker.di.pin[22]),
         ]
         for key, name, button in buttons:
             result[key] = button
@@ -151,16 +105,21 @@ class Server(QObject):
     def get_switch(self) -> Dict[str, TwoStateDiscreteType]:
         result: Dict[str, TwoStateDiscreteType] = {}
         switches = [
-            ('ku 215', 'КУ 215', self.worker.di.pin[9]),
-            ('el. braking', 'ЗАМ. ЭЛ. ТОРМ.', self.worker.di.pin[21]),
-            ('>60 km/h', '> 60 км/ч', self.worker.di.pin[4]),
             ('rd 042', 'РД 042', self.worker.di.pin[2]),
             ('upr rd 042', 'УПР. РД 042', self.worker.di.pin[3]),
+            ('sd', 'СД', self.worker.di.pin[4]),
             ('keb 208', 'КЭБ 208', self.worker.di.pin[5]),
             ('red 211', 'РЕД 211.020', self.worker.di.pin[6]),
-            ('leak 1', 'УТЕЧКА d 1', self.worker.di.pin[13]),
-            ('leak 0,5', 'УТЕЧКА d 0.5', self.worker.di.pin[12]),
-            ('ok', 'ОК', self.worker.di.pin[14]),
+            ('ku 215', 'КУ 215', self.worker.di.pin[7]),
+            ('tc820', 'ТЦ2 8 л - 20 л', self.worker.di.pin[10]),            
+            ('leak 1', 'УТЕЧКА d 1', self.worker.di.pin[11]),
+            ('gap', 'РАЗРЫВ', self.worker.di.pin[12]),
+            ('leak 0,5', 'УТЕЧКА d 0.5', self.worker.di.pin[13]),
+            ('kp106', 'КП 106', self.worker.di.pin[14]),            
+            ('auto', 'АВТ. ОТПУСК', self.worker.di.pin[20]),
+            ('zam', 'ЗАМ.', self.worker.di.pin[21]),
+            ('edt', 'ЭДТ', self.worker.di.pin[22]),
+            ('50-100', '50 В/100 В', self.worker.di.pin[23]),
         ]
         for key, name, switch in switches:
             result[key] = switch
@@ -170,10 +129,9 @@ class Server(QObject):
     def get_switch_with_neutral(self) -> Dict[str, TwoStateWithNeutralType]:
         result: Dict[str, TwoStateWithNeutralType] = {}
         radio_switch = [
-            ('enter', 'ВХОД', ['- 0 -', 'ВР', 'КУ'], [self.worker.di.pin[10], self.worker.di.pin[11]]),
-            ('rd-0-keb', 'РД 042 - 0 - КЭБ 208', ['- 0 -', 'РД 042', 'КЭБ 208'],
-             [self.worker.di.pin[7], self.worker.di.pin[8]]),
-            ('tank', 'НАКОП. РЕЗ.', ['- 0 -', 'ЗАР.', 'СБРОС'], [self.worker.di.pin[0], self.worker.di.pin[1]]),
+            ('rd-0-keb', 'РД 042 - 0 - КП 106', ['- 0 -', 'РД 042', 'КП 106'],
+             [self.worker.di.pin[8], self.worker.di.pin[9]]),
+            ('o-p-t', 'КМ', ['- П -', 'О', 'Т'], [self.worker.di.pin[0], self.worker.di.pin[1]]),
         ]
         for key, name, enum, di in radio_switch:
             radio_switch = TwoStateWithNeutralType(name=name, enum_values=enum)

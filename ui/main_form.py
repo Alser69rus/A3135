@@ -16,8 +16,8 @@ class MainForm(QWidget):
     def __init__(self, server, parent=None):
         super().__init__(parent=parent)
         #self.setFixedSize(1024, 768)
-        self.setWindowTitle('Стенд А3139')
-        self.setWindowIcon(QIcon('A3139.ico'))
+        self.setWindowTitle('Стенд А3135')
+        self.setWindowIcon(QIcon('A3135.ico'))
 
         self.vbox = QVBoxLayout()
         self.vbox.setContentsMargins(4, 4, 4, 4)

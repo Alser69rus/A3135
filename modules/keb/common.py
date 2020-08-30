@@ -110,7 +110,7 @@ class SetPim(QState):
         self.finish = QFinalState(self)
 
         self.setInitialState(self.tank)
-        self.tank.addTransition(ctrl.switch_with_neutral['tank'].state_one, self.pim)
+        self.tank.addTransition(ctrl.switch_with_neutral['o-p-t'].state_one, self.pim)
         self.pim.addTransition(self.pim.success, self.finish)
         self.pim.addTransition(self.pim.fail, self.check_pim)
         self.check_pim.addTransition(ctrl.server_updated, self.check_pim)
