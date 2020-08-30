@@ -21,7 +21,7 @@ class Tank(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст')
         ctrl.show_button('back')
-        ctrl.setText('Включить тумблер "НАКОП. РЕЗ." в положение "ЗАР.".')
+        ctrl.setText('Включить тумблер "КМ" в положение "ОТПУСК".')
 
 
 class CheckPim(QState):
@@ -29,7 +29,7 @@ class CheckPim(QState):
     fail = pyqtSignal()
 
     def onEntry(self, event: QEvent) -> None:
-        if 0.49 <= ctrl.manometer['p tm'].get_value() <= 0.51:
+        if 0.52 <= ctrl.manometer['p tm'].get_value() <= 0.55:
             self.success.emit()
         else:
             self.fail.emit()
@@ -38,11 +38,11 @@ class CheckPim(QState):
 class SetPim(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст')
-        if 0.49 <= ctrl.manometer['p tm'].get_value() <= 0.51:
+        if 0.52 <= ctrl.manometer['p tm'].get_value() <= 0.55:
             ctrl.show_button('back yes')
         else:
             ctrl.show_button('back')
-        ctrl.setText('<p>Установите давление в накопительном резервуаре Р им в пределах 0,49-0,51 МПа.</p>'
+        ctrl.setText('<p>Установите давление в ТМ в пределах 0,52-0,55 МПа.</p>'
                      '<p><br>Для продолжения нажмите "ДА".</p>')
 
 
@@ -81,7 +81,7 @@ class CheckPrsd(QState):
     fail = pyqtSignal()
 
     def onEntry(self, event: QEvent) -> None:
-        if 0.38 <= ctrl.manometer['p upr'].get_value() <= 0.40:
+        if 0.38 <= ctrl.manometer['p upr'].get_value() <= 0.42:
             self.success.emit()
         else:
             self.fail.emit()
@@ -90,9 +90,9 @@ class CheckPrsd(QState):
 class SetPrdsd(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст')
-        ctrl.setText('<p>Установите давление РД/СД в пределах 0,38-0,40 МПа.</p>'
+        ctrl.setText('<p>Установите давление РД/СД в пределах 0,38-0,42 МПа.</p>'
                      '<p><br>Для продолжения нажмите "ДА".</p>')
-        if 0.38 <= ctrl.manometer['p upr'].get_value() <= 0.40:
+        if 0.38 <= ctrl.manometer['p upr'].get_value() <= 0.42:
             ctrl.show_button('back yes')
         else:
             ctrl.show_button('back')

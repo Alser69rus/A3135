@@ -42,7 +42,7 @@ class Breaking(QState):
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст график прогресс')
-        ctrl.graph.show_graph('p tm')
+        ctrl.graph.show_graph('p tc2')
         ctrl.show_button('back')
         ctrl.normal()
         ctrl.ku.breaking_stage.reset()

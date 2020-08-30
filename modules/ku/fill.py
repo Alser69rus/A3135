@@ -40,7 +40,7 @@ class Fill(QState):
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст график')
-        ctrl.graph.show_graph('p tm')
+        ctrl.graph.show_graph('p tc2')
         ctrl.show_button('back')
         ctrl.normal()
         ctrl.ku.fill.reset()
@@ -52,9 +52,9 @@ class Handle4(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_button('back')
         ctrl.setText(f'<p>Переведите ручку КУ 215 в четвертое положение за один прием.</p>'
-                     f'<p>Будет зарегестрировано время увеличения давления Рим с 0 до 0,35 МПа. '
+                     f'<p>Будет зарегестрировано время увеличения давления ТЦ2 с 0 до 0,35 МПа. '
                      f'Норма: не более 3 с. </p>')
-        if ctrl.manometer['p tm'].get_value() >= 0.005:
+        if ctrl.manometer['p tc2'].get_value() >= 0.005:
             ctrl.graph.start()
             ctrl.ku.fill.start()
             self.done.emit()
@@ -65,8 +65,8 @@ class Measure(QState):
 
     def onEntry(self, event: QEvent) -> None:
         ctrl.graph.update()
-        ctrl.setText('Измеряется время увеличения давления Р им с 0 до 0,35 МПа. Норма: не более 3 с.')
-        if ctrl.manometer['p tm'].get_value() >= 0.35:
+        ctrl.setText('Измеряется время увеличения давления ТЦ2 с 0 до 0,35 МПа. Норма: не более 3 с.')
+        if ctrl.manometer['p tc2'].get_value() >= 0.35:
             ctrl.ku.fill.stop()
             self.done.emit()
 
@@ -81,9 +81,9 @@ class ShowResult(QState):
             ctrl.fail()
 
         ctrl.setText(f'<p><table border="2" cellpadding="4">'
-                     f'<caption>Проверка времени наполнения импульсной магистрали</caption>'
+                     f'<caption>Проверка времени наполнения ТЦ2</caption>'
                      f'<tr><th>Наименование</th><th>Норма, c</th><th>Время факт, с</th></tr>'
-                     f'<tr><td>Время наполнения Р им<br>(с 0 до 0,35 МПа)</td><td>не более 3</td>'
+                     f'<tr><td>Время наполнения Р тц2<br>(с 0 до 0,35 МПа)</td><td>не более 3</td>'
                      f'<td align="center">{ctrl.ku.fill.text()}</td></tr>'
                      f'</table></p>'
                      f'<p><br>Для продолжения нажмите "ВОЗВРАТ".</p>')

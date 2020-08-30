@@ -23,6 +23,7 @@ class Prepare(QState):
         self.voltage = Voltage(self)
         self.install_keb = InstallKeb(self)
         self.prepare_pressure = PreparePressure(self)
+        self.tc820 = Tc820(self)
         self.enable_menu = EnableMenu(self)
 
         self.setInitialState(self.start)
@@ -32,7 +33,8 @@ class Prepare(QState):
         self.reset_ptc.addTransition(self.reset_ptc.finished, self.voltage)
         self.voltage.addTransition(ctrl.button['yes'].clicked, self.install_keb)
         self.install_keb.addTransition(ctrl.button['yes'].clicked, self.prepare_pressure)
-        self.prepare_pressure.addTransition(self.prepare_pressure.finished, self.enable_menu)
+        self.prepare_pressure.addTransition(self.prepare_pressure.finished, self.tc820)
+        self.tc820.addTransition(ctrl.switch['tc 820'].high_value, self.enable_menu)
 
 
 class Start(QState):
@@ -55,6 +57,7 @@ class InstallRd(QState):
 class Rd(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl: Controller = self.parent().controller
+        ctrl.show_button('back')
         ctrl.setText('<p>Включите тумблер "РД 042".</p>')
 
 
@@ -74,6 +77,13 @@ class InstallKeb(QState):
         ctrl.setText('<p>Установите КЭБ 208 на прижим, включите пневмотумблер "ПРИЖИМ КЭБ 208".</p>'
                      '<p>Подключите кабель к разъему КЭБ 208.</p>'
                      '<p><br>Для продолжения нажмите "ДА".</p>')
+
+
+class Tc820(QState):
+    def onEntry(self, event: QEvent) -> None:
+        ctrl: Controller = self.parent().controller
+        ctrl.show_button('back')
+        ctrl.setText('<p>Включите тумблер "ТЦ2 8 л - 20 л" в положение "20 л".</p>')
 
 
 class EnableMenu(QFinalState):

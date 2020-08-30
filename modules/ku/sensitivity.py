@@ -41,7 +41,7 @@ class Sensitivity(QState):
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст график')
-        ctrl.graph.show_graph('p tm')
+        ctrl.graph.show_graph('p tc2')
         ctrl.show_button('back')
         ctrl.normal()
         ctrl.ku.sensitivity.reset()
@@ -62,7 +62,7 @@ class Measure(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.graph.update()
         ctrl.ku.sensitivity.update(ctrl.manometer['p tm'].get_value())
-        ctrl.setText(f'<p>В течении одной минуты будет измеряться давление в импульсной магистрали '
+        ctrl.setText(f'<p>В течении одной минуты будет измеряться давление в ТЦ2 '
                      f'для определения величины утечки.</p>'
                      f'<p>Осталось времени до завершения: {60 - ctrl.graph.dt:.1f} c.</p>')
         if ctrl.graph.dt >= 60:
@@ -84,7 +84,7 @@ class ShowResult(QState):
             ctrl.fail()
 
         ctrl.setText(f'<p><table border="2" cellpadding="4">'
-                     f'<caption>Проверка величины давления в импульсной магистрали при создании утечки из нее</caption>'
+                     f'<caption>Проверка величины давления в ТЦ2 при создании утечки из нее</caption>'
                      f'<tr><th>Наименование</th><th>Норма, МПа</th><th>Р им факт, МПа</th></tr>'
                      f'<tr><td>Разница давлений</td><td align="center">не более 0,015</td>'
                      f'<td align="center">{ctrl.ku.sensitivity.text()}</td></tr>'

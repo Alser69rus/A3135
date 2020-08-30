@@ -1,7 +1,6 @@
 from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal
 
 from controller.controller import Controller
-
 from modules.rd.report import Report
 
 ctrl: Controller
@@ -26,6 +25,7 @@ class End(QState):
         self.rdkp_0 = RdKp0(self)
         self.tank_2 = Tank2(self)
         self.uninstall = Uninstall(self)
+        self.air = Air(self)
         self.report = Report(self)
 
         self.setInitialState(self.start)
@@ -37,7 +37,9 @@ class End(QState):
         self.rdkp_0.addTransition(ctrl.switch_with_neutral['rd-0-keb'].state_neutral, self.tank_2)
         self.tank_2.addTransition(ctrl.server_updated, self.tank_2)
         self.tank_2.addTransition(self.tank_2.done, self.uninstall)
-        self.uninstall.addTransition(ctrl.button['yes'].clicked, self.report)
+        self.uninstall.addTransition(ctrl.button['yes'].clicked, self.air)
+        self.air.addTransition(ctrl.server_updated, self.air)
+        self.air.addTransition(self.air.done, self.report)
 
 
 class Start(QState):
@@ -74,12 +76,11 @@ class Tank2(QState):
     done = pyqtSignal()
 
     def onEntry(self, event: QEvent) -> None:
-        p = ctrl.manometer["p im"].get_value()
-        ctrl.setText(f'<p>Включите тумблер "НАКОП. РЕЗ." в положение "СБРОС", '
-                     f'и установите давление в накопительном резервуаре равным 0 МПа. </p>'
-                     f'<p>Давление в накопительном резервуаре: '
+        p = ctrl.manometer["p tm"].get_value()
+        ctrl.setText(f'<p>Включите тумблер "КМ" в положение "ТОРМОЖЕНИЕ". </p>'
+                     f'<p>Давление в ТМ: '
                      f'{p:.3f} МПа.</p>')
-        if p < 0.005:
+        if p < 0.4:
             self.done.emit()
 
 
@@ -88,3 +89,16 @@ class Uninstall(QState):
         ctrl.show_button('back yes')
         ctrl.setText('<p>Снимите РД 042 с прижима.</p>'
                      '<p><br>Для продолжения нажмите "ДА".</p>')
+
+
+class Air(QState):
+    done = pyqtSignal()
+
+    def onEntry(self, event: QEvent) -> None:
+        p = ctrl.manometer['p tm'].get_value()
+        ctrl.setText(f'<p>Включите тумблер "РД 042" и сбросьте давление в тормозной магистрали до 0 МПа.</p>'
+                     f'<p><font color="red">ВНИМАНИЕ! Сброс давления происходит через прижим "РД 042".</font></p>'
+                     f'<p>Давление в ТМ: {p:.3f} МПа.</p>')
+
+        if p <= 0.005:
+            self.done.emit()

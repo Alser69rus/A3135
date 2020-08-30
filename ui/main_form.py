@@ -1,13 +1,15 @@
-﻿from PyQt5.QtWidgets import QWidget, QVBoxLayout, QProgressBar
-from PyQt5.QtCore import pyqtSlot, Qt
-from PyQt5.QtGui import QKeyEvent,QIcon
+﻿from functools import partial
 from typing import Dict
+
+from PyQt5.QtCore import pyqtSlot, Qt
+from PyQt5.QtGui import QKeyEvent, QIcon
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QProgressBar
+
 from ui.button_panel import ButtonPanel
-from ui.workspace import Workspace
-from ui.manometers_panel import ManometersPanel
 from ui.control_window import ControlWindow
 from ui.diagnostic_window import DiagnosticWindow
-from functools import partial
+from ui.manometers_panel import ManometersPanel
+from ui.workspace import Workspace
 
 ANIMATE_CLICK_DELAY = 50
 
@@ -15,7 +17,8 @@ ANIMATE_CLICK_DELAY = 50
 class MainForm(QWidget):
     def __init__(self, server, parent=None):
         super().__init__(parent=parent)
-        #self.setFixedSize(1024, 768)
+        # self.setMaximumHeight(700)
+        self.setFixedSize(1366, 700)
         self.setWindowTitle('Стенд А3135')
         self.setWindowIcon(QIcon('A3135.ico'))
 

@@ -121,7 +121,9 @@ class SetPim(QState):
 class Tank(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl: Controller = self.parent().controller
-        ctrl.setText('Включите тумблер "НАКОП. РЕЗ." в положение "ЗАР.".')
+        ctrl.show_button('back')
+        ctrl: Controller = self.parent().controller
+        ctrl.setText('Включите тумблер "КМ" в положение "ОТПУСК".')
 
 
 class Pim(QState):
@@ -130,8 +132,8 @@ class Pim(QState):
 
     def onEntry(self, event: QEvent) -> None:
         ctrl: Controller = self.parent().controller
-        ctrl.setText('Проверка давления в импульсной магистрали (норма 0,49-0,51 МПа).')
-        if 0.49 <= ctrl.manometer['p tm'].get_value() <= 0.51:
+        ctrl.setText('Проверка давления в тормозной магистрали (норма 0,52-0,55 МПа).')
+        if 0.52 <= ctrl.manometer['p tm'].get_value() <= 0.55:
             self.success.emit()
         else:
             self.fail.emit()
@@ -140,9 +142,9 @@ class Pim(QState):
 class CheckPim(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl: Controller = self.parent().controller
-        ctrl.setText('<p>Установите давление в импульсной магистрали в пределах 0,49-0,51 МПа.</p>'
+        ctrl.setText('<p>Установите давление в тормозной магистрали в пределах 0,52-0,55 МПа.</p>'
                      '<p><br>Для продолжения нажмите "ДА".</p>')
-        if 0.49 <= ctrl.manometer['p tm'].get_value() <= 0.51:
+        if 0.52 <= ctrl.manometer['p tm'].get_value() <= 0.55:
             ctrl.show_button('back yes')
         else:
             ctrl.show_button('back')
@@ -179,8 +181,8 @@ class Pupr(QState):
 
     def onEntry(self, event: QEvent) -> None:
         ctrl: Controller = self.parent().controller
-        ctrl.setText('<p>Проверка давления Р упр рд/сд. Норма: 0,38-0,40 МПа.</p>')
-        if 0.38 <= ctrl.manometer['p upr'].get_value() <= 0.40:
+        ctrl.setText('<p>Проверка давления Р упр рд/сд. Норма: 0,38-0,42 МПа.</p>')
+        if 0.38 <= ctrl.manometer['p upr'].get_value() <= 0.42:
             self.success.emit()
         else:
             self.fail.emit()
@@ -189,9 +191,9 @@ class Pupr(QState):
 class CheckPupr(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl: Controller = self.parent().controller
-        ctrl.setText('<p>Установите давление в управления РД/СД в пределах 0,38-0,40 МПа.</p>'
+        ctrl.setText('<p>Установите давление в управления РД/СД в пределах 0,38-0,42 МПа.</p>'
                      '<p><br>Для продолжения нажмите "ДА".</p>')
-        if 0.38 <= ctrl.manometer['p upr'].get_value() <= 0.40:
+        if 0.38 <= ctrl.manometer['p upr'].get_value() <= 0.42:
             ctrl.show_button('back yes')
         else:
             ctrl.show_button('back')
@@ -219,10 +221,12 @@ class PreparePressure(QState):
 class Keb(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl: Controller = self.parent().controller
+        ctrl.show_button('back')
         ctrl.setText('<p>Включите тумблер "КЭБ 208".</p>')
 
 
 class Rd(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl: Controller = self.parent().controller
+        ctrl.show_button('back')
         ctrl.setText('<p>Включите тумблер "РД 042".</p>')
