@@ -1,4 +1,5 @@
-from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal, pyqtBoundSignal
+from PyQt5.QtCore import QState, QFinalState, QEvent
+
 from controller.controller import Controller
 from modules.btp.common import Common
 
@@ -37,7 +38,7 @@ class Prepare(QState):
         self.ppm.addTransition(self.ppm.done, self.pim)
         self.pim.addTransition(ctrl.server_updated, self.pim)
         self.pim.addTransition(self.pim.done, self.tank)
-        self.tank.addTransition(ctrl.switch_with_neutral['o-p-t'].state_two, self.el_breaking)
+        self.tank.addTransition(ctrl.switch_with_neutral['km'].state_two, self.el_breaking)
         self.el_breaking.addTransition(ctrl.switch['gap'].low_value, self.speed_60)
         self.speed_60.addTransition(ctrl.switch['gap'].low_value, self.set_bto)
         self.set_bto.addTransition(ctrl.button['yes'].clicked, self.connect_btp)

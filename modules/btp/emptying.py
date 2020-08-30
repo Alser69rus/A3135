@@ -36,7 +36,7 @@ class Emptying(QState):
         self.el_breaking.addTransition(ctrl.switch['gap'].low_value, self.speed_60)
         self.speed_60.addTransition(ctrl.switch['gap'].low_value, self.ku_215)
         self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.enter)
-        self.enter.addTransition(ctrl.switch_with_neutral['o-p-t'].state_two, self.handle_position_four)
+        self.enter.addTransition(ctrl.switch_with_neutral['km'].state_two, self.handle_position_four)
         self.handle_position_four.addTransition(ctrl.server_updated, self.handle_position_four)
         self.handle_position_four.addTransition(self.handle_position_four.done, self.handle_position_zero)
         self.handle_position_zero.addTransition(ctrl.server_updated, self.handle_position_zero)
@@ -59,7 +59,7 @@ class HandlePositionZero(QState):
 
     def onEntry(self, event: QEvent) -> None:
         ctrl.setText(f'<p>Переведите ручку КУ 215 в отпускное положение за один прием.</p>')
-        if ctrl.manometer['p im'].get_value() < .37:
+        if ctrl.manometer['p tm'].get_value() < .37:
             ctrl.graph.start()
             ctrl.btp.empty_time.start(0)
             ctrl.btp.empty_time.start(1)

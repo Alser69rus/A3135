@@ -38,7 +38,7 @@ class Junctions(QState):
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст')
-        ctrl.graph.show_graph('p im')
+        ctrl.graph.show_graph('p tm')
         ctrl.show_button('back')
         ctrl.normal()
         ctrl.ku.junctions.reset()

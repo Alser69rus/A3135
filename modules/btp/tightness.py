@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QState, QFinalState, QEvent, pyqtSignal
+from PyQt5.QtCore import QState, QFinalState, QEvent
 
 from controller.controller import Controller
 from modules.btp.common import Common
@@ -36,7 +36,7 @@ class Tightness(QState):
         self.el_breaking.addTransition(ctrl.switch['gap'].low_value, self.speed_60)
         self.speed_60.addTransition(ctrl.switch['gap'].low_value, self.ku_215)
         self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.enter)
-        self.enter.addTransition(ctrl.switch_with_neutral['o-p-t'].state_two, self.handle_position_four)
+        self.enter.addTransition(ctrl.switch_with_neutral['km'].state_two, self.handle_position_four)
         self.handle_position_four.addTransition(ctrl.server_updated, self.handle_position_four)
         self.handle_position_four.addTransition(self.handle_position_four.done, self.check)
         self.check.addTransition(ctrl.button['yes'].clicked, self.yes)

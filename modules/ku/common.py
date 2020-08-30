@@ -35,7 +35,7 @@ class PreparePressure(QState):
         self.finish = QFinalState(self)
 
         self.setInitialState(self.enter)
-        self.enter.addTransition(ctrl.switch_with_neutral['o-p-t'].state_neutral, self.ku_215)
+        self.enter.addTransition(ctrl.switch_with_neutral['km'].state_neutral, self.ku_215)
         self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.finish)
 
 
@@ -55,7 +55,7 @@ class Pressure0(QState):
         ctrl.setText(f'<p>Переведите ручку КУ 215 в отпускное положение, чтобы сбросить давление в импульсной '
                      f'магистрали до 0 МПа.</p>'
                      f'<p><br>Для продолжения нажмите "ДА".</p>')
-        if ctrl.manometer['p im'].get_value() < 0.005:
+        if ctrl.manometer['p tm'].get_value() < 0.005:
             ctrl.show_button('back yes')
         else:
             ctrl.show_button('back')
@@ -66,7 +66,7 @@ class Pressure4(QState):
         ctrl.setText(f'<p>Переведите ручку КУ 215 в четвертое положение и установите давление в импульсной магистрали '
                      f'в  пределах 0,37-0,40 МПа.</p>'
                      f'<p><br>Для продолжения нажмите "ДА".</p>')
-        if 0.37 <= ctrl.manometer['p im'].get_value() <= 0.40:
+        if 0.37 <= ctrl.manometer['p tm'].get_value() <= 0.40:
             ctrl.show_button('back yes')
         else:
             ctrl.show_button('back')
@@ -96,7 +96,7 @@ class HandleStage(QState):
         ctrl.setText(f'<p>Переведите ручку КУ 215 в {handle}.</p>'
                      f'<p>После стабилизации давления в импульсной магистради будет измерено его значение. '
                      f'Норма: {norm[0]} - {norm[1]} МПа.</p>')
-        if ctrl.manometer['p im'].get_value() >= norm[2]:
+        if ctrl.manometer['p tm'].get_value() >= norm[2]:
             ctrl.graph.reset()
             ctrl.graph.start()
             self.done.emit()
@@ -114,7 +114,7 @@ class Stabilize(QState):
 
     def onEntry(self, event: QEvent) -> None:
         ctrl.graph.update()
-        data = ctrl.graph.data['p im']
+        data = ctrl.graph.data['p tm']
         data = data[-self.DATA_SIZE:]
         dp = max(data) - min(data)
         p = self.p_percent(dp)
@@ -124,7 +124,7 @@ class Stabilize(QState):
         ctrl.form.progress_bar.setValue(value)
         ctrl.setText(f'<p>Ожидается стабилизация давления в импульсной магистрали.</p>')
         if dp <= self.EPS and dt >= self.DELAY:
-            ctrl.ku.breaking_stage.p.append(ctrl.manometer['p im'].get_value())
+            ctrl.ku.breaking_stage.p.append(ctrl.manometer['p tm'].get_value())
             self.done.emit()
 
     @staticmethod

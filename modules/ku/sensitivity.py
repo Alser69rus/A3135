@@ -41,7 +41,7 @@ class Sensitivity(QState):
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст график')
-        ctrl.graph.show_graph('p im')
+        ctrl.graph.show_graph('p tm')
         ctrl.show_button('back')
         ctrl.normal()
         ctrl.ku.sensitivity.reset()
@@ -61,7 +61,7 @@ class Measure(QState):
 
     def onEntry(self, event: QEvent) -> None:
         ctrl.graph.update()
-        ctrl.ku.sensitivity.update(ctrl.manometer['p im'].get_value())
+        ctrl.ku.sensitivity.update(ctrl.manometer['p tm'].get_value())
         ctrl.setText(f'<p>В течении одной минуты будет измеряться давление в импульсной магистрали '
                      f'для определения величины утечки.</p>'
                      f'<p>Осталось времени до завершения: {60 - ctrl.graph.dt:.1f} c.</p>')

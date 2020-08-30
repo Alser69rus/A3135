@@ -29,7 +29,7 @@ class CheckPim(QState):
     fail = pyqtSignal()
 
     def onEntry(self, event: QEvent) -> None:
-        if 0.49 <= ctrl.manometer['p im'].get_value() <= 0.51:
+        if 0.49 <= ctrl.manometer['p tm'].get_value() <= 0.51:
             self.success.emit()
         else:
             self.fail.emit()
@@ -38,7 +38,7 @@ class CheckPim(QState):
 class SetPim(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст')
-        if 0.49 <= ctrl.manometer['p im'].get_value() <= 0.51:
+        if 0.49 <= ctrl.manometer['p tm'].get_value() <= 0.51:
             ctrl.show_button('back yes')
         else:
             ctrl.show_button('back')
@@ -55,7 +55,7 @@ class Pim(QState):
         self.finish = QFinalState(self)
 
         self.setInitialState(self.tank)
-        self.tank.addTransition(ctrl.switch_with_neutral['o-p-t'].state_one, self.check_pim)
+        self.tank.addTransition(ctrl.switch_with_neutral['km'].state_one, self.check_pim)
         self.check_pim.addTransition(self.check_pim.success, self.finish)
         self.check_pim.addTransition(self.check_pim.fail, self.set_pim)
         self.set_pim.addTransition(ctrl.server_updated, self.set_pim)

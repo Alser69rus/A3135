@@ -41,7 +41,7 @@ class Substitution(QState):
         self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.pim)
         self.pim.addTransition(ctrl.server_updated, self.pim)
         self.pim.addTransition(self.pim.done, self.enter)
-        self.enter.addTransition(ctrl.switch_with_neutral['o-p-t'].state_neutral, self.el_breaking_on)
+        self.enter.addTransition(ctrl.switch_with_neutral['km'].state_neutral, self.el_breaking_on)
         self.el_breaking_on.addTransition(ctrl.server_updated, self.el_breaking_on)
         self.el_breaking_on.addTransition(self.el_breaking_on.done, self.measure)
         self.measure.addTransition(ctrl.server_updated, self.measure)

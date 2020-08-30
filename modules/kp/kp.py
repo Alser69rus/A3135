@@ -2,17 +2,7 @@ from PyQt5.QtCore import QState, QEvent, QFinalState
 
 from controller.controller import Controller
 from modules.kp.data import KpData
-
-
-# from modules.ku.breaking import Breaking
-# from modules.ku.data import KuData
-# from modules.ku.empty import Empty
-# from modules.ku.end import End
-# from modules.ku.fill import Fill
-# from modules.ku.junctions import Junctions
-# from modules.ku.prepare import Prepare
-# from modules.ku.sensitivity import Sensitivity
-# from modules.ku.valve import Valve
+from modules.kp.prepare import Prepare
 
 
 class Kp(QState):
@@ -35,7 +25,7 @@ class Kp(QState):
         self.report_data.addTransition(ctrl.menu.prepare_menu.done.clicked, self.menu)
         self.menu.addTransition(ctrl.button['back'].clicked, self.finish)
 
-        # self.prepare = Prepare(self)
+        self.prepare = Prepare(self)
         # self.fill = Fill(self)
         # self.empty = Empty(self)
         # self.breaking = Breaking(self)

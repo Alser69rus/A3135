@@ -76,8 +76,8 @@ class Server(QObject):
     def get_manometer(self) -> Dict[str, AnalogItemType]:
         result: Dict[str, AnalogItemType] = {}
         ai = [
-            ('p pm', 'Р пм', 1.6, self.worker.ai.pin[0]),
-            ('p im', 'Р им', 1.0, self.worker.ai.pin[1]),
+            ('p pm', 'Р пм', 1.0, self.worker.ai.pin[0]),
+            ('p tm', 'Р тм', 1.0, self.worker.ai.pin[1]),
             ('p tc1', 'Р тц1', 1.0, self.worker.ai.pin[2]),
             ('p tc2', 'Р тц2', 1.0, self.worker.ai.pin[3]),
             ('p upr', 'Р упр рд/сд', 1.0, self.worker.ai.pin[4]),
@@ -111,11 +111,11 @@ class Server(QObject):
             ('keb 208', 'КЭБ 208', self.worker.di.pin[5]),
             ('red 211', 'РЕД 211.020', self.worker.di.pin[6]),
             ('ku 215', 'КУ 215', self.worker.di.pin[7]),
-            ('tc820', 'ТЦ2 8 л - 20 л', self.worker.di.pin[10]),            
+            ('tc 820', 'ТЦ2 8 л - 20 л', self.worker.di.pin[10]),
             ('leak 1', 'УТЕЧКА d 1', self.worker.di.pin[11]),
             ('gap', 'РАЗРЫВ', self.worker.di.pin[12]),
             ('leak 0,5', 'УТЕЧКА d 0.5', self.worker.di.pin[13]),
-            ('kp106', 'КП 106', self.worker.di.pin[14]),            
+            ('kp 106', 'КП 106', self.worker.di.pin[14]),
             ('auto', 'АВТ. ОТПУСК', self.worker.di.pin[20]),
             ('zam', 'ЗАМ.', self.worker.di.pin[21]),
             ('edt', 'ЭДТ', self.worker.di.pin[22]),
@@ -131,7 +131,7 @@ class Server(QObject):
         radio_switch = [
             ('rd-0-keb', 'РД 042 - 0 - КП 106', ['- 0 -', 'РД 042', 'КП 106'],
              [self.worker.di.pin[8], self.worker.di.pin[9]]),
-            ('o-p-t', 'КМ', ['- П -', 'О', 'Т'], [self.worker.di.pin[0], self.worker.di.pin[1]]),
+            ('km', 'КМ', ['- П -', 'О', 'Т'], [self.worker.di.pin[0], self.worker.di.pin[1]]),
         ]
         for key, name, enum, di in radio_switch:
             radio_switch = TwoStateWithNeutralType(name=name, enum_values=enum)

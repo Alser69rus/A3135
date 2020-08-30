@@ -60,7 +60,7 @@ class SaveResult(QFinalState):
         self.stage = stage
 
     def onEntry(self, event: QEvent) -> None:
-        ctrl.btp.auto_breaking.pim[self.stage] = ctrl.manometer['p im'].get_value()
+        ctrl.btp.auto_breaking.pim[self.stage] = ctrl.manometer['p tm'].get_value()
         ctrl.btp.auto_breaking.tc[0][self.stage] = ctrl.manometer['p tc1'].get_value()
         ctrl.btp.auto_breaking.tc[1][self.stage] = ctrl.manometer['p tc2'].get_value()
 
@@ -86,7 +86,7 @@ class Check(QState):
         self.el_breaking.addTransition(ctrl.switch['gap'].low_value, self.speed_60)
         self.speed_60.addTransition(ctrl.switch['gap'].low_value, self.ku_215)
         self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.enter)
-        self.enter.addTransition(ctrl.switch_with_neutral['o-p-t'].state_one, self.handle_position)
+        self.enter.addTransition(ctrl.switch_with_neutral['km'].state_one, self.handle_position)
         self.handle_position.addTransition(self.check_handle_position)
         self.check_handle_position.addTransition(ctrl.server_updated, self.check_handle_position)
         self.check_handle_position.addTransition(self.check_handle_position.done, self.pressure_stabilization)

@@ -32,7 +32,7 @@ class Prepare(QState):
         self.install.addTransition(ctrl.button['yes'].clicked, self.prepare_pressure)
         self.prepare_pressure.addTransition(self.prepare_pressure.finished, self.leak)
         self.leak.addTransition(ctrl.switch['leak 0,5'].low_value, self.tank)
-        self.tank.addTransition(ctrl.switch_with_neutral['o-p-t'].state_two, self.pim_0)
+        self.tank.addTransition(ctrl.switch_with_neutral['km'].state_two, self.pim_0)
         self.pim_0.addTransition(ctrl.server_updated, self.pim_0)
         self.pim_0.addTransition(self.pim_0.done, self.enable_menu)
 

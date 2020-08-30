@@ -46,7 +46,7 @@ class Pim(QState):
         ctrl.setText(f'<p>Переведите ручку крана в отпускное положение и сбросьте давление в '
                      f'импульсной магистрали, ТЦ1 и ТЦ2 до нуля.</p>')
         p = [
-            ctrl.manometer['p im'].get_value() <= 0.005,
+            ctrl.manometer['p tm'].get_value() <= 0.005,
             ctrl.manometer['p tc1'].get_value() <= 0.005,
             ctrl.manometer['p tc2'].get_value() <= 0.005,
         ]
@@ -127,7 +127,7 @@ class CheckHandlePosition(QState):
             self.check = None
 
     def onEntry(self, event: QEvent) -> None:
-        pim = ctrl.manometer['p im'].get_value()
+        pim = ctrl.manometer['p tm'].get_value()
         if self.check(pim):
             ctrl.graph.reset()
             ctrl.graph.start()
@@ -139,7 +139,7 @@ class PressureStabilization(QState):
 
     def onEntry(self, event: QEvent) -> None:
         ctrl.graph.update()
-        data = ctrl.graph.data['p im']
+        data = ctrl.graph.data['p tm']
         data = data[-DATA_SIZE:]
         dp = max(data) - min(data)
         p = self.p_percent(dp)
@@ -188,7 +188,7 @@ class CheckKuPressure(QState):
         ctrl.show_button('back')
         ctrl.show_panel('текст манометры график прогресс')
         low, high = ctrl.btp.ku_215.range[self.stage]
-        p = ctrl.manometer['p im'].get_value()
+        p = ctrl.manometer['p tm'].get_value()
         if low <= p <= high:
             self.done.emit()
         else:
@@ -206,5 +206,5 @@ class HandlePositionFour(QState):
 
     def onEntry(self, event: QEvent) -> None:
         ctrl.setText(f'Переведите ручку КУ 215 в четвертое положение за один прием.')
-        if ctrl.manometer['p im'].get_value() >= 0.37:
+        if ctrl.manometer['p tm'].get_value() >= 0.37:
             self.done.emit()

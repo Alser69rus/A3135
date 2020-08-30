@@ -40,7 +40,7 @@ class Empty(QState):
 class Start(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.show_panel('манометры текст график')
-        ctrl.graph.show_graph('p im')
+        ctrl.graph.show_graph('p tm')
         ctrl.show_button('back')
         ctrl.normal()
         ctrl.ku.empty.reset()
@@ -54,7 +54,7 @@ class Handle0(QState):
         ctrl.setText(f'<p>Переведите ручку КУ 215 в отпускное положение за один прием.</p>'
                      f'<p>Будет зарегестрировано время снижения давления Рим с 0,35 до 0 МПа. '
                      f'Норма: не более 10 с. </p>')
-        if ctrl.manometer['p im'].get_value() <= 0.35:
+        if ctrl.manometer['p tm'].get_value() <= 0.35:
             ctrl.graph.start()
             ctrl.ku.empty.start()
             self.done.emit()
@@ -66,7 +66,7 @@ class Measure(QState):
     def onEntry(self, event: QEvent) -> None:
         ctrl.graph.update()
         ctrl.setText('Измеряется время снижения давления Р им до 0 МПа. Норма: не более 10 с.')
-        if ctrl.manometer['p im'].get_value() <= 0.01:
+        if ctrl.manometer['p tm'].get_value() <= 0.01:
             ctrl.ku.empty.stop()
             self.done.emit()
 

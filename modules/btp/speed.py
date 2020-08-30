@@ -41,7 +41,7 @@ class Speed(QState):
         self.ku_215.addTransition(ctrl.switch['ku 215'].high_value, self.pim)
         self.pim.addTransition(ctrl.server_updated, self.pim)
         self.pim.addTransition(self.pim.done, self.enter)
-        self.enter.addTransition(ctrl.switch_with_neutral['o-p-t'].state_neutral, self.speed_on)
+        self.enter.addTransition(ctrl.switch_with_neutral['km'].state_neutral, self.speed_on)
         self.speed_on.addTransition(ctrl.server_updated, self.speed_on)
         self.speed_on.addTransition(self.speed_on.done, self.measure_fill)
         self.measure_fill.addTransition(ctrl.server_updated, self.measure_fill)
