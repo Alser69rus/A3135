@@ -61,9 +61,8 @@ class MainMenu(MenuWidget):
 
         menu = self.add_menu('КП 106', 'Программа испытания КП 106')
         menu.add_button('Подготовка к испытанию')
-        menu.add_button('Испытание 1', 'Испытание 1')
-        menu.add_button('Испытание 2', 'Испытание 2')
-        menu.add_button('Завершение', 'Завершение испытаний')
+        menu.add_button('Испытание', 'Испытание клапана пневматического КП 106')
+        menu.add_button('Завершение', 'Завершение испытания')
 
         self.prepare_menu = PrepareMenu(self)
 

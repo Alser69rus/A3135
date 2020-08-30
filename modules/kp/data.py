@@ -1,0 +1,2 @@
+class KpData:
+    pass

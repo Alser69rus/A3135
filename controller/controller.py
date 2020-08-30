@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, Union
 
@@ -9,6 +8,7 @@ from PyQt5.QtWidgets import QPushButton, QLabel, QWidget
 
 from modules.btp.data import BtpData
 from modules.keb.data import KebData
+from modules.kp.data import KpData
 from modules.ku.data import KuData
 from modules.rd.data import RdData
 from opc.opc import TwoStateDiscreteType
@@ -82,6 +82,7 @@ class Controller(QObject):
         self.rd = RdData()
         self.keb = KebData()
         self.ku = KuData()
+        self.kp = KpData()
 
     def closeEvent(self, QCloseEvent):
         running_states = [self.server.th.isRunning(), self.stm.isRunning()]
