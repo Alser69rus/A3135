@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.WARNING, format='%(name)s %(asctime)s - %(leve
 
 class Main:
     def __init__(self):
-        print('Стенд А3139')
+        print('Стенд А3135')
         print('(c) ПКБ ЦТ, 2020')
 
         self.server = Server()
