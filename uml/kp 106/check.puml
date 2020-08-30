@@ -1,0 +1,12 @@
+@startuml
+[*]-->gap_on
+gap_on-->measure_p:True
+measure_p->measure_p:upd
+measure_p-->measure_t:ptc2>0.005
+note left of measure_p:save ptm on exit
+measure_t->measure_t:upd
+measure_t-->gap_off:ptc2>0.35
+note left of measure_t:save t on exit
+gap_off-->show_result
+show_result-->[*]
+@enduml

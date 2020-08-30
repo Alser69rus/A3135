@@ -1,0 +1,11 @@
+@startuml
+[*]-->upr_rd
+upr_rd-->rd:False
+rd-->kp106:false
+kp106-->km:false
+km-->rdkp:state_neutral
+rdkp-->tc820:state_neutral
+tc820-->uninstall:false
+uninstall-->report:yes
+report-->[*]
+@enduml

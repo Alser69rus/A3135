@@ -1,0 +1,17 @@
+@startuml
+[*]-->install
+install-->tc820:yes
+tc820-->rdkp:True
+rdkp-->km:state_two
+km-->ptm:state_one
+ptm-->kp106:0.52<=ptm<=0.55
+ptm-->set_ptm:fail
+set_ptm->set_ptm:upd
+set_ptm-->kp106:yes
+kp106-->rd042:True
+rd042-->upr_rd042:True
+upr_rd042-->pupr:True
+pupr-->[*]:0.38<=pupr<0.40
+pupr-->set_pupr:fail
+set_pupr-->[*]:yes
+@enduml
